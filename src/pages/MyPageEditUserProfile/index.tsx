@@ -168,7 +168,7 @@ const NicknameCheckButton = styled.button`
 `;
 
 const WarningText = styled.p`
-        color: #007bff;
+        color: #6EA7D0;
         font-size: 12px;
         margin-bottom: 10px;
 `;

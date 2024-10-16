@@ -69,7 +69,7 @@ const Index = () => {
                 </ChildProfile>
             </ProfileCard>
 
-            <Button backcolor="#FFD700" color="#FFFFFF" onClick={handleLogout}>로그아웃</Button>
+            <Button backcolor="#FFC317" color="#FFFFFF" onClick={handleLogout}>로그아웃</Button>
             <DeleteAccount onClick={handleDeleteAccount}>탈퇴하기</DeleteAccount>
         </Container>
     );
@@ -194,7 +194,7 @@ const DeleteAccount = styled.p`
     margin-top: 10px;
     font-size: 14px;
     text-align: center;
-    color: #007bff;
+    color: #6EA7D0;
     cursor: pointer;
     text-decoration: underline;
 `;
