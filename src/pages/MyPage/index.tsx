@@ -16,7 +16,7 @@ const Index = () => {
     };
 
     const handleViewChildProfile = (childId: number) => {
-        navigate(`/child-profile/${childId}`);
+        navigate(RouteDef.MyPageDetailChildProfile.path.replace(':childId', String(childId)));
     };
 
     const handleLogout = () => {

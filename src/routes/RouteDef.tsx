@@ -8,7 +8,7 @@ import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
 import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
-
+import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
 
 export const Screens = {
   Main: {
@@ -44,6 +44,11 @@ export const Screens = {
   MyPageEditUserProfile: {
     path: '/mypage/editUserProfile',
     element: <MyPageEditUserProfile />
+  },
+
+  MyPageDetailChildProfile: {
+    path: '/mypage/detail/childProfile/:childId',
+    element: <MyPageDetailChildProfile />
   },
 
   Event: {
