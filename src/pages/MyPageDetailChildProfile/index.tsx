@@ -118,11 +118,11 @@ const SectionWrapper = styled.div`
 const SectionTitle = styled.h3`
     font-size: 14px;
     color: #757575;
-    position: relative;
-    left: -30%;
-    transform: translateX(-50%);
-    padding: 0;
-    margin-bottom: 5px;
+    margin: 5px;
+    padding-left: 5px; /* 좌측에 여백을 고정 */
+    width: 100%; /* 부모 요소 크기에 맞춤 */
+    text-align: left; /* 텍스트를 좌측 정렬 */
+    box-sizing: border-box; /* 패딩을 포함한 너비 계산 */
 `;
 
 const RecordWrapper = styled.div`
