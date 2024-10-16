@@ -60,7 +60,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   border-radius: 16px;
   width: 100%;
   height: 48px;
-  margin 0 auto;
+  margin: 0 auto;
   border: none;
   &:focus {
     outline: 2px solid ${({ color }) => color};
@@ -86,3 +86,30 @@ export const AdminContainer = styled.div`
   padding: 0;
   position: relative;
 `
+
+// Select 스타일 컴포넌트 추가
+export const Select = styled.select<{color: string, bordercolor: string}>`
+  width: 100%;
+  height: 48px;
+  border-radius: 16px;
+  background-color: ${({ color }) => color};
+  border: 2px solid ${({ bordercolor }) => bordercolor};
+  font-size: 16px;
+  padding: 8px;
+  &:focus {
+    outline: none;
+    border-color: ${({ bordercolor }) => bordercolor};
+  }
+`;
+
+export const TextArea = styled.textarea<{ color: string; inputcolor: string }>`
+    border: 1px solid ${({ color }) => color};
+    background-color: ${({ inputcolor }) => inputcolor};
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    resize: vertical;
+`;

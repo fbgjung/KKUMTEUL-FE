@@ -35,6 +35,14 @@ const FormFields = styled.div`
     flex: 1;
 `;
 
+const ButtonFields = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex: 1;
+`;
+
+
 const Label = styled.label`
     color: #6EA7D0;
     font-weight: bold;
@@ -82,7 +90,7 @@ const Index = () => {
   return (
     <AdminContainer color="#f3f3f3">
       <Header
-        title="도서 등록"
+        title="도서 수정"
         textcolor="#000000"
         color="#6EA7D0"
         nextBtnImageUrl="/assets/home.svg" // 홈 아이콘 URL 설정
@@ -141,9 +149,14 @@ const Index = () => {
               <Label>페이지 수</Label>
               <StyledInput placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" />
             </div>
-            <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
-              등록하기
-            </StyledButton>
+            <ButtonFields>
+              <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
+                삭제하기
+              </StyledButton>
+              <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
+                수정하기
+              </StyledButton>
+            </ButtonFields>
           </FormFields>
         </FormContainer>
       </div>

@@ -7,6 +7,7 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import UpdateBookList from '../pages/Admin/UpdateBookList';
 
 
 export const Screens = {
@@ -55,7 +56,10 @@ export const Screens = {
     element: <CreateBookList />
   },
 
-
+  UpdateBookList: {
+    path: '/book/update',
+    element: <UpdateBookList />
+  },
 
 
   
