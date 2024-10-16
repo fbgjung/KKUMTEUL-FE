@@ -2,12 +2,13 @@ import {Container, Button} from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
+import {RouteDef} from "../../routes/RouteDef.tsx";
 
 const Index = () => {
     const navigate = useNavigate();
 
     const handleEditProfile = () => {
-        navigate('/edit-profile');
+        navigate(RouteDef.MyPageEditUserProfile.path);
     };
 
     const handleEditChildrenProfile = () => {
