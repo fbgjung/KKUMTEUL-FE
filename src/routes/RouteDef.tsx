@@ -5,6 +5,8 @@ import Survey from '../pages/Survey';
 import MyPage from '../pages/MyPage';
 import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
+import ManageBookList from '../pages/Admin/ManageBookList'
+import CreateBookList from '../pages/Admin/CreateBookList'
 
 
 export const Screens = {
@@ -42,6 +44,17 @@ export const Screens = {
     path: '/event',
     element: <Event />
   },
+
+  ManageBookList: {
+    path: '/book/manage',
+    element: <ManageBookList />
+  },
+
+  CreateBookList: {
+    path: '/book/create',
+    element: <CreateBookList />
+  },
+
 
 
 
