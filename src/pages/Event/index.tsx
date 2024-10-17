@@ -114,7 +114,7 @@ const Description = styled.span`
 
 /* 이름, 전화번호, 설명 div */
 const InputDiv = styled.div`
-    width:83%;
+    width:100%;
     margin-top:40px;
     padding:10px;
     display: flex;
