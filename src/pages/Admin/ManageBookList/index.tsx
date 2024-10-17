@@ -190,6 +190,7 @@ const Index = () => {
         />
         <div style={{ padding: '20px' }}>
           <InputContainer>
+
             <SearchContainer>
               <SearchInput
                 placeholder="도서 검색"
@@ -211,6 +212,7 @@ const Index = () => {
                 도서 추가
               </AddButton>
             </DeleteAddContainer>
+
           </InputContainer>
           <SelectContainer>
             <Select color="#FFFFFF" bordercolor="#6EA7D0">
