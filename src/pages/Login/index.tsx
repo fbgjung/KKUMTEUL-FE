@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; //241017
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { AdminContainer, Button, Input } from '../../styles/globalStyles';
+import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 
@@ -45,18 +45,15 @@ const Login: React.FC = () => {
 
 export default Login;
 
-// 스타일 컴포넌트
-const LoginContainer = styled(AdminContainer)`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #FDDC69;
-    height: 100vh;
-    padding: 0;
-    position: relative;
+const LoginContainer = styled(Container)`
     max-width: 600px;
     margin: 0 auto;
+    background-color: #FDDC69;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 `;
 
 const FixedHeader = styled(Header)`
@@ -64,30 +61,28 @@ const FixedHeader = styled(Header)`
     top: 0;
     width: 100%;
     z-index: 100;
+    font-size: 32px;
 `;
 
 const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-top: 40px;
+    justify-content: flex-start;
+    margin-top: 90px;
     padding-bottom: 20px;
-    flex-grow: 1;
 `;
 
 const CharacterWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
 `;
 
 const CharacterImage = styled.img`
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
 `;
 
 const Form = styled.form`
@@ -95,34 +90,32 @@ const Form = styled.form`
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-bottom: 100px;
 `;
 
 const InputStyled = styled(Input)`
-    width: 80%;
-    height: 50px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    padding: 0 15px;
-    font-size: 16px;
+    width: 130%;
+    height: 80px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    padding: 0 25px;
+    font-size: 24px;
 `;
 
 const ButtonStyled = styled(Button)`
-    width: 80%;
-    height: 50px;
+    width: 130%;
+    height: 80px;
     background-color: #FFCB05;
     color: #fff;
-    border-radius: 10px;
-    font-size: 18px;
-    margin-bottom: 50px;
+    border-radius: 15px;
+    font-size: 24px;
+    margin-bottom: 60px;
 `;
 
 const SignUpLink = styled.p`
-    margin-top: auto;
+    margin-top: 10px;
     color: #74A5D0;
     cursor: pointer;
     text-decoration: underline;
-    margin-bottom: 20px;
-    position: absolute;
-    bottom: 10px;
+    font-size: 18px;
 `;
+
