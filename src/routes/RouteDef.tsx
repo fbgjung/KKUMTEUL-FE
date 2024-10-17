@@ -7,6 +7,7 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import SurveyResult from '../pages/SurveyResult';
 
 
 export const Screens = {
@@ -35,6 +36,11 @@ export const Screens = {
     element: <Survey />
   },
   
+  SurveyResult: {
+    path: '/survey/result',
+    element: <SurveyResult />
+  },
+
   MyPage: {
     path: '/mypage',
     element: <MyPage />
