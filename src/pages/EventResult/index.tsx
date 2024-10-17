@@ -45,14 +45,14 @@ const VirtualizedListWithDummyData = () => {
   };
 
   return (
-    <List
+    <CustomList
       height={600} // 리스트 전체 높이
       itemCount={data.length} // 아이템 개수
       itemSize={80} // 각 아이템의 높이 (픽셀)
       width="100%" // 리스트의 너비
     >
       {Row}
-    </List>
+    </CustomList>
   );
 };
 
@@ -77,7 +77,6 @@ const Index = () => {
 
         <Title>응모 내역</Title> <br />
 
-        {/* VirtualizedListWithDummyData 컴포넌트 삽입 */}
         <VirtualizedListWithDummyData />
       </MyContainer>
     </Container>
@@ -90,7 +89,7 @@ export default Index;
 const ResultDiv = styled.div`
   width: 100%;
   background-color: #ffffff;
-  margin: 10px;
+  margin-top: 10px;
   margin-bottom: 7%;
   padding-left: 6%;
   padding-top: 8%;
@@ -102,12 +101,12 @@ const ResultDiv = styled.div`
 const Title = styled.span`
   font-size: 20px;
   font-weight: 500;
-  margin-left: 15px;
+  margin-left:5px;
 `;
 
 /* 일반 크기 글자 */
 const Text = styled.span`
-  margin-left: 15px;
+    margin-left:5px;
 `;
 
 const MyContainer = styled.div`
@@ -119,7 +118,7 @@ const MyContainer = styled.div`
 
 /* 응모 내역 부분 왼쪽 div */
 const ResultDivL = styled.div`
-  width: 70%; /* 부모 컨테이너의 70% 너비 */
+  width: 50%; /* 부모 컨테이너의 70% 너비 */
   display: flex;
   align-items: center;
   overflow: hidden; /* 가로 스크롤 방지 */
@@ -127,7 +126,7 @@ const ResultDivL = styled.div`
 
 /* 응모 내역 부분 오른쪽 div */
 const ResultDivR = styled.div`
-  width: 30%; /* 부모 컨테이너의 30% 너비 */
+  width: 50%; /* 부모 컨테이너의 30% 너비 */
   display: flex;
   align-items: center;
   justify-content: flex-end; /* 텍스트를 오른쪽 정렬 */
@@ -142,22 +141,22 @@ const ItemContainer = styled.div`
   width: 100%; /* 부모 요소 너비를 벗어나지 않도록 */
   box-sizing: border-box; /* 패딩 포함한 너비 계산 */
   padding: 15px;
+  margin : 10px 0;
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0; /* 회색 구분선 */
   border-radius: 4px;
   transition: background-color 0.3s;
   overflow: hidden; /* 가로 스크롤 방지 */
-  margin: 10px 0;
+  border-radius: 10px;
 
   &:hover {
     background-color: #f9f9f9; /* 호버 시 살짝 회색 배경 */
   }
 `
 
-
 /* 텍스트 스타일 */
 const Text1 = styled.span`
-  margin-left: 8%;
+  margin-left: 12%;
   font-size: 20px;
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
   overflow: hidden;
@@ -166,9 +165,18 @@ const Text1 = styled.span`
 
 const Text2 = styled.span`
   font-size: 14px;
-  margin-right: 8%;
+  margin-right: 30px;
   text-align: right;
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
   overflow: hidden;
   text-overflow: ellipsis; /* 넘칠 때 '...' 표시 */
+`;
+
+/* 스크롤 바 숨기기 */
+const CustomList = styled(List)`
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge에서 스크롤바 숨기기 */
+  }
+  -ms-overflow-style: none; /* IE 및 Edge에서 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
 `;
