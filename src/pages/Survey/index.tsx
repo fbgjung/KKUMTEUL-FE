@@ -12,7 +12,8 @@ import PrevButton from '../../components/survey/PrevButton.tsx';
 
 const Index = () => {
 
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(6);
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number | number[] }>({});
   const progressPercentage = `${((step - 1) / 5) * 100}%`;
 
   const handlePrevStep = () => {
@@ -23,17 +24,33 @@ const Index = () => {
     setStep((prevStep) => Math.min(prevStep + 1, 6));
   }
 
+  const handleUpdateMbtiAnswer = (questionId: number, answer: number) => {
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionId]: answer,
+    }));
+  };
+
+  const handleUpdateInterestAnswer = (questionId: number, interests: number[]) => {
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionId]: interests, 
+    }));
+  };
+  
+  console.log(selectedAnswers);
+
   return(
     <Container color="#ffffff">
       <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="우리 아이 진단" nextPage='/'/>
       {step > 0 && <PrevButton onClick={handlePrevStep} progressStep={step} totalProgressStep={6}/>}
       <ProgressLine percentage={ progressPercentage } />
-      {step === 1 && <MbtiFirst onNextStep={handleNextStep} />}
-      {step === 2 && <MbtiSecond onNextStep={handleNextStep} />}
-      {step === 3 && <MbtiThird onNextStep={handleNextStep} />}
-      {step === 4 && <MbtiForth onNextStep={handleNextStep} />}
-      {step === 5 && <MbtiFifth onNextStep={handleNextStep} />}
-      {step === 6 && <Interest />}
+      {step === 1 && <MbtiFirst onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers}/>}
+      {step === 2 && <MbtiSecond onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers}/>}
+      {step === 3 && <MbtiThird onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers}/>}
+      {step === 4 && <MbtiForth onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers}/>}
+      {step === 5 && <MbtiFifth onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers}/>}
+      {step === 6 && <Interest updateAnswer={handleUpdateInterestAnswer}/>}
     </Container>
   )
 }

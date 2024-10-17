@@ -3,15 +3,17 @@ import {Button} from '../../styles/globalStyles';
 
 interface Props {
   onNextStep: () => void;
+  updateAnswer: (questionId: number, scoreId: number) => void;
+  selectedAnswers: { [key: number]: number | number[] };
 }
 
-const MbtiFifth = ({onNextStep}:Props) => {
+const MbtiFifth = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
 
   const questions = [
-    {id:0, question:'본인의 생각을 친구들에게 이야기하는 것을 좋아하나요?', code: 'E', num: 17},
-    {id:1, question:'상상 속 이야기를 잘 만들어내나요?', code: 'N', num: 18},
-    {id:2, question:'왜요? 라는 질문을 많이 하나요?', code: 'T', num: 19},
-    {id:3, question:'자기 것을 덜 주장하고 덜 고집하는 편인가요?', code: 'P', num: 20},
+    {id:17, question:'본인의 생각을 친구들에게 이야기하는 것을 좋아하나요?', code: 'E'},
+    {id:18, question:'상상 속 이야기를 잘 만들어내나요?', code: 'N'},
+    {id:19, question:'왜요? 라는 질문을 많이 하나요?', code: 'T'},
+    {id:20, question:'자기 것을 덜 주장하고 덜 고집하는 편인가요?', code: 'P'},
   ]
   
   const scores = [
@@ -28,6 +30,10 @@ const MbtiFifth = ({onNextStep}:Props) => {
     onNextStep();
   }
 
+  const handleScoreClick = (questionId: number, scoreId: number) => {
+    updateAnswer(questionId, scoreId);
+  };
+
   return(
     <Container>
     {questions.map((q) => (
@@ -35,9 +41,9 @@ const MbtiFifth = ({onNextStep}:Props) => {
             <QuestionText>{q.question}</QuestionText>
             <ScoreContainer>
                 {scores.map((score) => (
-                    <Score key={score.id}>
+                    <Score key={score.id} onClick={() => handleScoreClick(q.id, score.id)}>
                         <CircleWrapper>
-                          <Circle $size={score.size} $color={score.color}></Circle>
+                        <Circle $size={score.size} $color={score.color} isSelected={selectedAnswers[q.id] === score.id}></Circle>
                         </CircleWrapper>
                         <ScoreText>{score.name}</ScoreText>
                     </Score>
@@ -96,13 +102,15 @@ const CircleWrapper = styled.div`
   cursor: pointer;
 `
 
-const Circle = styled.div<{$color:string, $size:string}>`
+const Circle = styled.div<{$color: string; $size: string; isSelected: boolean}>`
   width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
-  background-color: #ffffff;
+  background-color: ${({ isSelected, $color }) => (isSelected ? $color : '#ffffff')};
   border-radius: 100%;
   border: 2px solid ${({ $color }) => $color};
-`
+`;
+
+
 
 const ScoreText = styled.p`
   font-size: 10px;
