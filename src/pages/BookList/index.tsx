@@ -5,7 +5,7 @@ import Header from '../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
 
 const books = [
-    { id: 1, title: "책 1", author: "작가 1", price: 10000, publisher: "출판사 1", page: 200, summary: "이 책은 환경 보호에 관한 이야기입니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "INFJ", topic: "환경", genre: "자연의 세계" },
+    { id: 1, title: "책 1", author: "작가 1", price: 10000, publisher: "출판사 1", page: 200, summary: "이 책은 환경 보호에 관한 이야기입니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "INFJ", topic: "환경", genre: "자연" },
     { id: 2, title: "책 2", author: "작가 2", price: 10000, publisher: "출판사 2", page: 180, summary: "이 책은 동물의 생태를 다룹니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ENTP", topic: "동물", genre: "만화" },
     { id: 3, title: "책 3", author: "작가 1", price: 10000, publisher: "출판사 3", page: 150, summary: "이 책은 가족의 소중함을 이야기합니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "ISFP", topic: "가족", genre: "그림책" },
     { id: 4, title: "책 4", author: "작가 3", price: 10000, publisher: "출판사 1", page: 250, summary: "이 책은 성장에 관한 내용을 담고 있습니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESTJ", topic: "성장", genre: "동화(옛날이야기)" },
@@ -16,10 +16,10 @@ const books = [
     { id: 9, title: "책 9", author: "작가 3", price: 10000, publisher: "출판사 3", page: 240, summary: "이 책은 과거와 현재의 관계를 탐구합니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESTP", topic: "역사", genre: "사회" },
     { id: 10, title: "책 10", author: "작가 1", price: 10000, publisher: "출판사 1", page: 160, summary: "이 책은 협동의 중요성을 다룹니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "INFP", topic: "협동", genre: "시" },
     { id: 11, title: "책 11", author: "작가 2", price: 10000, publisher: "출판사 2", page: 200, summary: "이 책은 사랑의 의미를 탐구합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ENFJ", topic: "사랑", genre: "동화(옛날이야기)" },
-    { id: 12, title: "책 12", author: "작가 3", price: 10000, publisher: "출판사 3", page: 230, summary: "이 책은 외계인의 이야기를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ISTJ", topic: "외계인", genre: "자연의 세계" },
+    { id: 12, title: "책 12", author: "작가 3", price: 10000, publisher: "출판사 3", page: 230, summary: "이 책은 외계인의 이야기를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ISTJ", topic: "외계인", genre: "자연" },
     { id: 13, title: "책 13", author: "작가 1", price: 10000, publisher: "출판사 1", page: 190, summary: "이 책은 음악의 아름다움을 탐구합니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "ESFP", topic: "음악", genre: "예술" },
     { id: 14, title: "책 14", author: "작가 2", price: 10000, publisher: "출판사 2", page: 220, summary: "이 책은 기계의 원리를 설명합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ISTP", topic: "기계", genre: "생활과 과학" },
-    { id: 15, title: "책 15", author: "작가 3", price: 10000, publisher: "출판사 3", page: 210, summary: "이 책은 식물의 신비로운 세계를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESFJ", topic: "식물", genre: "자연의 세계" }
+    { id: 15, title: "책 15", author: "작가 3", price: 10000, publisher: "출판사 3", page: 210, summary: "이 책은 식물의 신비로운 세계를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESFJ", topic: "식물", genre: "자연" }
 ];
 
 
