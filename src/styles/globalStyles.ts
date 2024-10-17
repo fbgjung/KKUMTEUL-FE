@@ -60,7 +60,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   border-radius: 16px;
   width: 100%;
   height: 48px;
-  margin 0 auto;
+  margin : 0 auto;
   border: none;
   &:focus {
     outline: 2px solid ${({ color }) => color};
@@ -71,7 +71,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  
+  padding-left: 20px;
 `
 
 // 관리자 페이지
