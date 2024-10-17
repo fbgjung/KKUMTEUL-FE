@@ -145,12 +145,20 @@ const Index = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
 
+  const handleSearchBook = () => {
+    // 검색 버튼을 눌렀을 때 수행 코드
+  };
+
   const handleDeleteAll = () => {
     setBooks([]);
   };
 
   const handleAddBook = () => {
-    navigate('/CreateBookList');
+    navigate('/book/create');
+  };
+
+  const handleUpdateBook = () => {
+    navigate('/book/update');
   };
 
   const handleSelectAll = () => {
@@ -190,7 +198,7 @@ const Index = () => {
                 color="#6EA7D0"
                 inputcolor="#E6E6E6"
               />
-              <SearchButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleAddBook}>
+              <SearchButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleSearchBook}>
                 검색
               </SearchButton>
             </SearchContainer>
@@ -273,7 +281,8 @@ const Index = () => {
                   <TableCell>{book.mbti}</TableCell>
                   <TableCell>
                     <Button color="#FFFFFF" backcolor="#6EA7D0"
-                            style={{ width: '80px', height: '30px', fontSize: '15px'}}>
+                            style={{ width: '80px', height: '30px', fontSize: '15px'}}
+                            onClick={handleUpdateBook}>
                       수정
                     </Button>
                   </TableCell>
