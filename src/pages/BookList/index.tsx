@@ -50,8 +50,12 @@ const Index = () => {
             <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/'/>
 
             <SearchContainer>
-                <Input placeholder="입력하세요" color="#6EA7D0" inputcolor='#E6E6E6' />
-                <Button color="#FFFFFF" backcolor='#6EA7D0'>검색</Button>
+              <Input placeholder="     입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <BtnMagnifier
+                color="#FFFFFF"
+                backcolor="#6EA7D0"
+                nextBtnImageUrl="/assets/magnifier.png"
+              />
             </SearchContainer>
 
             <GridContainer>
@@ -95,6 +99,11 @@ const BookCard = styled.div`
     padding: 41px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        background-color: #fcf5d2;
+    }
+
 `
 
 // 책 표지 스타일
@@ -130,7 +139,24 @@ const SearchContainer = styled.div`
     display: flex;  /* Flexbox 사용 */
     align-items: center;  /* 세로 중앙 정렬 */
     margin: 20px 0;  /* 여백 추가 */
-`
+    width: 100%;  /* 컨테이너 전체 너비 사용 */
+`;
+
+const BtnMagnifier = styled.button`
+  width: 40px;
+  height: 40px;
+  background-color: transparent; /* 배경을 투명으로 설정 */
+  color: ${(props) => props.color || "#FFF"}; /* 텍스트 색상 */
+  background-image: url(${(props) => props.nextBtnImageUrl}); /* 돋보기 아이콘 */
+  background-size: contain; /* 아이콘 크기 조정 */
+  background-repeat: no-repeat; /* 아이콘 반복 안 함 */
+  background-position: center; /* 아이콘 중앙 정렬 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  cursor: pointer; /* 커서 포인터 */
+  margin-left: 10px; /* 입력 필드와의 간격 */
+`;
+
 
 // 페이지네이션 스타일
 const Pagination = styled.div`
@@ -142,7 +168,7 @@ const Pagination = styled.div`
 // 페이지 버튼 스타일
 const PageButton = styled.button`
     border: none;
-    background-color: #6EA7D0;
+    background-color: #FFD869;
     color: white;
     padding: 10px 15px;
     margin: 0 5px;
@@ -150,6 +176,6 @@ const PageButton = styled.button`
     border-radius: 5px;
 
     &:hover {
-        background-color: #5a9ec0;
+        background-color: #fac737;
     }
 `
