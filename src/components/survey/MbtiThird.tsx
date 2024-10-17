@@ -44,7 +44,6 @@ const MbtiThird = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
                     <Score key={score.id} onClick={() => handleScoreClick(q.id, score.id)}>
                     <CircleWrapper>
                     <Circle $size={score.size} $color={score.color} isSelected={selectedAnswers[q.id] === score.id}></Circle>
-                    {/* $color={score.color} */}
                     </CircleWrapper>
                     <ScoreText>{score.name}</ScoreText>
                 </Score>
