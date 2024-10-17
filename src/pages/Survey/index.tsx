@@ -12,7 +12,7 @@ import PrevButton from '../../components/survey/PrevButton.tsx';
 
 const Index = () => {
 
-  const [step, setStep] = useState<number>(6);
+  const [step, setStep] = useState<number>(1);
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number | number[] }>({});
   const progressPercentage = `${((step - 1) / 5) * 100}%`;
 

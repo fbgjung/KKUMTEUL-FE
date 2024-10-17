@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Button } from '../../styles/globalStyles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -11,6 +11,7 @@ const Interest = ({ updateAnswer }: Props) => {
   const navigate = useNavigate();
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [selectedKeyWords, setSelectedKeyWords] = useState<number[]>([]);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const genres = [
     { id: 0, name: '그림책', image: '/assets/sports.png' },
@@ -77,6 +78,10 @@ const Interest = ({ updateAnswer }: Props) => {
     navigate('/survey/result');
   };
 
+  useEffect(() => {
+    setIsButtonEnabled(selectedGenres.length === 3 && selectedKeyWords.length === 5);
+  }, [selectedGenres, selectedKeyWords]);
+
   return (
     <Container>
         <GenreTitle>📚 우리 아이가 좋아하는 도서 장르 (3개 선택)</GenreTitle>
@@ -106,7 +111,10 @@ const Interest = ({ updateAnswer }: Props) => {
               </Item>
           ))}
         </KeyWordList>
-        <NextButton color="#FFFFFF" backcolor='#FFC317' onClick={onNextPage}>결과 보기</NextButton>
+        <NextButton 
+          color={isButtonEnabled ? "#FFFFFF" : "#999999"} 
+          backcolor={isButtonEnabled ? '#FFC317' : '#d9d9d9'} 
+          onClick={onNextPage} disabled={!isButtonEnabled}>결과 보기</NextButton>
     </Container>
   );
 };

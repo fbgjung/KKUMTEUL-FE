@@ -34,6 +34,9 @@ const MbtiSecond = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
     updateAnswer(questionId, scoreId);
   };
 
+  const isAllAnswersSelected = () => {
+    return questions.every(q => selectedAnswers[q.id] !== undefined);
+  };
 
   return(
     <Container>
@@ -52,8 +55,11 @@ const MbtiSecond = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
             </ScoreContainer>
         </Question>
       ))}
-      <NextButton color="#FFFFFF" backcolor='#FFC317' onClick={onNextPage}>다음</NextButton>
-    </Container>
+      <NextButton 
+        color={isAllAnswersSelected() ? "#FFFFFF" : "#999999"} 
+        backcolor={isAllAnswersSelected() ? '#FFC317' : '#d9d9d9'}  
+        onClick={onNextPage} disabled={!isAllAnswersSelected()} >다음</NextButton>      
+      </Container>
   )
 }
 
