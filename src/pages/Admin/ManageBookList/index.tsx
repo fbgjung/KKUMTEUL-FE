@@ -138,7 +138,7 @@ const Index = () => {
       date: "2024-10-16",
       subject: "우정",
       mbti: "INFP",
-      imageUrl: "/assets/book1.svg"
+      imageUrl: "/assets/home.svg"
     }
   ]);
   const [searchText, setSearchText] = useState('');
