@@ -120,9 +120,9 @@ const SectionTitle = styled.h3`
     color: #757575;
     margin: 5px;
     padding-left: 5px; /* 좌측에 여백을 고정 */
-    width: 100%; /* 부모 요소 크기에 맞춤 */
     text-align: left; /* 텍스트를 좌측 정렬 */
     box-sizing: border-box; /* 패딩을 포함한 너비 계산 */
+    width: calc(100% - 3px);
 `;
 
 const RecordWrapper = styled.div`
