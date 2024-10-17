@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -60,7 +60,9 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   border-radius: 16px;
   width: 100%;
   height: 48px;
-  margin : 0 auto;
+
+  margin: 0 auto;
+
   border: none;
   &:focus {
     outline: 2px solid ${({ color }) => color};
