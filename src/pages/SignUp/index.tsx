@@ -107,7 +107,7 @@ export default SignUp;
 
 // 스타일 컴포넌트
 const SignUpContainer = styled(Container)`
-    max-width: 600px;
+    width: 100%;
     margin: 0 auto;
     background-color: #FDDC69;
     height: 100vh;
@@ -115,6 +115,7 @@ const SignUpContainer = styled(Container)`
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    padding: 0 20px;
 `;
 
 const FixedHeader = styled(Header)`
@@ -132,6 +133,7 @@ const ContentContainer = styled.div`
     justify-content: flex-start;
     margin-top: 90px;
     padding-bottom: 20px;
+    width: 100%;
 `;
 
 const Form = styled.form`
@@ -139,10 +141,13 @@ const Form = styled.form`
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 `;
 
 const InputStyled = styled(Input)`
-    width: 130%;
+    width: 100%;
+    max-width: 550px;
     height: 55px;
     margin-bottom: 12px;
     border-radius: 12px;
@@ -151,7 +156,8 @@ const InputStyled = styled(Input)`
 `;
 
 const ButtonStyled = styled(Button)`
-    width: 130%;
+    width: 100%;
+    max-width: 550px;
     height: 60px;
     background-color: #FFCB05;
     color: #fff;
@@ -163,16 +169,17 @@ const ButtonStyled = styled(Button)`
 const InputWrapper = styled.div`
     display: flex;
     align-items: center;
-    width: 95%;
+    width: 100%;
+    max-width: 550px;
     margin-bottom: 12px;
 `;
 
 const CheckButton = styled(Button)`
-    width: 25%;  // 중복확인 버튼
+    width: 30%;
     height: 55px;
     background-color: #FFCB05;
     color: white;
     margin-left: 10px;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 14px;
 `;
