@@ -8,8 +8,8 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import EventResult from '../pages/EventResult';
 import SurveyResult from '../pages/SurveyResult';
-
 
 export const Screens = {
   Main: {
@@ -55,6 +55,11 @@ export const Screens = {
   Event: {
     path: '/event',
     element: <Event />
+  },
+
+  EventResult:{
+    path: '/event/result',
+    element: <EventResult />
   },
 
   ManageBookList: {
