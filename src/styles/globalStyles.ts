@@ -48,7 +48,7 @@ export const Button = styled.button<{color: string, backcolor: string}>`
   border-radius: 20px;
   background-color: ${({ backcolor }) => backcolor};
   color: ${({ color }) => color};
-  width: 100%;
+  width: 600px;
   font-size: 20px;
   height: 64px;
   &:focus {
@@ -60,9 +60,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   border-radius: 16px;
   width: 100%;
   height: 48px;
-
   margin: 0 auto;
-
   border: none;
   &:focus {
     outline: 2px solid ${({ color }) => color};

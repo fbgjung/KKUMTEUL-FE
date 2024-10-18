@@ -8,6 +8,8 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
+import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
 import EventResult from '../pages/EventResult';
 import SurveyResult from '../pages/SurveyResult';
 
@@ -50,6 +52,16 @@ export const Screens = {
   MyPage: {
     path: '/mypage',
     element: <MyPage />
+  },
+
+  MyPageEditUserProfile: {
+    path: '/mypage/editUserProfile',
+    element: <MyPageEditUserProfile />
+  },
+
+  MyPageDetailChildProfile: {
+    path: '/mypage/detail/childProfile/:childId',
+    element: <MyPageDetailChildProfile />
   },
 
   Event: {
