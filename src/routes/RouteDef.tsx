@@ -8,6 +8,7 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import UpdateBookList from '../pages/Admin/UpdateBookList';
 import MyPageCreateChildProfile from '../pages/MyPageCreateChildProfile';
 import MyPageManageChildProfile from '../pages/MyPageManageChildProfile';
 import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
@@ -84,6 +85,11 @@ export const Screens = {
   CreateBookList: {
     path: '/book/create',
     element: <CreateBookList />
+  },
+
+  UpdateBookList: {
+    path: '/book/update/:book_id',
+    element: <UpdateBookList />
   },
 
   MyPageCreateChildProfile: {
