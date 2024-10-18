@@ -7,6 +7,8 @@ import Event from '../pages/Event';
 import SignUp from '../pages/SignUp';
 import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
+import MyPageCreateChildProfile from '../pages/MyPageCreateChildProfile';
+import MyPageManageChildProfile from '../pages/MyPageManageChildProfile';
 
 
 export const Screens = {
@@ -55,7 +57,15 @@ export const Screens = {
     element: <CreateBookList />
   },
 
+  MyPageCreateChildProfile: {
+    path: '/mypage/createChildProfile',
+    element: <MyPageCreateChildProfile />
+  },
 
+  MyPageManageChildProfile: {
+    path: '/mypage/manageChildProfile',
+    element: <MyPageManageChildProfile />
+  }
 
 
   
