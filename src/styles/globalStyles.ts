@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -71,7 +71,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  
+  padding-left: 20px;
 `
 
 // 관리자 페이지

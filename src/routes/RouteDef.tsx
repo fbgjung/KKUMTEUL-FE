@@ -1,5 +1,6 @@
 import Main from '../pages/Main';
 import BookList from '../pages/BookList';
+import BookDetail from '../pages/BookDetail';
 import Login from '../pages/Login';
 import Survey from '../pages/Survey';
 import MyPage from '../pages/MyPage';
@@ -9,6 +10,8 @@ import ManageBookList from '../pages/Admin/ManageBookList'
 import CreateBookList from '../pages/Admin/CreateBookList'
 import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
 import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
+import EventResult from '../pages/EventResult';
+import SurveyResult from '../pages/SurveyResult';
 
 export const Screens = {
   Main: {
@@ -31,11 +34,21 @@ export const Screens = {
     element: <BookList />
   },
 
+  BookDetail: {
+    path: '/bookdetail',
+    element: <BookDetail />
+  },
+
   Survey: {
     path: '/survey',
     element: <Survey />
   },
   
+  SurveyResult: {
+    path: '/survey/result',
+    element: <SurveyResult />
+  },
+
   MyPage: {
     path: '/mypage',
     element: <MyPage />
@@ -54,6 +67,11 @@ export const Screens = {
   Event: {
     path: '/event',
     element: <Event />
+  },
+
+  EventResult:{
+    path: '/event/result',
+    element: <EventResult />
   },
 
   ManageBookList: {
