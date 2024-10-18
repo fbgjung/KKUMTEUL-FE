@@ -103,6 +103,10 @@ const SelectContainer = styled.div`
     width: 30%;
 `;
 
+const TitleContainer = styled.div`
+  margin: 0 auto;
+`;
+
 const CheckboxHeader = styled.th`
     width: 5%;
     text-align: center;
@@ -129,16 +133,40 @@ const Index = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([
     {
-      id: 1,
+      book_id: 1,
       title: "구름 버스 동동",
+      author: "김작가",
       publisher: "출판사",
-      price: "13,000원",
       genre: "동화책",
-      age: "5세",
+      age_group: "5세",
       date: "2024-10-16",
       subject: "우정",
       mbti: "INFP",
-      imageUrl: "/assets/home.svg"
+      book_image: "/assets/home.svg"
+    },
+    {
+      book_id: 2,
+      title: "구름 버스 동동",
+      author: "김작가",
+      publisher: "출판사",
+      genre: "동화책",
+      age_group: "5세",
+      date: "2024-10-16",
+      subject: "우정",
+      mbti: "INFP",
+      book_image: "/assets/home.svg"
+    },
+    {
+      book_id: 3,
+      title: "구름 버스 동동",
+      author: "김작가",
+      publisher: "출판사",
+      genre: "동화책",
+      age_group: "5세",
+      date: "2024-10-16",
+      subject: "우정",
+      mbti: "INFP",
+      book_image: "/assets/home.svg"
     }
   ]);
   const [searchText, setSearchText] = useState('');
@@ -147,6 +175,7 @@ const Index = () => {
 
   const handleSearchBook = () => {
     // 검색 버튼을 눌렀을 때 수행 코드
+
   };
 
   const handleDeleteAll = () => {
@@ -157,15 +186,15 @@ const Index = () => {
     navigate('/book/create');
   };
 
-  const handleUpdateBook = () => {
-    navigate('/book/update');
+  const handleUpdateBook = (book_id: number) => {
+    navigate(`/book/update/${book_id}`);
   };
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedBooks([]);
     } else {
-      setSelectedBooks(books.map((book) => book.id));
+      setSelectedBooks(books.map((book) => book.book_id));
     }
     setSelectAll(!selectAll);
   };
@@ -247,7 +276,8 @@ const Index = () => {
                 </CheckboxHeader>
                 <TableHeader>No</TableHeader>
                 <TableHeader>도서명</TableHeader>
-                <TableHeader>판매가</TableHeader>
+                <TableHeader>작가</TableHeader>
+                <TableHeader>출판사</TableHeader>
                 <TableHeader>장르</TableHeader>
                 <TableHeader>연령</TableHeader>
                 <TableHeader>등록일</TableHeader>
@@ -258,31 +288,31 @@ const Index = () => {
               </thead>
               <tbody>
               {books.map((book, index) => (
-                <TableRow key={book.id}>
+                <TableRow key={book.book_id}>
                   <TableCell>
                     <input
                       type="checkbox"
-                      value={book.id}
-                      checked={selectedBooks.includes(book.id)}
-                      onChange={() => handleSelectBook(book.id)}
+                      value={book.book_id}
+                      checked={selectedBooks.includes(book.book_id)}
+                      onChange={() => handleSelectBook(book.book_id)}
                     />
                   </TableCell>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                    <ImagePlaceholder src={book.imageUrl} alt="도서 이미지" /> {book.title}
-                    <br />
-                    {book.publisher}
+                    <ImagePlaceholder src={book.book_image} alt="이미지 준비중" />
+                    <TitleContainer>{book.title}</TitleContainer>
                   </TableCell>
-                  <TableCell>{book.price}</TableCell>
+                  <TableCell>{book.author}</TableCell>
+                  <TableCell>{book.publisher}</TableCell>
                   <TableCell>{book.genre}</TableCell>
-                  <TableCell>{book.age}</TableCell>
+                  <TableCell>{book.age_group}</TableCell>
                   <TableCell>{book.date}</TableCell>
                   <TableCell>{book.subject}</TableCell>
                   <TableCell>{book.mbti}</TableCell>
                   <TableCell>
                     <Button color="#FFFFFF" backcolor="#6EA7D0"
                             style={{ width: '80px', height: '30px', fontSize: '15px'}}
-                            onClick={handleUpdateBook}>
+                            onClick={() => handleUpdateBook(book.book_id)}>
                       수정
                     </Button>
                   </TableCell>

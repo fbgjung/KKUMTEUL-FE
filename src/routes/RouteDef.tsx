@@ -57,7 +57,7 @@ export const Screens = {
   },
 
   UpdateBookList: {
-    path: '/book/update',
+    path: '/book/update/:book_id',
     element: <UpdateBookList />
   },
 

@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { AdminContainer, Button, Input, TextArea } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 
 const ImageContainer = styled.div<{ imageUrl?: string }>`
     width: 150px;
@@ -87,6 +88,63 @@ const Index = () => {
     }
   };
 
+  const { book_id } = useParams();
+  const [books] = useState([
+    {
+      book_id: 1,
+      title: "구름 버스 동동1",
+      author: "김작가",
+      publisher: "출판사",
+      price: 10000,
+      genre: "동화책",
+      age_group: "5세",
+      date: "2024-10-16",
+      subject: "우정",
+      mbti: "INFP",
+      summary: "1줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
+      page: 1,
+      book_image: "/assets/home.svg"
+    },
+    {
+      book_id: 2,
+      title: "구름 버스 동동2",
+      author: "김작가",
+      publisher: "출판사",
+      price: 20000,
+      genre: "동화책",
+      age_group: "5세",
+      date: "2024-10-16",
+      subject: "우정",
+      mbti: "INFP",
+      summary: "2줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
+      page: 2,
+      book_image: "/assets/home.svg"
+    },
+    {
+      book_id: 3,
+      title: "구름 버스 동동3",
+      author: "김작가",
+      publisher: "출판사",
+      price: 30000,
+      genre: "동화책",
+      age_group: "5세",
+      date: "2024-10-16",
+      subject: "우정",
+      mbti: "INFP",
+      summary: "3줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
+      page: 3,
+      book_image: "/assets/home.svg"
+    }
+  ]);
+  if (!book_id) {
+    return <div>로딩 중...</div>;
+  }
+
+  const book = books.find((b) => b.book_id === parseInt(book_id));
+  if (!book) {
+    return <div>도서를 찾을 수 없습니다.</div>;
+  }
+
   return (
     <AdminContainer color="#f3f3f3">
       <Header
@@ -98,8 +156,8 @@ const Index = () => {
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>
-          <ImageContainer imageUrl={imageUrl} onClick={handleImageClick}>
-            {!imageUrl && <span>이미지 추가</span>}
+          <ImageContainer imageUrl={book.book_image} onClick={handleImageClick}>
+            {!imageUrl}
             <input
               type="file"
               ref={fileInputRef}
@@ -111,43 +169,43 @@ const Index = () => {
           <FormFields>
             <div>
               <Label>도서명</Label>
-              <StyledInput placeholder="구름 버스 둥둥" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="구름 버스 둥둥" color="#6EA7D0" inputcolor="#E6E6E6" value={book.title}/>
             </div>
             <div>
               <Label>출판사</Label>
-              <StyledInput placeholder="꿈틀 출판사" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="꿈틀 출판사" color="#6EA7D0" inputcolor="#E6E6E6" value={book.publisher}/>
             </div>
             <div>
               <Label>작가</Label>
-              <StyledInput placeholder="작가명" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="작가명" color="#6EA7D0" inputcolor="#E6E6E6" value={book.author}/>
             </div>
             <div>
               <Label>가격</Label>
-              <StyledInput placeholder="13,000원" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="13,000원" color="#6EA7D0" inputcolor="#E6E6E6" value={book.price}/>
             </div>
             <div>
               <Label>연령대</Label>
-              <StyledInput placeholder="5세" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="5세" color="#6EA7D0" inputcolor="#E6E6E6" value={book.age_group}/>
             </div>
             <div>
               <Label>장르</Label>
-              <StyledInput placeholder="장르를 입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="장르를 입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" value={book.genre}/>
             </div>
             <div>
               <Label>주제어</Label>
-              <StyledInput placeholder="구름, 버스 등등" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="구름, 버스 등등" color="#6EA7D0" inputcolor="#E6E6E6"value={book.subject} />
             </div>
             <div>
               <Label>MBTI</Label>
-              <StyledInput placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" value={book.mbti}/>
             </div>
             <div>
               <Label>줄거리</Label>
-              <StyledTextArea placeholder="줄거리를 작성해주세요." color="#6EA7D0" inputcolor="#E6E6E6" rows={5} />
+              <StyledTextArea placeholder="줄거리를 작성해주세요." color="#6EA7D0" inputcolor="#E6E6E6" rows={5}  value={book.summary}/>
             </div>
             <div>
               <Label>페이지 수</Label>
-              <StyledInput placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" />
+              <StyledInput placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" value={book.page}/>
             </div>
             <ButtonFields>
               <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
