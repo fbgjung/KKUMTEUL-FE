@@ -1,15 +1,185 @@
-// import styled from 'styled-components';
-import {Container, Button, Input} from '../../styles/globalStyles';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
+import styled from 'styled-components';
 
-const Index = () => {
-    return(
-        <Container color="#f3f3f3">
-            <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/src/assets/home.svg" title="회원가입" nextPage='/'/>
-            <Button color="#FFFFFF" backcolor='#6EA7D0'>Button1</Button>
-            <Input placeholder="입력하세요" color="#6EA7D0" inputcolor='#E6E6E6'></Input>
-        </Container>
-    )
-}
+const SignUp: React.FC = () => {
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        passwordConfirm: '',
+        name: '',
+        nickname: '',
+        phone: '',
+        birthdate: ''
+    });
+    const navigate = useNavigate();
 
-export default Index;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSignUp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (formData.password !== formData.passwordConfirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        try {
+            const response = await axios.post('/api/users/register', formData);
+            alert('회원가입에 성공하였습니다.');
+            navigate('/login');
+        } catch (error) {
+            console.error('회원가입에 실패하였습니다.', error);
+            alert('회원가입에 실패하였습니다.');
+        }
+    };
+
+    const handleDuplicateCheck = (field: string) => {
+        alert(`${field} 중복 확인이 필요합니다`);
+    };
+
+    return (
+        <SignUpContainer>
+            <FixedHeader textcolor="#000000" color="#FDDC69" nextBtnImageUrl="/assets/home.svg" title="회원가입" nextPage="/" />
+            <ContentContainer>
+                <Form onSubmit={handleSignUp}>
+                    <InputWrapper>
+                        <InputStyled
+                            placeholder="아이디"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                        />
+                        <CheckButton type="button" onClick={() => handleDuplicateCheck('아이디')}>중복확인</CheckButton>
+                    </InputWrapper>
+                    <InputStyled
+                        placeholder="비밀번호"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    <InputStyled
+                        placeholder="비밀번호 확인"
+                        name="passwordConfirm"
+                        type="password"
+                        value={formData.passwordConfirm}
+                        onChange={handleChange}
+                    />
+                    <InputStyled
+                        placeholder="이름"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                    />
+                    <InputWrapper>
+                        <InputStyled
+                            placeholder="닉네임"
+                            name="nickname"
+                            value={formData.nickname}
+                            onChange={handleChange}
+                        />
+                        <CheckButton type="button" onClick={() => handleDuplicateCheck('닉네임')}>중복확인</CheckButton>
+                    </InputWrapper>
+                    <InputStyled
+                        placeholder="전화번호"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                    />
+                    <InputStyled
+                        placeholder="생년월일 ex)980905"
+                        name="birthdate"
+                        value={formData.birthdate}
+                        onChange={handleChange}
+                    />
+                    <ButtonStyled type="submit">회원가입</ButtonStyled>
+                </Form>
+            </ContentContainer>
+        </SignUpContainer>
+    );
+};
+
+export default SignUp;
+
+// 스타일 컴포넌트
+const SignUpContainer = styled(Container)`
+    width: 100%;
+    margin: 0 auto;
+    background-color: #FDDC69;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 20px;
+`;
+
+const FixedHeader = styled(Header)`
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    font-size: 32px;
+`;
+
+const ContentContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 90px;
+    padding-bottom: 20px;
+    width: 100%;
+`;
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+`;
+
+const InputStyled = styled(Input)`
+    width: 100%;
+    max-width: 550px;
+    height: 55px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    padding: 0 15px;
+    font-size: 16px;
+`;
+
+const ButtonStyled = styled(Button)`
+    width: 100%;
+    max-width: 550px;
+    height: 60px;
+    background-color: #FFCB05;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 18px;
+    margin-top: 20px;
+`;
+
+const InputWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 550px;
+    margin-bottom: 12px;
+`;
+
+const CheckButton = styled(Button)`
+    width: 30%;
+    height: 55px;
+    background-color: #FFCB05;
+    color: white;
+    margin-left: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+`;
