@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -48,7 +48,7 @@ export const Button = styled.button<{color: string, backcolor: string}>`
   border-radius: 20px;
   background-color: ${({ backcolor }) => backcolor};
   color: ${({ color }) => color};
-  width: 100%;
+  width: 600px;
   font-size: 20px;
   height: 64px;
   &:focus {
@@ -71,7 +71,7 @@ export const Input  = styled.input<{color: string, inputcolor:string}>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  
+  padding-left: 20px;
 `
 
 // 관리자 페이지
