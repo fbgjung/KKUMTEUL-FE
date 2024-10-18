@@ -40,11 +40,13 @@ const Index = () => {
       return;
     }
     // 추가 로직 구현
+    // #f3f3f3
   };
 
   return (
     <Container color="#f3f3f3">
       <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="자녀 등록" nextPage='/' />
+      <WholeContainer color="#f3f3f3">
       <ProfileImageContainer  imageUrl={imageUrl} onClick={handleImageClick}>
         {!imageUrl && <span>이미지 추가</span>}
         <input
@@ -89,16 +91,21 @@ const Index = () => {
         />
       </FormContainer>
       <AddButton color="#FFFFFF" backcolor='#6EA7D0' onClick={handleAddChild}>추가하기</AddButton>
+      </WholeContainer>
     </Container>
   );
 };
 
 export default Index;
 
+const WholeContainer = styled(Container)`
+  margin-top: 30%;
+`;
+
 const ProfileImageContainer = styled.div<{ imageUrl?: string }>`
   margin-top: 20px;
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
   background-color: #D3D3D3;
   border-radius: 50%;
   overflow: hidden;
