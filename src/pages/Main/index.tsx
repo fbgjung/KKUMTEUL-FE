@@ -44,10 +44,10 @@ const Index = () => {
   const menus: Menu[] = [
     { id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png' },
     { id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png' },
+    { id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png' },
   ]
 
   const toggleMenus: ToggleMenu[] = [
-    { id: 0, name: '마이페이지', to: '/mypage'},
     { id: 1, name: '꿈틀이1', to: 1},
     { id: 2, name: '꿈틀이2', to: 2},
     { id: 3, name: '꿈틀이3', to: 3},
@@ -58,11 +58,7 @@ const Index = () => {
   };
 
   const onClickToggleMenuItem = (menu:ToggleMenu) => {
-    if (menu.name === '마이페이지') {
-      navigate(menu.to as string);
-    } else {
-      setChild(menu.to as number);
-    }
+    setChild(menu.to as number);
   };
 
   const onClickEventBanner = () => {
