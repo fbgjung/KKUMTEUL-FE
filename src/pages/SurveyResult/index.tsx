@@ -34,7 +34,7 @@ const Index = () => {
   };
 
     return(
-      <Container color="#FFFFFF">
+      <Container color="#FFD869">
         <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
         <MbtiSection>
           <MbtiImage />
@@ -224,7 +224,7 @@ const ChildBirth = styled.span<{$color:string}>`
 `
 
 const ResultSection = styled.div`
-  background-color: #ffffff;
+  background-color: #FFD869;
   width: 90%;
   display: flex;
   align-items: center;
@@ -242,7 +242,7 @@ const MbtiDescription = styled.p`
 
 const Graph = styled.div`
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FFD869;
   display: flex;
   align-items: center;
   flex-direction: column;
