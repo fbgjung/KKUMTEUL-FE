@@ -12,7 +12,7 @@ const Index = () => {
     };
 
     const handleEditChildrenProfile = () => {
-        navigate('/edit-children-profile');
+        navigate('/mypage/manageChildProfile');
     };
 
     const handleViewChildProfile = (childId: number) => {
@@ -30,10 +30,10 @@ const Index = () => {
     return (
         <Container color="#f3f3f3">
             <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="마이페이지" nextPage="/"/>
-
+            <MyPageContainer>
             <ProfileCard>
                 <ProfileContent>
-                    <ProfileImage src="/assets/userProfileImg.svg" alt="Profile"/>
+                    <ProfileImage src="/assets/sports.png" alt="Profile"/>
                     <ProfileInfo>
                         <h3>류금정</h3>
                         <p>금정씨</p>
@@ -49,7 +49,7 @@ const Index = () => {
                 </ProfileHeader>
                 <Divider />
                 <ChildProfile>
-                    <ProfileImage src="/assets/childProfileImg1.svg" alt="Child1"/>
+                    <ProfileImage src="/assets/sports.png" alt="Child1"/>
                     <ChildInfo>
                         <h4>금정</h4>
                         <p>2017년 03월 4일</p>
@@ -59,7 +59,7 @@ const Index = () => {
                 </ChildProfile>
 
                 <ChildProfile>
-                    <ProfileImage src="/assets/childProfileImg2.svg" alt="Child2"/>
+                    <ProfileImage src="/assets/sports.png" alt="Child2"/>
                     <ChildInfo>
                         <h4>금정</h4>
                         <p>2024년 03월 4일</p>
@@ -69,8 +69,11 @@ const Index = () => {
                 </ChildProfile>
             </ProfileCard>
 
-            <Button backcolor="#FFC317" color="#FFFFFF" onClick={handleLogout}>로그아웃</Button>
+            <LogoutButton backcolor="#FFC317" color="#FFFFFF" onClick={handleLogout}>로그아웃</LogoutButton>
             <DeleteAccount onClick={handleDeleteAccount}>탈퇴하기</DeleteAccount>
+
+            </MyPageContainer>
+            
         </Container>
     );
 };
@@ -78,12 +81,20 @@ const Index = () => {
 export default Index;
 
 // 스타일링
+const MyPageContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+`
+
 const ProfileCard = styled.div`
-    width: 600px;
+    width: 90%;
     background-color: white;
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 20px;
+    margin: 20px 0 10px 0;
 `;
 
 const ProfileHeader = styled.div`
@@ -101,8 +112,8 @@ const ProfileContent = styled.div`
 `;
 
 const ProfileImage = styled.img`
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     margin-right: 16px;
 `;
@@ -139,6 +150,10 @@ const UserEditButton = styled.button`
     position: absolute;
     top: 2px;
     right: 0;
+    &:hover {
+        background-color: #6EA7D0;
+        color: #ffffff;
+    }
 `;
 
 const ChildEditButton = styled.button`
@@ -147,6 +162,10 @@ const ChildEditButton = styled.button`
     border-radius: 12px;
     padding: 8px 12px;
     font-size: 14px;
+    &:hover {
+        background-color: #6EA7D0;
+        color: #ffffff;
+    }
 `;
 
 const ProfileTitle = styled.h3`
@@ -159,14 +178,14 @@ const Divider = styled.div`
 `;
 
 const ChildProfile = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 12px;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
 `;
 
 const ChildInfo = styled.div`
@@ -198,3 +217,8 @@ const DeleteAccount = styled.p`
     cursor: pointer;
     text-decoration: underline;
 `;
+
+const LogoutButton = styled(Button)` 
+  width: 90%;
+  margin-top: 300px;
+`

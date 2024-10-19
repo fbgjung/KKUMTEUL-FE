@@ -47,50 +47,50 @@ const Index = () => {
     <Container color="#f3f3f3">
       <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="자녀 등록" nextPage='/' />
       <WholeContainer color="#f3f3f3">
-      <ProfileImageContainer  imageUrl={imageUrl} onClick={handleImageClick}>
-        {!imageUrl && <span>이미지 추가</span>}
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-      </ProfileImageContainer>
-      <FormContainer>
-        <Label>이름</Label>
-        <StyledInput
-          placeholder="이름"
-          color="#6EA7D0"
-          inputcolor='#E6E6E6'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Label>성별</Label>
-        <GenderButtonContainer>
-          <GenderButton
-            isSelected={gender === 'MALE'}
-            onClick={() => handleGenderSelect('MALE')}
-          >
-            남아
-          </GenderButton>
-          <GenderButton
-            isSelected={gender === 'FEMALE'}
-            onClick={() => handleGenderSelect('FEMALE')}
-          >
-            여아
-          </GenderButton>
-        </GenderButtonContainer>
-        <Label>생년월일</Label>
-        <StyledInput
-          placeholder="ex) 19980905"
-          color="#6EA7D0"
-          inputcolor='#E6E6E6'
-          value={birthdate}
-          onChange={(e) => setBirthdate(e.target.value)}
-        />
-      </FormContainer>
-      <AddButton color="#FFFFFF" backcolor='#6EA7D0' onClick={handleAddChild}>추가하기</AddButton>
+        <ProfileImageContainer  imageUrl={imageUrl} onClick={handleImageClick}>
+          {!imageUrl && <span>프로필사진 추가</span>}
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </ProfileImageContainer>
+        <FormContainer>
+          <Label>이름</Label>
+          <StyledInput
+            placeholder="이름"
+            color="#6EA7D0"
+            inputcolor='#E6E6E6'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Label>성별</Label>
+          <GenderButtonContainer>
+            <GenderButton
+              isSelected={gender === 'MALE'}
+              onClick={() => handleGenderSelect('MALE')}
+            >
+              남아
+            </GenderButton>
+            <GenderButton
+              isSelected={gender === 'FEMALE'}
+              onClick={() => handleGenderSelect('FEMALE')}
+            >
+              여아
+            </GenderButton>
+          </GenderButtonContainer>
+          <Label>생년월일</Label>
+          <StyledInput
+            placeholder="ex) 19980905"
+            color="#6EA7D0"
+            inputcolor='#E6E6E6'
+            value={birthdate}
+            onChange={(e) => setBirthdate(e.target.value)}
+          />
+        </FormContainer>
+        <AddButton color="#FFFFFF" backcolor='#6EA7D0' onClick={handleAddChild}>추가하기</AddButton>
       </WholeContainer>
     </Container>
   );
@@ -98,25 +98,28 @@ const Index = () => {
 
 export default Index;
 
-const WholeContainer = styled(Container)`
-  margin-top: 30%;
+const WholeContainer = styled.div`
+  margin-top: 100px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+
 `;
 
 const ProfileImageContainer = styled.div<{ imageUrl?: string }>`
-  margin-top: 20px;
   width: 200px;
   height: 200px;
   background-color: #D3D3D3;
-  border-radius: 50%;
+  border-radius: 100%;
   overflow: hidden;
   position: relative;
   justify-content: center;
   align-items: center;
   display: flex;
-  background-image: ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
+  background: cover center ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
   // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
-  background-size: cover;
-  background-position: center;
   cursor: pointer;
 `;
 
