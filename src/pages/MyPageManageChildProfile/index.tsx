@@ -4,8 +4,83 @@ import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
+const Index = () => {
+  const navigate = useNavigate();
+  const [children, setChildren] = useState([
+    {
+      child_id: 1,
+      name: "금정",
+      birthdate: "2017년 03월 4일 출생",
+      age: "8살",
+      gender: '여아',
+      image: "/assets/dog1.png"
+    },
+    {
+      child_id: 2,
+      name: "금정",
+      birthdate: "2024년 03월 4일 출생",
+      age: "2살",
+      gender: '여아',
+      image: "/assets/dog2.png"
+    },
+    {
+      child_id: 3,
+      name: "금정",
+      birthdate: "2024년 03월 4일 출생",
+      age: "2살",
+      gender: '여아',
+      image: "/assets/dog2.png"
+    }
+  ]);
+
+  const handleDeleteChild = (child_id: number) => {
+    setChildren(children.filter((child) => child.child_id !== child_id));
+  };
+
+  const handleAddChild = () => {
+    navigate('/mypage/createChildProfile');
+  };
+
+  return (
+    <Container color="#f3f3f3">
+      <Header
+        textcolor="#000000"
+        color="#f3f3f3"
+        nextBtnImageUrl="/assets/home.svg"
+        title="우리집 꿈틀이들"
+        nextPage='/'
+      />
+      <ListContainer>
+        {children.map((child) => (
+          <ChildItem key={child.child_id}>
+            <ChildInfo>
+              <ChildImage src={child.image} alt="자녀 이미지" />
+              <ChildDetails>
+                <ChildName>{child.name}</ChildName>
+                <ChildBirth>{child.birthdate}</ChildBirth>
+                <ChildText>
+                  <ChildDetailText>{child.age}</ChildDetailText>
+                  <ChildDetailText>{child.gender}</ChildDetailText>
+                </ChildText>
+              </ChildDetails>
+            </ChildInfo>
+            <DeleteButton color="rgb(110,167,208,0.8)" backcolor="#f3f3f3" onClick={() => handleDeleteChild(child.child_id)}>
+              삭제
+            </DeleteButton>
+          </ChildItem>
+        ))}
+        <AddChildLink color="#FFFFFF" onClick={handleAddChild}>
+          추가하기
+        </AddChildLink>
+      </ListContainer>
+    </Container>
+  );
+};
+
+export default Index;
+
 const ListContainer = styled.div`
-    width: 100%;
+    width: 90%;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -44,21 +119,27 @@ const ChildDetails = styled.div`
     flex-direction: column;
 `;
 
-const ChildName = styled.div`
+const ChildName = styled.span`
     font-weight: bold;
     font-size: 19px;
     margin-bottom: 10px;
 `;
 
-const ChildBirthdate = styled.span`
+const ChildBirth = styled.span`
   font-size: 14px;
   font-weight: bold;  
   color: #555;
 `;
 
-const ChildAge = styled.span`
+const ChildText = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`
+const ChildDetailText = styled.p`
   font-size: 14px;
   color: #555;
+  margin: 0;
 `;
 
 const DeleteButton = styled(Button)`
@@ -78,72 +159,3 @@ const AddChildLink = styled.a`
   text-align: center;
   margin-top: 20px;
 `;
-
-const Index = () => {
-  const navigate = useNavigate();
-  const [children, setChildren] = useState([
-    {
-      child_id: 1,
-      name: "금정",
-      birthdate: "2017년 03월 4일 출생",
-      age: "8살",
-      image: "/assets/dog1.png"
-    },
-    {
-      child_id: 2,
-      name: "금정",
-      birthdate: "2024년 03월 4일 출생",
-      age: "2살",
-      image: "/assets/dog2.png"
-    },
-    {
-      child_id: 3,
-      name: "금정",
-      birthdate: "2024년 03월 4일 출생",
-      age: "2살",
-      image: "/assets/dog2.png"
-    }
-  ]);
-
-  const handleDeleteChild = (child_id: number) => {
-    setChildren(children.filter((child) => child.child_id !== child_id));
-  };
-
-  const handleAddChild = () => {
-    navigate('/mypage/createChildProfile');
-  };
-
-  return (
-    <Container color="#f3f3f3">
-      <Header
-        textcolor="#000000"
-        color="#f3f3f3"
-        nextBtnImageUrl="/assets/home.svg"
-        title="우리집 꿈틀이들"
-        nextPage='/'
-      />
-      <ListContainer>
-        {children.map((child) => (
-          <ChildItem key={child.child_id}>
-            <ChildInfo>
-              <ChildImage src={child.image} alt="자녀 이미지" />
-              <ChildDetails>
-                <ChildName>{child.name}</ChildName>
-                <ChildBirthdate>{child.birthdate}</ChildBirthdate>
-                <ChildAge>{child.age}</ChildAge>
-              </ChildDetails>
-            </ChildInfo>
-            <DeleteButton color="rgb(110,167,208,0.8)" backcolor="#f3f3f3" onClick={() => handleDeleteChild(child.child_id)}>
-              삭제
-            </DeleteButton>
-          </ChildItem>
-        ))}
-        <AddChildLink color="#FFFFFF" onClick={handleAddChild}>
-          추가하기
-        </AddChildLink>
-      </ListContainer>
-    </Container>
-  );
-};
-
-export default Index;
