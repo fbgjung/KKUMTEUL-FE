@@ -36,6 +36,7 @@ const Index = () => {
     return(
       <Container color="#FFD869">
         <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
+        <SurveyContainer>
         <MbtiSection>
           <MbtiImage />
           <MbtiInfo>
@@ -141,19 +142,25 @@ const Index = () => {
           </InterestList>
         </ResultSection>
         <ReSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleReSurveyButton}>다시 진단하기</ReSurveyButton>
+        </SurveyContainer>
       </Container>
     )
 }
 
 export default Index;
-
+const SurveyContainer = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 const MbtiSection = styled.div`
   background-color:#FFC317;
-  width: 90%;
+  width: 100%;
   margin: 10px 0;
   padding: 0 0 0 50px;
   display:flex;
- border-radius:10px;
+  border-radius:10px;
   box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
   align-items: center;
 `
@@ -188,7 +195,7 @@ const MbtiDate = styled.p`
 
 const ProfileSection = styled.div`
   background-color:#FFFFFF;
-  width: 90%;
+  width: 100%;
   margin: 10px 0;
   padding: 20px 0;
   display:flex;
