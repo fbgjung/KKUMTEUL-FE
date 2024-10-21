@@ -81,7 +81,10 @@ const Index = () => {
           </DropdownMenu>
         )}
       </Header>
-      <Image />
+
+      <ImageWrapper>
+        <Image src="/assets/main_test_image.svg" alt="Main Test" />      
+      </ImageWrapper>
       <MenuSection>
       {menus.map((menu) => (
         <Menus key={menu.id} onClick={() => navigate(menu.link)}>
@@ -102,7 +105,7 @@ const Index = () => {
               <MbtiImage></MbtiImage>
               {recommendBookData.map((book) => (
                   <RecommendItem key={book.id}>
-                      <RecommendBookImage $imageurl={book.image} />
+                      <RecommendBookImage onClick = {() => navigate(`/booklist/${book.id}`)} $imageurl={book.image} />
                       <RecommendBookTitle>{book.title}</RecommendBookTitle>
                   </RecommendItem>
               ))}
@@ -123,7 +126,7 @@ const Header = styled.div`
   top: 0; 
   left: 0;
   z-index: 1000;
-  padding: 0 20px;
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
 `;
@@ -172,16 +175,20 @@ const NextButton = styled.button<{$imageurl: string}>`
   overflow: hidden;
 `
 
-const Image = styled.div`
-  width: 600px;
-  height: 270px;
-  background: no-repeat center/contain url("/assets/main_test_image.svg");
-  background-size: contain;
+const ImageWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
+
+const Image = styled.img`
+  width: 100%;
+`
 
 // 링크
 const MenuSection = styled.div`
-  width: calc(100% - 40px);
+  width: 90%;
   height: 100px;
   background-color: #ffffff;
   margin: 20px 10px 0 10px;
@@ -199,6 +206,7 @@ const Menus = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding: 20px 0;
 `
 
 const LinkButton = styled.img`
@@ -220,7 +228,7 @@ const LinkTitle = styled.p<{$color: string}>`
 
 // 이벤트 배너
 const EventBanner = styled.div`
-  width: calc(100% - 40px);
+  width: 90%;
   height: 100px;
   background-color: #04cb94;
   margin: 20px 10px 10px 10px;
@@ -235,13 +243,12 @@ const EventBanner = styled.div`
 
 const EventTitle = styled.p`
   font-weight: bold;
-  font-style: italic;
   font-size: 30px;
 `
 
 // 도서 추천
 const RecommendBookSection = styled.div`
-  width: calc(100% - 40px);
+  width: 90%;
   background-color: #ffffff;
   border-radius: 20px;
   margin: 12px 10px 90px 10px;
@@ -255,28 +262,28 @@ const RecommendBookSection = styled.div`
 
 const RecommendTitle = styled.h3`
   margin-bottom: 2px;
-  width: calc(100% - 40px);
+  width: 90%;
 
 `;
 
 const RecommendText = styled.p`
   margin: 0;
   color: #FFC317;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
 `;
 
 const ArrowBubble = styled.div`
   margin: 10px;
   position: relative;
-  width: calc(100% - 40px);
+  width: 90%;
   height: auto;
   padding: 10px;
   background: #ffffff;
   border-radius: 30px;
   border: #FFC317 solid 3px;
 
-  @media screen and (max-width: 650px) {
+  @media screen and (max-width: 500px) {
     width: 90%;
     height: auto;
   }
@@ -319,6 +326,7 @@ const RecommendContainer = styled.div`
   flex-wrap: nowrap;
   overflow-x: scroll;
   gap: 0;
+  width: 100%;
 `;
 
 const MbtiImage = styled.div`
@@ -332,11 +340,13 @@ const MbtiImage = styled.div`
 
 // 추천 책 리스트
 const RecommendItem = styled.div`
+  /* width: 100%; */
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 10px 10px 0 0;
   justify-content: flex-start;
+  cursor: pointer;
 `;
 
 const RecommendBookImage = styled.svg<{$imageurl: string}>`

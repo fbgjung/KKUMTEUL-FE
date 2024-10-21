@@ -41,7 +41,7 @@ const Container = styled.div<{color: string}>`
   top: 0; 
   left: 0;
   z-index: 1000;
-  padding: 0 20px;
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
 `;

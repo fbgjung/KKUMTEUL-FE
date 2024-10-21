@@ -1,16 +1,13 @@
 import styled from 'styled-components';
 import {Container, Button} from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
-import { useNavigate } from 'react-router-dom';
 import ProgressLine from '../../components/surveyresult/ProgressLine.tsx';
 
 
+// TODO: 진단 또는 피드백에 의한 히스토리 구분 후 삭제하기 버튼 활성화 여부 결정
 const Index = () => {
-  const navigate = useNavigate();
 
-  const handleReSurveyButton = () => {
-    // TODO: 방금 진단한 결과 삭제하는 로직
-    navigate('/survey');
+  const handleDeleteButton = () => {
   }
 
   const data = [
@@ -142,7 +139,7 @@ const Index = () => {
             ))}
           </InterestList>
         </ResultSection>
-        <ReSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleReSurveyButton}>다시 진단하기</ReSurveyButton>
+        <DeleteSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleDeleteButton}>삭제하기</DeleteSurveyButton>
         </SurveyContainer>
       </Container>
     )
@@ -305,7 +302,7 @@ const Name = styled.p`
  font-size: 12px;
 `
 
-const ReSurveyButton = styled(Button)`
+const DeleteSurveyButton = styled(Button)`
   width: 90%;
   margin: 30px 0;
 `

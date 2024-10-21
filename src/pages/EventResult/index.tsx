@@ -1,8 +1,15 @@
-import { Container, Button, Input } from '../../styles/globalStyles';
+import { Container } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+interface Item {
+  id: number;
+  name: string;
+  isWinner: boolean;
+  appliedDate: string; // Consider using Date if necessary
+}
 
 // 더미 데이터 생성 함수
 const generateDummyData = () => {
@@ -20,7 +27,7 @@ const generateDummyData = () => {
 
 /* 가상 스크롤 리스트 -> 리사이클러뷰 같은 거 */
 const VirtualizedListWithDummyData = () => {
-  const [data, setData] = useState<any[]>([]); // 데이터를 저장할 상태
+  const [data, setData] = useState<Item[]>([]); // 데이터를 저장할 상태
 
   // 컴포넌트가 마운트될 때 더미 데이터로 초기화
   useEffect(() => {
@@ -68,15 +75,12 @@ const Index = () => {
         nextPage="/"
       />
       <MyContainer>
-        <Title>최근 응모 결과</Title> <br />
-
+        <Title>최근 응모 결과</Title>
         <ResultDiv>
-          <Title>당첨🎉</Title> <br />
+          <ResultText>당첨🎉</ResultText>
           <Text>2024.10.14 응모 당첨</Text>
         </ResultDiv>
-
-        <Title>응모 내역</Title> <br />
-
+        <Title>응모 내역</Title>
         <VirtualizedListWithDummyData />
       </MyContainer>
     </Container>
@@ -95,22 +99,27 @@ const ResultDiv = styled.div`
   padding-top: 8%;
   padding-bottom: 8%;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 `;
 
 /* 타이틀 span */
-const Title = styled.span`
+const Title = styled.p`
   font-size: 20px;
-  font-weight: 500;
-  margin-left:5px;
+  font-weight: bold;
+  margin: 28px 0 0 0;
 `;
 
+const ResultText = styled.h2`
+  margin: 0;
+`
 /* 일반 크기 글자 */
 const Text = styled.span`
-    margin-left:5px;
+  margin: 0;
 `;
 
 const MyContainer = styled.div`
-  width: 80%;
+  width: 90%;
   height: 100vh;
   overflow-x: hidden; /* 가로 스크롤 방지 */
 

@@ -15,6 +15,7 @@ import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
 import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
 import EventResult from '../pages/EventResult';
 import SurveyResult from '../pages/SurveyResult';
+import ChildPersonalityHistoryDetail from '../pages/ChildPersonalityHistoryDetail';
 
 export const Screens = {
   Main: {
@@ -100,7 +101,13 @@ export const Screens = {
   MyPageManageChildProfile: {
     path: '/mypage/manageChildProfile',
     element: <MyPageManageChildProfile />
+  },
+
+  ChildPersonalityHistoryDetail: {
+    path: '/record/:recordId',
+    element: <ChildPersonalityHistoryDetail />
   }
+  
 
 
   

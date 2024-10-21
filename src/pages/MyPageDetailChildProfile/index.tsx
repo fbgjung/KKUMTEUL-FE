@@ -1,26 +1,37 @@
-import {Container} from '../../styles/globalStyles';
+import { Container } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ChildProfile = () => {
     const navigate = useNavigate();
 
     const handleRecordClick = (recordId: number) => {
-        navigate(`/record/${recordId}`); // 성향 기록 상세 페이지로 이동
+        navigate(`/record/${recordId}`);
     };
 
     const handleBookClick = (bookId: number) => {
-        navigate(`/book-detail/${bookId}`); // 책 상세 페이지로 이동
-    };
+        navigate(`/booklist/${bookId}`);
+    }
+
+    // 민정이 성향 더미데이터
+    const records = [
+        {id: 0, type: 'INFJ', date: '24.10.13 일', image: '/assets/isfj.png' }, 
+        { id: 1, type: 'ESFJ', date: '24.10.14 월', image: '/assets/isfj.png' }, 
+        { id: 2, type: 'ISFJ', date: '24.10.15 화', image: '/assets/isfj.png' }, 
+        { id: 3, type: 'ISFP', date: '24.10.16 수', image: '/assets/isfj.png' }, 
+        { id: 4, type: 'INTJ', date: '24.10.17 목', image: '/assets/isfj.png' }, 
+        { id: 5, type: 'ENTP', date: '24.10.18 금', image: '/assets/isfj.png' }, 
+    ];
 
     return (
         <Container color="#f3f3f3">
             <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="내 자녀 프로필"
-                    nextPage="/"/>
+                    nextPage="/" />
 
+            <ChildProfileDetailContainer>
             <ProfileCard>
-                <ProfileImage src="/assets/MBTIImg.svg" alt="Character"/>
+                <ProfileImage src="/assets/isfj.png" alt="Character" />
                 <ProfileText>
                     <h3>ISFJ</h3>
                     <p>용감한 수호자</p>
@@ -30,33 +41,13 @@ const ChildProfile = () => {
             <SectionTitle>민정이의 성향 기록</SectionTitle>
             <SectionWrapper>
                 <RecordWrapper>
-                    {[1, 2].map((id) => (
+                    {records.map(({ id, type, date, image }) => (
                         <RecordCard key={id} onClick={() => handleRecordClick(id)}>
-                            <RecordImage src="/assets/MBTIImg.svg" alt="Record"/>
+                            <RecordImage src={image} alt="Record" />
                             <RecordText>
-                                <h4>ESFJ</h4>
+                                <h4>{type}</h4>
                             </RecordText>
-                            <RecordDate>24.10.14 월</RecordDate>
-                        </RecordCard>
-                    ))}
-
-                    {[1, 2].map((id) => (
-                        <RecordCard key={id} onClick={() => handleRecordClick(id)}>
-                            <RecordImage src="/assets/MBTIImg.svg" alt="Record"/>
-                            <RecordText>
-                                <h4>ISFJ</h4>
-                            </RecordText>
-                            <RecordDate>24.10.15 화</RecordDate>
-                        </RecordCard>
-                    ))}
-
-                    {[1].map((id) => (
-                        <RecordCard key={id} onClick={() => handleRecordClick(id)}>
-                            <RecordImage src="/assets/MBTIImg.svg" alt="Record"/>
-                            <RecordText>
-                                <h4>ISFP</h4>
-                            </RecordText>
-                            <RecordDate>24.10.16 수</RecordDate>
+                            <RecordDate>{date}</RecordDate>
                         </RecordCard>
                     ))}
                 </RecordWrapper>
@@ -66,11 +57,12 @@ const ChildProfile = () => {
             <BookGrid>
                 {[1, 2, 3, 4, 5, 6, 7].map((bookId) => (
                     <BookCard key={bookId} onClick={() => handleBookClick(bookId)}>
-                        <BookImage src={`/assets/bookExampleImg.svg`} alt="Book Cover"/>
+                        <BookImage src={`/assets/book1.svg`} alt="Book Cover" />
                         <BookTitle>구름 버스 둥둥</BookTitle>
                     </BookCard>
                 ))}
             </BookGrid>
+            </ChildProfileDetailContainer>
         </Container>
     );
 };
@@ -78,11 +70,15 @@ const ChildProfile = () => {
 export default ChildProfile;
 
 // 스타일링
+const ChildProfileDetailContainer = styled.div`
+  margin-top: 30px;
+  width: 90%;
+`
 const ProfileCard = styled.div`
     width: 100%;
     background-color: #FFD869;
     border-radius: 12px;
-    padding: 16px;
+    padding: 30px;
     display: flex;
     align-items: center;
     margin-bottom: 20px;
@@ -108,7 +104,7 @@ const ProfileText = styled.div`
 `;
 
 const SectionWrapper = styled.div`
-    width: 600px;
+    width: 100%;
     background-color: white;
     border-radius: 12px;
     padding: 16px;
@@ -119,9 +115,9 @@ const SectionTitle = styled.h3`
     font-size: 14px;
     color: #757575;
     margin: 5px;
-    padding-left: 5px; /* 좌측에 여백을 고정 */
-    text-align: left; /* 텍스트를 좌측 정렬 */
-    box-sizing: border-box; /* 패딩을 포함한 너비 계산 */
+    padding-left: 5px;
+    text-align: left;
+    box-sizing: border-box;
     width: calc(100% - 3px);
 `;
 
@@ -140,7 +136,6 @@ const RecordCard = styled.div`
     margin-bottom: 10px;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
@@ -176,7 +171,7 @@ const BookGrid = styled.div`
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     margin-top: 10px;
-    width: 600px;
+    width: 100%;
 `;
 
 const BookCard = styled.div`
