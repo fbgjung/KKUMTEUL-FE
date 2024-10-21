@@ -9,6 +9,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   const handleReSurveyButton = () => {
+    // TODO: 방금 진단한 결과 삭제하는 로직
     navigate('/survey');
   }
 
