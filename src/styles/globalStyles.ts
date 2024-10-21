@@ -42,6 +42,8 @@ export const Container = styled.div<{color: string}>`
   flex-direction: column;
   padding: 0;
   position: relative;
+  height: 100svh;
+  overflow-x: hidden;
 `
 
 export const Button = styled.button<{color: string, backcolor: string}>`
