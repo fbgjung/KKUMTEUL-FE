@@ -3,17 +3,17 @@ import {Button} from '../../styles/globalStyles';
 
 interface Props {
   onNextStep: () => void;
-  updateAnswer: (questionId: number, scoreId: number) => void;
-  selectedAnswers: { [key: number]: number | number[] };
+  updateAnswer: (questionId: number, answer: { id: number; mbtiEffect: string; score: number }) => void;
+  selectedAnswers: { answers: { id: number; mbtiEffect: string; score: number }[] };
 }
 
 const MbtiThird = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
 
   const questions = [
-    {id:9, question:'새로운 친구들을 만나는 것을 좋아하나요?', code: 'E'},
-    {id:10, question:'비유적인 표현을 잘 하나요?', code: 'N'},
-    {id:11, question:'친구들에게 양보를 잘 하나요?', code: 'F'},
-    {id:12, question:'새로운 상황에 잘 적응하나요?', code: 'P'},
+    {id:9, question:'새로운 친구들을 만나는 것을 좋아하나요?', mbtiEffect: 'E'},
+    {id:10, question:'비유적인 표현을 잘 하나요?', mbtiEffect: 'N'},
+    {id:11, question:'친구들에게 양보를 잘 하나요?', mbtiEffect: 'F'},
+    {id:12, question:'새로운 상황에 잘 적응하나요?', mbtiEffect: 'P'},
   ]
     
   const scores = [
@@ -30,12 +30,12 @@ const MbtiThird = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
     onNextStep();
   }
 
-  const handleScoreClick = (questionId: number, scoreId: number) => {
-    updateAnswer(questionId, scoreId);
+  const handleScoreClick = (questionId: number, score: { id: number; mbtiEffect: string; score: number }) => {
+    updateAnswer(questionId, score);
   };
 
   const isAllAnswersSelected = () => {
-    return questions.every(q => selectedAnswers[q.id] !== undefined);
+    return questions.every(q => selectedAnswers.answers.some(answer => answer.id === q.id));
   };
 
   return(
@@ -45,12 +45,12 @@ const MbtiThird = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
             <QuestionText>{q.question}</QuestionText>
             <ScoreContainer>
                 {scores.map((score) => (
-                    <Score key={score.id} onClick={() => handleScoreClick(q.id, score.id)}>
-                    <CircleWrapper>
-                    <Circle $size={score.size} $color={score.color} isSelected={selectedAnswers[q.id] === score.id}></Circle>
-                    </CircleWrapper>
-                    <ScoreText>{score.name}</ScoreText>
-                </Score>
+              <Score key={score.id} onClick={() => handleScoreClick(q.id, { id: q.id, mbtiEffect: q.mbtiEffect, score: score.score })}>
+                        <CircleWrapper>
+                        <Circle $size={score.size} $color={score.color}  isSelected={selectedAnswers.answers.find(answer => answer.id === q.id)?.score === score.score}></Circle>
+                        </CircleWrapper>
+                        <ScoreText>{score.name}</ScoreText>
+                    </Score>
                 ))}
             </ScoreContainer>
         </Question>
