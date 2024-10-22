@@ -83,7 +83,7 @@ const Index = () => {
       </Header>
 
       <ImageWrapper>
-        <Image src="/assets/main_test_image.svg" alt="Main Test" />      
+        <Image src="/assets/advertisement.png" alt="Main Test" />      
       </ImageWrapper>
       <MenuSection>
       {menus.map((menu) => (
