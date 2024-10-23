@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-  updateAnswer: (questionId: number, interests: number[]) => void;
+  updateAnswer: (favoriteId: string, interests: number[]) => void;
 }
 
 const Interest = ({ updateAnswer }: Props) => {
@@ -60,7 +60,7 @@ const Interest = ({ updateAnswer }: Props) => {
     } else if (selectedGenres.length < 3) {
         setSelectedGenres(prev => [...prev, genreId]);
     }
-    updateAnswer(21, selectedGenres);
+    updateAnswer('favoriteGenres', selectedGenres);
   };
 
 
@@ -70,7 +70,7 @@ const Interest = ({ updateAnswer }: Props) => {
     } else if (selectedKeyWords.length < 5) {
       setSelectedKeyWords(prev => [...prev, keyWordId]);
     }
-    updateAnswer(22, selectedKeyWords);
+    updateAnswer('favoriteTopics', selectedKeyWords);
   };
 
 
@@ -201,3 +201,4 @@ const NextButton = styled(Button)`
   align-items: center;
   margin: 10px 0 0 0;
 `;
+

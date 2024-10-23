@@ -13,7 +13,9 @@ import PrevButton from '../../components/survey/PrevButton.tsx';
 const Index = () => {
 
   const [step, setStep] = useState<number>(1);
-  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number | number[] }>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<{ answers: { id: number; mbtiEffect: string; score: number }[] }>({
+    answers: [],
+  });
   const progressPercentage = `${((step - 1) / 5) * 100}%`;
 
   const handlePrevStep = () => {
@@ -24,14 +26,18 @@ const Index = () => {
     setStep((prevStep) => Math.min(prevStep + 1, 6));
   }
 
-  const handleUpdateMbtiAnswer = (questionId: number, answer: number) => {
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [questionId]: answer,
-    }));
+  const handleUpdateMbtiAnswer = (questionId: number, answer: { id: number; mbtiEffect: string; score: number }) => {
+    setSelectedAnswers((prev) => {
+      const existingAnswerIndex = prev.answers.findIndex(a => a.id === questionId);
+      if (existingAnswerIndex > -1) {
+        const updatedAnswers = [...prev.answers];
+        updatedAnswers[existingAnswerIndex] = answer;
+        return { answers: updatedAnswers };
+      }
+      return { answers: [...prev.answers, answer] };
+    });
   };
-
-  const handleUpdateInterestAnswer = (questionId: number, interests: number[]) => {
+  const handleUpdateInterestAnswer = (questionId: string, interests: number[]) => {
     setSelectedAnswers((prev) => ({
       ...prev,
       [questionId]: interests, 
