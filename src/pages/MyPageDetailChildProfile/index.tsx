@@ -2,9 +2,51 @@ import { Container } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface BookLike {
+    bookId: number;
+    bookTitle: string;
+    bookImage: string | null;
+}
+
+interface ChildPersonalityHistory {
+    mbti: string;
+    mbtiTitle: string;
+    mbtiImage: string | null;
+    createdAt: string;
+    historyCreatedType: "DIAGNOSIS" | "FEEDBACK";
+}
+
+interface ChildProfile {
+    childName: string;
+    bookLikeList: BookLike[];
+    childPersonalityHistoryList: ChildPersonalityHistory[];
+}
+
 
 const ChildProfile = () => {
     const navigate = useNavigate();
+
+    const [childProfile, setChildProfile] = useState<ChildProfile>();
+
+    const fetchChildProfile = async (childProfileId: number) => {
+        try {
+            const response = await axios.get(`/kkumteul/api/childProfiles/${childProfileId}`);
+            setChildProfile(response.data.response);             
+        } catch (error) {
+            console.error("Error fetching child profile:", error);
+        }
+    };
+
+    useEffect(() => {
+        const childProfileId = 1; // 더미
+        fetchChildProfile(childProfileId);
+    })
+
+    console.log(childProfile);
+
 
     const handleRecordClick = (recordId: number) => {
         navigate(`/record/${recordId}`);
@@ -14,15 +56,17 @@ const ChildProfile = () => {
         navigate(`/booklist/${bookId}`);
     }
 
-    // 민정이 성향 더미데이터
-    const records = [
-        {id: 0, type: 'INFJ', date: '24.10.13 일', image: '/assets/isfj.png' }, 
-        { id: 1, type: 'ESFJ', date: '24.10.14 월', image: '/assets/isfj.png' }, 
-        { id: 2, type: 'ISFJ', date: '24.10.15 화', image: '/assets/isfj.png' }, 
-        { id: 3, type: 'ISFP', date: '24.10.16 수', image: '/assets/isfj.png' }, 
-        { id: 4, type: 'INTJ', date: '24.10.17 목', image: '/assets/isfj.png' }, 
-        { id: 5, type: 'ENTP', date: '24.10.18 금', image: '/assets/isfj.png' }, 
-    ];
+    const latestPersonality = childProfile?.childPersonalityHistoryList[0]; // 가장 최신 성향 히스토리 기록
+
+    // // 민정이 성향 더미데이터 사용X
+    // const records = [
+    //     {id: 0, type: 'INFJ', date: '24.10.13 일', image: '/assets/isfj.png' }, 
+    //     { id: 1, type: 'ESFJ', date: '24.10.14 월', image: '/assets/isfj.png' }, 
+    //     { id: 2, type: 'ISFJ', date: '24.10.15 화', image: '/assets/isfj.png' }, 
+    //     { id: 3, type: 'ISFP', date: '24.10.16 수', image: '/assets/isfj.png' }, 
+    //     { id: 4, type: 'INTJ', date: '24.10.17 목', image: '/assets/isfj.png' }, 
+    //     { id: 5, type: 'ENTP', date: '24.10.18 금', image: '/assets/isfj.png' }, 
+    // ];
 
     return (
         <Container color="#f3f3f3">
@@ -30,38 +74,43 @@ const ChildProfile = () => {
                     nextPage="/" />
 
             <ChildProfileDetailContainer>
-            <ProfileCard>
-                <ProfileImage src="/assets/isfj.png" alt="Character" />
-                <ProfileText>
-                    <h3>ISFJ</h3>
-                    <p>용감한 수호자</p>
-                </ProfileText>
-            </ProfileCard>
+                {/* 가장 최신 성향 기록 */}
+                {latestPersonality && (
+                    <ProfileCard>
+                        <ProfileImage src={latestPersonality.mbtiImage || '/assets/isfj.png'} alt="Character" />
+                        <ProfileText>
+                            <h3>{latestPersonality.mbti}</h3>
+                            <p>{latestPersonality.mbtiTitle}</p>
+                        </ProfileText>
+                    </ProfileCard>
+                )}
 
-            <SectionTitle>민정이의 성향 기록</SectionTitle>
-            <SectionWrapper>
-                <RecordWrapper>
-                    {records.map(({ id, type, date, image }) => (
-                        <RecordCard key={id} onClick={() => handleRecordClick(id)}>
-                            <RecordImage src={image} alt="Record" />
-                            <RecordText>
-                                <h4>{type}</h4>
-                            </RecordText>
-                            <RecordDate>{date}</RecordDate>
-                        </RecordCard>
-                    ))}
-                </RecordWrapper>
-            </SectionWrapper>
+                <SectionTitle>{childProfile?.childName} 성향 기록</SectionTitle>
+                <SectionWrapper>
+                    <RecordWrapper>
+                        {childProfile?.childPersonalityHistoryList.slice(1).map((history, index) => (
+                            // historyId 값으로 수정 필요
+                            <RecordCard key={index} onClick={() => handleRecordClick(index)}>
+                                <RecordImage src={history.mbtiImage || '/assets/isfj.png'} alt="Record" />
+                                <RecordText>
+                                    <h4>{history.mbti}</h4>
+                                    <p>{history.mbtiTitle}</p>
+                                </RecordText>
+                                <RecordDate>{new Date(history.createdAt).toLocaleDateString()}</RecordDate>
+                            </RecordCard>
+                        ))}
+                    </RecordWrapper>
+                </SectionWrapper>
 
-            <SectionTitle>좋아요 한 책 목록</SectionTitle>
-            <BookGrid>
-                {[1, 2, 3, 4, 5, 6, 7].map((bookId) => (
-                    <BookCard key={bookId} onClick={() => handleBookClick(bookId)}>
+                <SectionTitle>좋아요 한 책 목록</SectionTitle>
+                <BookGrid>
+                    {childProfile?.bookLikeList.map((book:BookLike) => (
+                        <BookCard key={book.bookId} onClick={() => handleBookClick(book.bookId)}>
                         <BookImage src={`/assets/book1.svg`} alt="Book Cover" />
-                        <BookTitle>구름 버스 둥둥</BookTitle>
-                    </BookCard>
-                ))}
-            </BookGrid>
+                            <BookTitle>{book.bookTitle}</BookTitle>
+                        </BookCard>
+                    ))}
+                </BookGrid>
             </ChildProfileDetailContainer>
         </Container>
     );
@@ -157,6 +206,10 @@ const RecordText = styled.div`
     h4 {
         margin: 0;
         font-size: 20px;
+    }
+
+    p {
+        margin: 2px 0;
     }
 `;
 
