@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container } from '../../styles/globalStyles';
+import axios from 'axios';
 
 
 interface RecommendBook {
-  id: number;
-  title: string;
-  image: string;
+  bookId: number;
+  bookTitle: string;
+  bookImage: string;
 }
 
 interface Menu {
@@ -17,10 +18,9 @@ interface Menu {
   image: string;
 }
 
-interface ToggleMenu {
-  id: number;
-  name: string;
-  to: string|number;
+interface ChildProfile {
+  childName:string;
+  profileId:number;
 }
 
 const Index = () => {
@@ -30,16 +30,14 @@ const Index = () => {
     navigate(-1);
   }
 
-  const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
-  const [child, setChild] = useState<number>(0); // 자녀 아이디 설정
+  const [childProfileId, setChildProfileId] = useState(
+    parseInt(sessionStorage.getItem('childProfileId') || '-1', 10)
+  );
 
-  const recommendBookData: RecommendBook[] = [
-    { id: 0, title: '구름 버스 둥둥 ', image: '/assets/book1.svg' },
-    { id: 1, title: '자신감 안경', image: '/assets/book2.svg' },
-    { id: 2, title: '숲속에 숨어 있어', image: '/assets/book3.svg' },
-    { id: 3, title: '꿈틀', image: '/assets/book1.svg' },
-    { id: 4, title: '꿈틀', image: '/assets/book1.svg' },
-  ];
+  const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
+  const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
+  const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
+  const [childName, setChildName] = useState<string>();
 
   const menus: Menu[] = [
     { id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png' },
@@ -47,23 +45,68 @@ const Index = () => {
     { id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png' },
   ]
 
-  const toggleMenus: ToggleMenu[] = [
-    { id: 1, name: '꿈틀이1', to: 1},
-    { id: 2, name: '꿈틀이2', to: 2},
-    { id: 3, name: '꿈틀이3', to: 3},
-  ]
-
   const toggleMenu = () => {
     setIsToggleMenuOpen((prev) => !prev);
   };
 
-  const onClickToggleMenuItem = (menu:ToggleMenu) => {
-    setChild(menu.to as number);
-  };
 
   const onClickEventBanner = () => {
     navigate('/event');
   }
+
+
+  const onClickToggleMenuItem = (profile:ChildProfile) => {
+    sessionStorage.setItem('childProfileId', profile.profileId.toString());
+    setChildName(profile.childName);
+    fetchRecommendedBooks(profile.profileId);
+  };
+
+  useEffect(() => {
+    // 자녀 프로필 리스트 조회
+    const fetchChildProfiles = async () => {
+        try {
+            const response = await axios.get(`/kkumteul/api/childProfiles`);
+            const childProfiles = response.data.response;
+            console.log(childProfiles);
+            setChildProfileList(childProfiles);
+        } catch (error) {
+            console.error('Failed to fetch child profiles:', error);
+        }
+    };
+
+    // 자녀 프로필 유효성 검증 api 연동 및 추천 도서 조회 함수 호출
+    const fetchChildProfileAndRecommendedBooks = async () => {
+      if (childProfileId) {
+          try {
+              const response = await axios.get(`/kkumteul/api/users/1/childProfiles/${childProfileId}`);
+              console.log(response.data);
+              fetchRecommendedBooks(childProfileId);
+          } catch (error) {
+              console.error('Failed to fetch child profile:', error);
+              alert('잘못된 접근입니다.');
+          }
+      }
+  };
+
+  fetchChildProfiles();
+  fetchChildProfileAndRecommendedBooks();  
+      
+  }, []);
+
+  console.log(childProfileList);
+
+  // 추천 도서 목록 조회
+  const fetchRecommendedBooks = async (childProfileId: number) => {
+    try {
+      const response = await axios.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
+      const recommendedBooks = response.data.response;
+      console.log(recommendedBooks);
+      setRecommendedBooks(recommendedBooks);
+    } catch (error) {
+      console.error('Failed to fetch recommended books:', error);
+    }
+  };
+  
 
   return (
     <Container color="#f3f3f3">
@@ -72,13 +115,13 @@ const Index = () => {
           <Title>꿈틀</Title>
           <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
           {isToggleMenuOpen && (
-          <DropdownMenu>
-            {toggleMenus.map((toggleMenu) => (
-              <DropdownItem key={toggleMenu.id} onClick={() => onClickToggleMenuItem(toggleMenu)}>
-                <LinkTitle $color='#6EA7D0'>{toggleMenu.name}</LinkTitle>
+            <DropdownMenu>
+            {childProfileList.map((profile) => (
+              <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
+                <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
               </DropdownItem>
             ))}
-          </DropdownMenu>
+            </DropdownMenu>
         )}
       </Header>
 
@@ -99,14 +142,14 @@ const Index = () => {
       <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
       <RecommendBookSection>
           <ArrowBubble>
-              <RecommendText>ISFJ 꿈틀이들은 어떤 책을 좋아할까??</RecommendText>
+              <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
           </ArrowBubble>
           <RecommendContainer>
               <MbtiImage></MbtiImage>
-              {recommendBookData.map((book) => (
-                  <RecommendItem key={book.id}>
-                      <RecommendBookImage onClick = {() => navigate(`/booklist/${book.id}`)} $imageurl={book.image} />
-                      <RecommendBookTitle>{book.title}</RecommendBookTitle>
+              {recommendedBooks.map((book) => (
+                  <RecommendItem key={book.bookId}>
+                      <RecommendBookImage onClick = {() => navigate(`/booklist/${book.bookId}`)} $imageurl={book.bookImage || '/assets/book1.svg'} />
+                      <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
                   </RecommendItem>
               ))}
           </RecommendContainer>
@@ -332,7 +375,7 @@ const RecommendContainer = styled.div`
 const MbtiImage = styled.div`
   width: 80px;
   height: 80px;
-  background: no-repeat center/contain url("/assets/blue_ping.svg");
+  background: no-repeat center/contain url("/assets/kkumteul_character.png");
   padding: 0;
   flex-shrink: 0;
   margin-top: 20px;
