@@ -158,8 +158,20 @@ const Index = () => {
     fetchBooks();
   }, [currentPage]);
 
-  const handleSearchBook = () => {
-    // 검색 버튼을 눌렀을 때 수행 코드
+  const handleSearchBook = async () => {
+    try {
+      const response = await axios.get('/kkumteul/api/admin/books/search', {
+        params: {
+          search: searchText,
+          page: currentPage,
+          size: 7,
+        },
+      });
+      setBooks(response.data.response.content);
+      setTotalPages(response.data.response.totalPages);
+    } catch (error) {
+      console.error('도서 검색 실패:', error);
+    }
   };
 
   const handleDeleteAll = () => {
@@ -207,7 +219,6 @@ const Index = () => {
     setCurrentPage(pageNumber);
   };
 
-  // @ts-ignore
   return (
     <AdminContainer color="#f3f3f3">
       <TableContainer>
@@ -222,7 +233,7 @@ const Index = () => {
           <InputContainer>
             <SearchContainer>
               <SearchInput
-                placeholder="도서 검색"
+                placeholder="도서 제목 또는 작가를 검색해보세요"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 color="#6EA7D0"
