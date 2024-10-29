@@ -1,62 +1,93 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
+import { ChangeEvent, MouseEvent } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  // const [profileImage, setProfileImage] = useState('/assets/default_profile.png');
-  const [gender, setGender] = useState('');
-  const [name, setName] = useState('');
-  const [birthdate, setBirthdate] = useState('');
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
+  const [gender, setGender] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [birthdate, setBirthdate] = useState<string>('');
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null); // 프로필 이미지를 위한 File 타입
 
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // 파일 입력 필드를 클릭하여 파일 탐색기를 엽니다.
-    }
-  };
-
-  const handleFileChange  = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result as string); // 파일의 URL을 상태로 설정
-      };
-      reader.readAsDataURL(file); // 파일을 Data URL로 읽음
-    }
-
-    console.log(file);
+      if (file) {
+        console.log("프로필 이미지 업로드:", file);
+        // const imageUrl = URL.createObjectURL(file);
+        setProfileImageFile(file);
+      }
   };
 
   const handleGenderSelect = (selectedGender: 'MALE' | 'FEMALE') => {
     setGender(selectedGender);
   };
 
-  const handleAddChild = () => {
+  const handleAddChild = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!/^\d{8}$/.test(birthdate)) {
       alert('생년월일은 8자리 숫자 형식으로 입력해주세요 (예: 19980905)');
       return;
     }
-    // 추가 로직 구현
-    // #f3f3f3
+
+    if (!gender) {
+      alert("성별을 선택 해주세요.");
+      return;
+    }
+
+    if (!name) {
+      alert("이름을 선택 해주세요.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('childName', name);
+    formData.append('childGender', gender);
+    formData.append('childBirthDate', birthdate);
+    if (profileImageFile) {
+      formData.append('childProfileImage', profileImageFile);
+    }
+
+    // log
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    try {
+      const response = await axios.post('/kkumteul/api/childProfiles', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    alert("자녀 프로필이 성공적으로 추가되었습니다!");
+    navigate('/mypage');
+
+    console.log(response.data.response);
+    } catch (error) {
+        console.error("Error inserting childProfile:", error);
+    }
   };
 
   return (
     <Container color="#f3f3f3">
       <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="자녀 등록" nextPage='/' />
       <WholeContainer color="#f3f3f3">
-        <ProfileImageContainer  imageUrl={imageUrl} onClick={handleImageClick}>
-          {!imageUrl && <span>프로필사진 추가</span>}
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </ProfileImageContainer>
+
+        <ProfileImageWrapper>
+        <ProfileImageLabel htmlFor="profile-upload">
+        {profileImageFile ? (
+              <ProfileImage src={URL.createObjectURL(profileImageFile)} alt="profile" />
+            ) : (
+              <ProfileImage src="/assets/default_profile.svg" alt="default profile" />
+            )}
+        </ProfileImageLabel>
+        <input type="file" id="profile-upload" style={{ display: 'none' }} onChange={handleProfileImageChange} />
+      </ProfileImageWrapper>
+
         <FormContainer>
           <Label>이름</Label>
           <StyledInput
@@ -108,20 +139,20 @@ const WholeContainer = styled.div`
 
 `;
 
-const ProfileImageContainer = styled.div<{ imageUrl?: string }>`
-  width: 200px;
-  height: 200px;
-  background-color: #D3D3D3;
-  border-radius: 100%;
-  overflow: hidden;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  background: cover center ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
-  // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
-  cursor: pointer;
-`;
+// const ProfileImageContainer = styled.div<{ imageUrl?: string }>`
+//   width: 200px;
+//   height: 200px;
+//   background-color: #D3D3D3;
+//   border-radius: 100%;
+//   overflow: hidden;
+//   position: relative;
+//   justify-content: center;
+//   align-items: center;
+//   display: flex;
+//   background: cover center ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
+//   // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
+//   cursor: pointer;
+// `;
 
 const FormContainer = styled.div`
   width: 90%;
@@ -162,4 +193,30 @@ const StyledInput = styled(Input)`
     width: 100%; /* 입력 필드의 너비를 부모 요소에 맞추도록 설정 */
     padding-left: 15px;
     margin-top: 5px;
+`;
+
+const ProfileImageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const ProfileImageLabel = styled.label`
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #E6E6E6;
+  border: 2px solid #6EA7D0;
+`;
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
