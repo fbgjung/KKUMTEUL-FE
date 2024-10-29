@@ -52,12 +52,19 @@ const Index = () => {
         spercent: surveyResult.spercent.toFixed(0)
     };
 
+    const formatImageSrc = (imageData) => {
+        return imageData
+            ? `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`
+            : '/assets/dog.svg'; // 기본 이미지로 대체
+    };
+
+
     return (
         <Container color="#FFD869">
             <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
             <SurveyContainer>
                 <MbtiSection>
-                    <MbtiImage src={surveyResult.mbtiResult?.mbtiImage || "/assets/default-mbti.png"} alt="MBTI 이미지"/>
+                    <MbtiImage src={formatImageSrc(surveyResult.mbtiResult?.mbtiImage) || "/assets/default-mbti.png"} alt="MBTI 이미지"/>
                     <MbtiInfo>
                         <MbtiTitle>{surveyResult.mbtiResult?.mbtiName}</MbtiTitle>
                         <MbtiText>{surveyResult.mbtiResult?.mbtiTitle}</MbtiText>
@@ -70,7 +77,7 @@ const Index = () => {
                 </MbtiSection>
 
                 <ProfileSection>
-                    <ProfileImage/>
+                    <ProfileImage src={formatImageSrc(surveyResult.profileImage)}/>
                     <ProfileInfo>
                         <ChildName>{surveyResult.childName}</ChildName>
                         <ChildBirth
@@ -167,7 +174,7 @@ const Index = () => {
                     <InterestList>
                         {surveyResult.favoriteGenres.map((genre, index) => (
                             <List key={index}>
-                                <Image src={genre.image || '/assets/default-genre.png'} alt={genre.name}/>
+                                <Image src={formatImageSrc(genre.image) || '/assets/sports.png'} alt={genre.name}/>
                                 <Name>{genre.name}</Name>
                             </List>
                         ))}
@@ -178,7 +185,7 @@ const Index = () => {
                     <InterestList>
                         {surveyResult.favoriteTopics.map((topic, index) => (
                             <List key={index}>
-                                <Image src={topic.image || '/assets/default-topic.png'} alt={topic.name}/>
+                                <Image src={formatImageSrc(topic.image) || '/assets/sports.png'} alt={topic.name}/>
                                 <Name>{topic.name}</Name>
                             </List>
                         ))}
