@@ -44,7 +44,7 @@ const EditProfile = () => {
       }
   };
 
-  const handleNicknameCheck = () => {
+  const handleNicknameCheck = (nickname: string) => {
     if (nickname === '이미 있는 닉네임') {
       setNicknameValid(false);
     } else {
@@ -145,7 +145,7 @@ const EditProfile = () => {
         color="#6EA7D0"
         inputcolor="#E6E6E6"
         />
-        <NicknameCheckButton onClick={handleNicknameCheck}>중복확인</NicknameCheckButton>
+        <NicknameCheckButton onClick={() => handleNicknameCheck(nickname)}>중복확인</NicknameCheckButton>
         </InputWrapper>
         {!nicknameValid && <WarningText>이미 존재하는 닉네임입니다.</WarningText>}
         <Input
