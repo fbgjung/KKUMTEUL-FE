@@ -24,10 +24,11 @@ const Index = () => {
   };
 
   useEffect(() => {
-    fetchBooks(currentPage); // 초기 로딩 시 전체 도서 목록 조회
-  }, [currentPage]);
+    fetchBooks(currentPage, keyword); // 초기 로딩 시 전체 도서 목록 조회
+  }, []);
 
   const handlePageClick = (pageNumber) => {
+    fetchBooks(pageNumber, keyword);
     setCurrentPage(pageNumber);
   };
 
