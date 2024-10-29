@@ -197,6 +197,16 @@ const Index = () => {
     }
   };
 
+  const handleDeleteBook = async () => {
+    try {
+      await axios.delete(`/kkumteul/api/admin/books/${book_id}`);
+      alert('도서가 성공적으로 삭제되었습니다!');
+      navigate('/book/manage');
+    } catch (error) {
+      console.error('도서 삭제 실패:', error);
+    }
+  };
+
   return (
     <AdminContainer color="#f3f3f3">
       <Header
@@ -259,7 +269,7 @@ const Index = () => {
               <StyledInput name="page" placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" value={book.page} onChange={handleInputChange} />
             </div>
             <ButtonFields>
-              <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
+              <StyledButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleDeleteBook}>
                 삭제하기
               </StyledButton>
               <StyledButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleUpdateBook}>
