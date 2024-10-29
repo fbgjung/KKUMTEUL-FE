@@ -55,7 +55,7 @@ const Index = () => {
     const formatImageSrc = (imageData) => {
         return imageData
             ? `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`
-            : '/assets/dog.svg'; // 기본 이미지로 대체
+            : '/assets/dog.svg';
     };
 
 
@@ -338,21 +338,24 @@ const Image = styled.img`
 
 const InterestList = styled.div`
     width: 100%;
-    height: 100px;
+    height: auto;
     background-color: #f3f3f3;
     display: flex;
+    flex-wrap: wrap;
     box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
     border-radius: 20px;
     margin-top: 14px;
     align-items: center;
     padding: 0 0 0 20px;
-`
+`;
 
 const List = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 18%;
 `
+
 const Name = styled.p`
     margin: 0;
     font-size: 12px;
