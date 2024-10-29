@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AdminContainer, Button, Input, Select } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const TableContainer = styled.div`
     width: 100%;
+    height: calc(100% - 60px);
 `;
 
 const Table = styled.table`
@@ -104,7 +106,7 @@ const SelectContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  margin: 0 auto;
+    margin: 0 auto;
 `;
 
 const CheckboxHeader = styled.th`
@@ -131,51 +133,33 @@ const MbtiOptions = [
 
 const Index = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState([
-    {
-      book_id: 1,
-      title: "구름 버스 동동",
-      author: "김작가",
-      publisher: "출판사",
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      book_image: "/assets/home.svg"
-    },
-    {
-      book_id: 2,
-      title: "구름 버스 동동",
-      author: "김작가",
-      publisher: "출판사",
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      book_image: "/assets/home.svg"
-    },
-    {
-      book_id: 3,
-      title: "구름 버스 동동",
-      author: "김작가",
-      publisher: "출판사",
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      book_image: "/assets/home.svg"
-    }
-  ]);
+  const [books, setBooks] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get('/kkumteul/api/admin/books', {
+          params: {
+            page: currentPage,
+            size: 7,
+          },
+        });
+        setBooks(response.data.response.content);
+        setTotalPages(response.data.response.totalPages);
+      } catch (error) {
+        console.error('도서 목록 조회 실패:', error);
+      }
+    };
+    fetchBooks();
+  }, [currentPage]);
 
   const handleSearchBook = () => {
     // 검색 버튼을 눌렀을 때 수행 코드
-
   };
 
   const handleDeleteAll = () => {
@@ -194,7 +178,7 @@ const Index = () => {
     if (selectAll) {
       setSelectedBooks([]);
     } else {
-      setSelectedBooks(books.map((book) => book.book_id));
+      setSelectedBooks(books.map((book) => book.id));
     }
     setSelectAll(!selectAll);
   };
@@ -207,6 +191,23 @@ const Index = () => {
     }
   };
 
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // @ts-ignore
   return (
     <AdminContainer color="#f3f3f3">
       <TableContainer>
@@ -217,7 +218,7 @@ const Index = () => {
           title="도서 관리"
           nextPage="/"
         />
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '20px', height: '100%' }}>
           <InputContainer>
             <SearchContainer>
               <SearchInput
@@ -267,7 +268,7 @@ const Index = () => {
               ))}
             </Select>
           </SelectContainer>
-          <div style={{ overflowY: 'auto', maxHeight: '400px' }}>
+          <div style={{ height: 'calc(100% - 200px)' }}>
             <Table>
               <thead>
               <tr>
@@ -280,7 +281,6 @@ const Index = () => {
                 <TableHeader>출판사</TableHeader>
                 <TableHeader>장르</TableHeader>
                 <TableHeader>연령</TableHeader>
-                <TableHeader>등록일</TableHeader>
                 <TableHeader>주제어</TableHeader>
                 <TableHeader>MBTI</TableHeader>
                 <TableHeader>관리</TableHeader>
@@ -288,31 +288,30 @@ const Index = () => {
               </thead>
               <tbody>
               {books.map((book, index) => (
-                <TableRow key={book.book_id}>
+                <TableRow key={book.id}>
                   <TableCell>
                     <input
                       type="checkbox"
-                      value={book.book_id}
-                      checked={selectedBooks.includes(book.book_id)}
-                      onChange={() => handleSelectBook(book.book_id)}
+                      value={book.id}
+                      checked={selectedBooks.includes(book.id)}
+                      onChange={() => handleSelectBook(book.id)}
                     />
                   </TableCell>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{index + 1 + currentPage * 7}</TableCell>
                   <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                    <ImagePlaceholder src={book.book_image} alt="이미지 준비중" />
+                    <ImagePlaceholder src={book.image ? `data:image/png;base64,${book.image}` : '/assets/home.svg'} alt="이미지 준비중" />
                     <TitleContainer>{book.title}</TitleContainer>
                   </TableCell>
                   <TableCell>{book.author}</TableCell>
                   <TableCell>{book.publisher}</TableCell>
-                  <TableCell>{book.genre}</TableCell>
-                  <TableCell>{book.age_group}</TableCell>
-                  <TableCell>{book.date}</TableCell>
-                  <TableCell>{book.subject}</TableCell>
-                  <TableCell>{book.mbti}</TableCell>
+                  <TableCell>{book.bookGenre}</TableCell>
+                  <TableCell>{book.ageGroup}</TableCell>
+                  <TableCell>{book.bookTopicList.join(', ')}</TableCell>
+                  <TableCell>{book.bookMBTI}</TableCell>
                   <TableCell>
                     <Button color="#FFFFFF" backcolor="#6EA7D0"
                             style={{ width: '80px', height: '30px', fontSize: '15px'}}
-                            onClick={() => handleUpdateBook(book.book_id)}>
+                            onClick={() => handleUpdateBook(book.id)}>
                       수정
                     </Button>
                   </TableCell>
@@ -321,6 +320,25 @@ const Index = () => {
               </tbody>
             </Table>
           </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', position: 'relative', bottom: '0', width: '100%', paddingBottom: '20px' }}>
+          <Button color="#FFFFFF" backcolor="#6EA7D0" onClick={handlePreviousPage} disabled={currentPage === 0} style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}>
+            이전
+          </Button>
+          {[...Array(totalPages)].map((_, index) => (
+            <Button
+              key={index}
+              color={index === currentPage ? "#000000" : "#FFFFFF"}
+              backcolor={index === currentPage ? "#FFFFFF" : "#6EA7D0"}
+              onClick={() => handlePageClick(index)}
+              style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}
+            >
+              {index + 1}
+            </Button>
+          ))}
+          <Button color="#FFFFFF" backcolor="#6EA7D0" onClick={handleNextPage} disabled={currentPage === totalPages - 1} style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}>
+            다음
+          </Button>
         </div>
       </TableContainer>
     </AdminContainer>
