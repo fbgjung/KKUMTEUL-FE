@@ -8,23 +8,24 @@ import axios from 'axios';
 const Index = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // 페이지 인덱스를 1부터 시작
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [keyword, setKeyword] = useState("");
   const booksPerPage = 12;
 
-  const fetchBooks = async (page) => {
+  const fetchBooks = async (page, keyword = "") => {
     try {
-      const response = await axios.get(`/api/books?page=${page - 1}&size=${booksPerPage}`); // 페이지 인덱스는 0부터 시작하므로 -1
+      const response = await axios.get(`/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
       setBooks(response.data.response.content);
-      setTotalPages(response.data.response.totalPages);  // 전체 페이지 수를 설정
+      setTotalPages(response.data.response.totalPages);
     } catch (error) {
       console.error("Error fetching books:", error);
     }
   };
 
   useEffect(() => {
-    fetchBooks(currentPage);
-  }, [currentPage]);  // currentPage가 변경될 때마다 데이터 다시 로드
+    fetchBooks(currentPage); // 초기 로딩 시 전체 도서 목록 조회
+  }, [currentPage]);
 
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -34,24 +35,69 @@ const Index = () => {
     navigate(`/${id}`);
   };
 
-  // 현재 페이지 기준으로 페이지 버튼 범위를 설정합니다.
-  const getPaginatedPages = () => {
-    const pages = [];
-    const startPage = Math.max(1, currentPage - 2); // 현재 페이지 기준으로 2개 전부터 시작
-    const endPage = Math.min(totalPages, startPage + 4); // 5개 페이지 버튼 보이기
+  const handleSearch = () => {
+    setCurrentPage(0); // 검색 시 페이지를 0으로 초기화
+    fetchBooks(0, keyword); // 페이지를 0으로 설정하고 키워드로 다시 데이터 로드
+  };
+
+  const handleNextPageSet = () => {
+    const nextPageSet = Math.floor(currentPage / 5) * 5 + 5;
+    if (nextPageSet < totalPages) {
+      setCurrentPage(nextPageSet);
+    }
+  };
+
+  const handlePreviousPageSet = () => {
+    const prevPageSet = Math.floor(currentPage / 5) * 5 - 5;
+    if (prevPageSet >= 0) {
+      setCurrentPage(prevPageSet);
+    }
+  };
+
+  const renderPagination = () => {
+    const pageButtons = [];
+    const startPage = Math.floor(currentPage / 5) * 5; // 현재 페이지 기준으로 5의 배수 시작
+    const endPage = Math.min(startPage + 4, totalPages - 1); // 현재 페이지 기준으로 최대 4개의 버튼
 
     for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+      if (i < totalPages) { // 총 페이지 수보다 작은 경우에만 버튼 추가
+        pageButtons.push(
+          <PageButton
+            key={i}
+            onClick={() => handlePageClick(i)}
+            isActive={i === currentPage}
+          >
+            {i + 1}
+          </PageButton>
+        );
+      }
     }
-    return pages;
+
+    return (
+      <>
+        <PaginationButton onClick={handlePreviousPageSet} disabled={currentPage === 0}>
+          &lt;
+        </PaginationButton>
+        {pageButtons}
+        <PaginationButton onClick={handleNextPageSet} disabled={currentPage + 5 >= totalPages}>
+          &gt;
+        </PaginationButton>
+      </>
+    );
   };
 
   return (
     <Container color="#f3f3f3">
       <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/' />
       <SearchContainer>
-        <Input placeholder="입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" />
-        <SearchButton />
+        <Input
+          placeholder="검색어 입력"
+          color="#6EA7D0"
+          inputcolor="#E6E6E6"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+        <SearchButton onClick={handleSearch} /> {/* 검색 버튼 클릭 시 검색 함수 호출 */}
       </SearchContainer>
       <GridContainer>
         {books.map((book) => (
@@ -65,21 +111,7 @@ const Index = () => {
         ))}
       </GridContainer>
       <Pagination>
-        <PageButton onClick={() => handlePageClick(currentPage - 1)} disabled={currentPage === 1}>
-          이전
-        </PageButton>
-        {getPaginatedPages().map((page) => (
-          <PageButton
-            key={page}
-            onClick={() => handlePageClick(page)}
-            isActive={page === currentPage}
-          >
-            {page}
-          </PageButton>
-        ))}
-        <PageButton onClick={() => handlePageClick(currentPage + 1)} disabled={currentPage === totalPages}>
-          다음
-        </PageButton>
+        {renderPagination()} {/* 페이지네이션 버튼 렌더링 */}
       </Pagination>
     </Container>
   );
@@ -87,7 +119,6 @@ const Index = () => {
 
 export default Index;
 
-// 스타일 컴포넌트 부분은 기존 코드 그대로 사용
 const GridContainer = styled.div`
   display: flex;
   grid-template-columns: repeat(3, 1fr);
@@ -172,5 +203,23 @@ const PageButton = styled.button`
   border-radius: 5px;
   &:hover {
     background-color: #fac737;
+  }
+`;
+
+const PaginationButton = styled.button`
+  border: none;
+  background-color: #FFD869;
+  color: white;
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  &:hover {
+    background-color: #fac737;
+  }
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;
