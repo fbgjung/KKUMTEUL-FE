@@ -33,7 +33,7 @@ const Index = () => {
   };
 
   const handleBookClick = (id) => {
-    navigate(`/${id}`);
+    navigate(`/booklist/${id}`);
   };
 
   const handleSearch = () => {
