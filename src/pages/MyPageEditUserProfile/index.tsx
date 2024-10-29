@@ -1,24 +1,46 @@
-import { Container, Button, Input } from '../../styles/globalStyles'; // 기존 Input 컴포넌트 사용
+import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
-import { useState } from 'react';
-import { ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
+import axios from 'axios';
+import { useLocation } from 'react-router-dom'
 
 const EditProfile = () => {
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [nicknameValid, setNicknameValid] = useState(true); // 닉네임 중복 확인 여부
-  const [passwordMatch, setPasswordMatch] = useState(true); // 비밀번호 확인 여부
-  const [profileImage, setProfileImage] = useState<string>('/assets/default_profile.svg'); // 프로필 추가
+
+  const location = useLocation();
+  const userData = location.state?.userData; // 유저 데이터 넘어온 거 받기
+  console.log(userData);
+
+  useEffect(() => {
+    if (userData) {
+      setNickname(userData.nickName || '');
+      setPassword('');
+      setConfirmPassword('');
+      setPhoneNumber(userData.phoneNumber || '');
+      setOriginalNickname(userData.nickName || ''); // 기존 닉네임 저장
+      // setProfileImageFile(userData.profileImage);
+    }
+  }, [userData]);
+
+  const [originalNickname, setOriginalNickname] = useState<string>(''); // 기존 닉네임 상태
+  const [nickname, setNickname] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [nicknameValid, setNicknameValid] = useState<boolean>(true); // 닉네임 중복 확인 여부
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 비밀번호 확인 여부
+  // const [profileImage, setProfileImage] = useState<string>('/assets/default_profile.svg'); // 프로필 추가
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null); // 프로필 이미지를 위한 File 타입
+
+  
 
   const handleProfileImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
       if (file) {
         console.log("프로필 이미지 업로드:", file);
-        const imageUrl = URL.createObjectURL(file);
-        setProfileImage(imageUrl);
+        // const imageUrl = URL.createObjectURL(file);
+        setProfileImageFile(file);
       }
   };
 
@@ -48,15 +70,54 @@ const EditProfile = () => {
      }
   };
 
-  const handleSubmit = () => {
-    if (!passwordMatch) {
-        alert("비밀번호가 일치하지 않습니다.");
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    // if (!passwordMatch) {
+    //   alert("비밀번호가 일치하지 않습니다.");
+    //   return;
+    // }
+    if (!nickname) {
+      alert("닉네임을 입력해 주세요.");
+      return;
+    }
+    if (!phoneNumber) {
+        alert("전화번호를 입력해 주세요.");
         return;
     }
-    console.log('닉네임:', nickname);
-    console.log('비밀번호:', password);
-    console.log('전화번호:', phoneNumber);
- };
+
+    if (nickname !== originalNickname) {
+      alert("닉네임을 변경하셨습니다. 중복검사를 해주세요.");
+      return;
+    }
+  
+    const formData = new FormData();
+    
+    if (nickname) {
+        formData.append('nickName', nickname);
+    }
+    if (phoneNumber) {
+        formData.append('phoneNumber', phoneNumber);
+    }
+    if (password) {
+        formData.append('password', password);
+    }
+ 
+    if (profileImageFile) {
+        formData.append('profileImage', profileImageFile);
+    }
+
+    try {
+        const response = await axios.patch('/kkumteul/api/users/1', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error("Error updating user:", error);
+    }
+  };
+  
 
   return (
     <Container color="#f3f3f3">
@@ -65,10 +126,14 @@ const EditProfile = () => {
       <ProfileEditContainer>
       <ProfileImageWrapper>
         <ProfileImageLabel htmlFor="profile-upload">
-        <ProfileImage src={profileImage} alt="profile" />
+        {profileImageFile ? (
+              <ProfileImage src={URL.createObjectURL(profileImageFile)} alt="profile" />
+            ) : (
+              <ProfileImage src="/assets/default_profile.svg" alt="default profile" />
+            )}
         </ProfileImageLabel>
         <input type="file" id="profile-upload" style={{ display: 'none' }} onChange={handleProfileImageChange} />
-        <ProfileName>류금정</ProfileName>
+        <ProfileName>{userData.username}</ProfileName>
       </ProfileImageWrapper>
         
         <FormWrapper>
