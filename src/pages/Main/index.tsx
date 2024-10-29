@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Container } from '../../styles/globalStyles';
 import axios from 'axios';
+import LoginModal from '../../modal/LoginModal';
 
 
 interface RecommendBook {
@@ -38,6 +39,8 @@ const Index = () => {
   const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
   const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
   const [childName, setChildName] = useState<string>();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const menus: Menu[] = [
     { id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png' },
@@ -46,7 +49,10 @@ const Index = () => {
   ]
 
   const toggleMenu = () => {
-    setIsToggleMenuOpen((prev) => !prev);
+    if(!isLoggedIn) {
+      setIsModalOpen(true); // 로그인 안했을 때 모달창 보여주기
+    }
+      setIsToggleMenuOpen(prev => !prev); // 로그인 했을 때 토글 목록 보여주기
   };
 
 
@@ -62,7 +68,12 @@ const Index = () => {
     fetchRecommendedBooks(profile.profileId);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
+    // TODO: 로그인 확인 하고 isLoggedIn에 세팅하는 로직 추가하기 
     // 자녀 프로필 리스트 조회
     const fetchChildProfiles = async () => {
         try {
@@ -88,6 +99,8 @@ const Index = () => {
           }
       }
   };
+
+  setIsLoggedIn(false);
 
   fetchChildProfiles();
   fetchChildProfileAndRecommendedBooks();  
@@ -119,12 +132,19 @@ const Index = () => {
           <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
           <Title>꿈틀</Title>
           <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
-          {isToggleMenuOpen && (
+          {!isLoggedIn && isModalOpen && (
+          <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />
+         )}
+          
+          {isLoggedIn && isToggleMenuOpen && (
           <DropdownMenu>
             {childProfileList.length > 0 ? (
               childProfileList.map((profile) => (
-                <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
-                  <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
+                <DropdownItem
+                  key={profile.profileId}
+                  onClick={() => onClickToggleMenuItem(profile)}
+                >
+                  <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
                 </DropdownItem>
               ))
             ) : (
