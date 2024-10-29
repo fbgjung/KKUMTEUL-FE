@@ -40,6 +40,12 @@ const Index = () => {
     fetchBooks(0, keyword); // 페이지를 0으로 설정하고 키워드로 다시 데이터 로드
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleNextPageSet = () => {
     const nextPageSet = Math.floor(currentPage / 5) * 5 + 5;
     if (nextPageSet < totalPages) {
@@ -96,6 +102,7 @@ const Index = () => {
           inputcolor="#E6E6E6"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
         />
         <SearchButton onClick={handleSearch} /> {/* 검색 버튼 클릭 시 검색 함수 호출 */}
       </SearchContainer>
