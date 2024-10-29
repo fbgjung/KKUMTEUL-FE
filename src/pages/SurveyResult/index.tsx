@@ -1,311 +1,357 @@
 import styled from 'styled-components';
 import {Container, Button} from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
-import { useNavigate } from 'react-router-dom';
-import ProgressLine from '../../components/surveyresult/ProgressLine.tsx';
-
+import {useNavigate, useLocation} from 'react-router-dom';
+import ProgressLine from '../../components/surveyresult/ProgressLine';
+import axios from 'axios';
 
 const Index = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const surveyResult = location.state?.response;
 
-  const handleReSurveyButton = () => {
-    // TODO: 방금 진단한 결과 삭제하는 로직
-    navigate('/survey');
-  }
+    if (!surveyResult) {
+        return <p>결과 데이터를 불러올 수 없습니다.</p>;
+    }
 
-  const data = [
-    {id: 0, mbti: 'ISFJ', I: '80%', E: '20%', S: '55%', N: '45%', F:'70%', T:'30%', P:'20%', J:'80%'}
-  ]
+    const handleReSurveyButton = async () => {
+        try {
+            await axios.delete('/kkumteul/api/survey');
+            navigate('/survey');
+        } catch (error) {
+            console.error("Error deleting survey result:", error);
+        }
+    };
 
-  const interestGenre = [
-    {id:0, name: '만화', image: '/assets/book.png'},
-    {id:1, name: '자연', image: '/assets/book.png'},
-  ]
+    const calculateIsReverse = (left: string, right: string) => {
+        const leftValue = parseInt(left);
+        const rightValue = parseInt(right);
+        return leftValue < rightValue;
+    };
 
-  const interestKeyWord = [
-    {id:0, name: '사랑', image: '/assets/survey.png'},
-    {id:1, name: '동물', image: '/assets/survey.png'},
-  ]
+    const calculateAge = (birthDate) => {
+        const birth = new Date(birthDate);
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDifference = today.getMonth() - birth.getMonth();
 
-  // 프로그래스 바 색상 반전을 위한 퍼센트 비교
-  const calculateIsReverse = (left: string, right: string) => {
-    const leftValue = parseInt(left);
-    const rightValue = parseInt(right);
-    return leftValue < rightValue;
-  };
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    };
 
-    return(
-      <Container color="#FFD869">
-        <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
-        <SurveyContainer>
-        <MbtiSection>
-          <MbtiImage />
-          <MbtiInfo>
-              <MbtiTitle>{data[0].mbti}</MbtiTitle>
-              <MbtiText>친구들을 걱정하며 늘 돌봐주는 작은 수호천사</MbtiText>
-              <MbtiDate>진단일: 2024년 10월 14일</MbtiDate>
-          </MbtiInfo>
-        </MbtiSection>
-        <ProfileSection>
-            <ProfileImage />
-            <ProfileInfo>
-              <ChildName>금정</ChildName>
-              <ChildBirth $color='#000000'>2017년 03월 04일</ChildBirth>
-              <ChildBirth $color='#757575'>8살</ChildBirth>
-            </ProfileInfo>
-        </ProfileSection>
-        <ResultSection>
-          <Title>MBTI 전반적인 특징은?</Title>
-          <MbtiDescription>아이들은 보호자와 함께 책을 읽으며 교감하고 싶어해요. 
-              ISFJ 성향의 아이들은 특히 보호자와의 친밀한 시간을 소중히 여기며, 
-              독서를 통해 깊은 유대감을 형성할 수 있어요. 
-              부모님과 함께 독서 여행을 떠난다면 더욱 즐거워할 거예요. 
-              (조용하고 세심한 아이들은 독서 습관을 길러 더욱 풍부한 내면 세계를 키울 수 있답니다.)
-          </MbtiDescription>
+    const formattedData = {
+        jpercent: surveyResult.jpercent.toFixed(0),
+        ppercent: surveyResult.ppercent.toFixed(0),
+        fpercent: surveyResult.fpercent.toFixed(0),
+        tpercent: surveyResult.tpercent.toFixed(0),
+        ipercent: surveyResult.ipercent.toFixed(0),
+        epercent: surveyResult.epercent.toFixed(0),
+        npercent: surveyResult.npercent.toFixed(0),
+        spercent: surveyResult.spercent.toFixed(0)
+    };
 
-          <Title>성향 상세 분석</Title>
-          <Graph>
-            <Type>
-              <TypeInfoContainer>
-                <Image src='/assets/e.png' />
-                <TypeInfo>외향형</TypeInfo>
-                <TypeInfo>{data[0].E}</TypeInfo>
-              </TypeInfoContainer>
-              <ProgressLine isReverse={calculateIsReverse(data[0].E, data[0].I)} percentage={data[0].E} />
-              <TypeInfoContainer>
-              <Image src='/assets/i.png' />
-                <TypeInfo>내향형</TypeInfo>
-                <TypeInfo>{data[0].I}</TypeInfo>
-              </TypeInfoContainer>
-              </Type>
+    return (
+        <Container color="#FFD869">
+            <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
+            <SurveyContainer>
+                <MbtiSection>
+                    <MbtiImage src={surveyResult.mbtiResult?.mbtiImage || "/assets/default-mbti.png"} alt="MBTI 이미지"/>
+                    <MbtiInfo>
+                        <MbtiTitle>{surveyResult.mbtiResult?.mbtiName}</MbtiTitle>
+                        <MbtiText>{surveyResult.mbtiResult?.mbtiTitle}</MbtiText>
+                        <MbtiDate>진단일: {new Date(surveyResult.diagnosisDate).toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}</MbtiDate>
+                    </MbtiInfo>
+                </MbtiSection>
 
-              <Type>
-                <TypeInfoContainer>
-                <Image src='/assets/n.png' />
-                    <TypeInfo>직관형</TypeInfo>
-                    <TypeInfo>{data[0].N}</TypeInfo>
-                  </TypeInfoContainer>
-                  <ProgressLine isReverse={calculateIsReverse(data[0].N, data[0].S)} percentage={data[0].N} />
-                  <TypeInfoContainer>
-                  <Image src='/assets/s.png' />
-                    <TypeInfo>현실주의형</TypeInfo>
-                    <TypeInfo>{data[0].S}</TypeInfo>
-                </TypeInfoContainer>
-              </Type>
+                <ProfileSection>
+                    <ProfileImage/>
+                    <ProfileInfo>
+                        <ChildName>{surveyResult.childName}</ChildName>
+                        <ChildBirth
+                            $color='#000000'>
+                            {new Date(surveyResult.childBirthDate).toLocaleDateString('ko-KR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </ChildBirth>
+                        <ChildBirth $color='#757575'>
+                            {calculateAge(surveyResult.childBirthDate)}살
+                        </ChildBirth>
+                    </ProfileInfo>
+                </ProfileSection>
 
-              <Type>
-                <TypeInfoContainer>
-                <Image src='/assets/f.png' />
-                    <TypeInfo>이성적사고형</TypeInfo>
-                    <TypeInfo>{data[0].F}</TypeInfo>
-                  </TypeInfoContainer>
-                  <ProgressLine isReverse={calculateIsReverse(data[0].F, data[0].T)} percentage={data[0].F} />
-                  <TypeInfoContainer>
-                  <Image src='/assets/t.png' />
-                    <TypeInfo>원칙주의형</TypeInfo>
-                    <TypeInfo>{data[0].T}</TypeInfo>
-                </TypeInfoContainer>
-              </Type>
+                <ResultSection>
+                    <Title>MBTI 전반적인 특징은?</Title>
+                    <MbtiDescription>{surveyResult.mbtiResult?.mbtiDescription}</MbtiDescription>
 
-              <Type>
-                <TypeInfoContainer>
-                <Image src='/assets/j.png' />
-                    <TypeInfo>계획형</TypeInfo>
-                    <TypeInfo>{data[0].J}</TypeInfo>
-                  </TypeInfoContainer>
-                  <ProgressLine isReverse={calculateIsReverse(data[0].J, data[0].P)} percentage={data[0].J} />
-                  <TypeInfoContainer>
-                  <Image src='/assets/p.png' />
-                    <TypeInfo>탐색형</TypeInfo>
-                    <TypeInfo>{data[0].P}</TypeInfo>
-                </TypeInfoContainer>
-              </Type>
-            </Graph>
+                    <Title>성향 상세 분석</Title>
+                    <Graph>
+                        <Type>
+                            <TypeInfoContainer>
+                                <Image src='/assets/e.png'/>
+                                <TypeInfo>외향형</TypeInfo>
+                                <TypeInfo>{formattedData.epercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                            <ProgressLine
+                                isReverse={calculateIsReverse(formattedData.epercent, formattedData.ipercent)}
+                                percentage={formattedData.epercent}
+                            />
+                            <TypeInfoContainer>
+                                <Image src='/assets/i.png'/>
+                                <TypeInfo>내향형</TypeInfo>
+                                <TypeInfo>{formattedData.ipercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                        </Type>
 
-          <Title>아이의 선호 장르</Title>
-          <InterestList>
-            {interestGenre.map((genre)=> (
-              <List key={genre.id}>
-                <Image src={genre.image}></Image>
-                <Name>{genre.name}</Name>
-              </List>
-            ))}
-          </InterestList>
+                        <Type>
+                            <TypeInfoContainer>
+                                <Image src='/assets/n.png'/>
+                                <TypeInfo>직관형</TypeInfo>
+                                <TypeInfo>{formattedData.npercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                            <ProgressLine
+                                isReverse={calculateIsReverse(formattedData.npercent, formattedData.spercent)}
+                                percentage={formattedData.npercent}
+                            />
+                            <TypeInfoContainer>
+                                <Image src='/assets/s.png'/>
+                                <TypeInfo>현실형</TypeInfo>
+                                <TypeInfo>{formattedData.spercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                        </Type>
 
-          <Title>아이의 관심사</Title>
-          <InterestList>
-          {interestKeyWord.map((keyword)=> (
-              <List key={keyword.id}>
-                <Image src={keyword.image}></Image>
-                <Name>{keyword.name}</Name>
-              </List>
-            ))}
-          </InterestList>
-        </ResultSection>
-        <ReSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleReSurveyButton}>다시 진단하기</ReSurveyButton>
-        </SurveyContainer>
-      </Container>
-    )
-}
+                        <Type>
+                            <TypeInfoContainer>
+                                <Image src='/assets/t.png'/>
+                                <TypeInfo>사고형</TypeInfo>
+                                <TypeInfo>{formattedData.tpercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                            <ProgressLine
+                                isReverse={calculateIsReverse(formattedData.tpercent, formattedData.fpercent)}
+                                percentage={formattedData.tpercent}
+                            />
+                            <TypeInfoContainer>
+                                <Image src='/assets/f.png'/>
+                                <TypeInfo>감정형</TypeInfo>
+                                <TypeInfo>{formattedData.fpercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                        </Type>
+
+                        <Type>
+                            <TypeInfoContainer>
+                                <Image src='/assets/j.png'/>
+                                <TypeInfo>판단형</TypeInfo>
+                                <TypeInfo>{formattedData.jpercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                            <ProgressLine
+                                isReverse={calculateIsReverse(formattedData.jpercent, formattedData.ppercent)}
+                                percentage={formattedData.jpercent}
+                            />
+                            <TypeInfoContainer>
+                                <Image src='/assets/p.png'/>
+                                <TypeInfo>탐색형</TypeInfo>
+                                <TypeInfo>{formattedData.ppercent}%</TypeInfo>
+                            </TypeInfoContainer>
+                        </Type>
+                    </Graph>
+
+
+                    <Title>아이의 선호 장르</Title>
+                    <InterestList>
+                        {surveyResult.favoriteGenres.map((genre, index) => (
+                            <List key={index}>
+                                <Image src={genre.image || '/assets/default-genre.png'} alt={genre.name}/>
+                                <Name>{genre.name}</Name>
+                            </List>
+                        ))}
+                    </InterestList>
+
+
+                    <Title>아이의 관심사</Title>
+                    <InterestList>
+                        {surveyResult.favoriteTopics.map((topic, index) => (
+                            <List key={index}>
+                                <Image src={topic.image || '/assets/default-topic.png'} alt={topic.name}/>
+                                <Name>{topic.name}</Name>
+                            </List>
+                        ))}
+                    </InterestList>
+                </ResultSection>
+
+                <ReSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleReSurveyButton}>
+                    다시 진단하기
+                </ReSurveyButton>
+            </SurveyContainer>
+        </Container>
+    );
+};
 
 export default Index;
+
 const SurveyContainer = styled.div`
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `
 const MbtiSection = styled.div`
-  background-color:#FFC317;
-  width: 100%;
-  margin: 10px 0;
-  padding: 0 0 0 50px;
-  display:flex;
-  border-radius:10px;
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
-  align-items: center;
+    background-color: #FFC317;
+    width: 100%;
+    margin: 10px 0;
+    padding: 0 0 0 50px;
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
+    align-items: center;
 `
 
 const MbtiImage = styled.div`
-  width: 130px;
-  height:130px;
-  background: no-repeat center/contain url("/assets/isfj.png");
-  background-size: contain;
+    width: 130px;
+    height: 130px;
+    background: no-repeat center/contain url("/assets/isfj.png");
+    background-size: contain;
 `
 
 const MbtiInfo = styled.div`
-  width: 100%;
-  padding: 30px;
+    width: 100%;
+    padding: 30px;
 `
 
 const MbtiTitle = styled.span`
-  font-size : 60px;
-  font-weight : 700;
-  color:#ff6f00;
-  text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
+    font-size: 60px;
+    font-weight: 700;
+    color: #ff6f00;
+    text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
 `
 
 const MbtiText = styled.p`
-  margin: 4px 0;
+    margin: 4px 0;
 `
 
 const MbtiDate = styled.p`
-  font-size: 12px;
-  margin: 0;
+    font-size: 12px;
+    margin: 0;
 `
 
 const ProfileSection = styled.div`
-  background-color:#FFFFFF;
-  width: 100%;
-  margin: 10px 0;
-  padding: 20px 0;
-  display:flex;
-  border-radius:10px;
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: 20px;
+    background-color: #FFFFFF;
+    width: 100%;
+    margin: 10px 0;
+    padding: 20px 0;
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 20px;
 `
 
 const ProfileImage = styled.div`
-  width: 64px;
-  height:64px;
-  background: no-repeat center/contain url("/assets/dog.svg");
-  background-size: contain;
+    width: 64px;
+    height: 64px;
+    background: no-repeat center/contain url("/assets/dog.svg");
+    background-size: contain;
 `
 
 const ProfileInfo = styled.div`
-  width: 200px;
-  text-align: center;
+    width: 200px;
+    text-align: center;
 `
 
 const ChildName = styled.p`
-  font-weight : 700;
-  font-size : 18px;
-  margin: 10px 0 0 0;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px 0 0 0;
 `
 
-const ChildBirth = styled.span<{$color:string}>`
-  margin-right: 6px;
-  color: ${({ $color }) => $color};
-  font-size: 14px;
+const ChildBirth = styled.span<{ $color: string }>`
+    margin-right: 6px;
+    color: ${({$color}) => $color};
+    font-size: 14px;
 `
 
 const ResultSection = styled.div`
-  background-color: #FFD869;
-  width: 90%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+    background-color: #FFD869;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 `
 
 const Title = styled.h3`
-  margin: 60px 0 0 0;
-  width: 100%;
+    margin: 60px 0 0 0;
+    width: 100%;
 `
 
 const MbtiDescription = styled.p`
-  margin: 10px;
+    margin: 10px;
 `
 
 const Graph = styled.div`
-  width: 100%;
-  background-color: #FFD869;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+    width: 100%;
+    background-color: #FFD869;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 `
 
 const Type = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 10px;
-  width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
 `
 
 const TypeInfo = styled.p`
-  margin: 0;
-  font-size: 12px;
+    margin: 0;
+    font-size: 12px;
 `
 
 const TypeInfoContainer = styled.span`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 10px;
-  width: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px;
+    width: 70px;
 `;
 
 const Image = styled.img`
-  width: 40px;
-  height: 40px;
-  margin: 8px;
+    width: 40px;
+    height: 40px;
+    margin: 8px;
 `
 
 const InterestList = styled.div`
-  width: 100%;
-  height: 100px;
-  background-color: #f3f3f3;
-  display: flex;
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
-  border-radius: 20px;
-  margin-top: 14px;
-  align-items: center;
-  padding: 0 0 0 20px;
+    width: 100%;
+    height: 100px;
+    background-color: #f3f3f3;
+    display: flex;
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
+    border-radius: 20px;
+    margin-top: 14px;
+    align-items: center;
+    padding: 0 0 0 20px;
 `
 
 const List = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `
 const Name = styled.p`
- margin: 0;
- font-size: 12px;
+    margin: 0;
+    font-size: 12px;
 `
 
 const ReSurveyButton = styled(Button)`
-  width: 90%;
-  margin: 30px 0;
+    width: 90%;
+    margin: 30px 0;
 `
