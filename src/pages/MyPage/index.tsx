@@ -43,6 +43,13 @@ const Index = () => {
       }
       // console.log(typeof(userResponse.profileImageBase64));
 
+      const formattedChildProfiles = userResponse.childProfileList?.map((child: { childProfileImage: string; }) => {
+        if (child.childProfileImage) {
+          child.childProfileImage = `data:image/jpeg;base64,${child.childProfileImage}`;
+        }
+        return child;
+      }) || [];
+
       setUserData(response.data.response); // 조회한 유저 정보 세팅
       setChildProfiles(response.data.response.childProfileList || []); // 조회한 유저의 자녀 프로필 정보 세팅
     } catch (error) {
@@ -102,10 +109,10 @@ const Index = () => {
         {userData && (
         <ProfileCard>
           <ProfileContent>
-            <ProfileImage src={userData?.profileImageBase64 || "/assets/sports.png"} alt="Profile" />
+            <ProfileImage src={userData?.profileImageBase64 || "/assets/default_profile.svg"} alt="Profile" />
             <ProfileInfo>
-              <h3>{userData.username}</h3>
-              <p>{userData.nickName}</p>
+              <h3>{userData?.username}</h3>
+              <p>{userData?.nickName}</p>
             </ProfileInfo>
             <UserEditButton onClick={handleEditProfile}>편집</UserEditButton>
           </ProfileContent>
@@ -121,7 +128,7 @@ const Index = () => {
 
           {childProfiles.map((child) => (
             <ChildProfile key={child.childProfileId}>
-              <ProfileImage src={child.childProfileImage} alt={child.childName} />
+              <ProfileImage src={child.childProfileImage || "/assets/default_profile.svg"} alt={child.childName} />
               <ChildInfo>
                 <h4>{child.childName}</h4>
                 <p>{child.childBirthDate.split("T")[0]}</p>
@@ -175,8 +182,8 @@ const ProfileContent = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   margin-right: 16px;
 `;
@@ -286,23 +293,3 @@ const LogoutButton = styled(Button)`
   width: 90%;
   margin-top: 300px;
 `;
-
-// 더미데이터 사용 X
-// const childProfiles = [
-//     {
-//       id: 1,
-//       name: "금정",
-//       birthDate: "2017년 03월 4일",
-//       age: "8살",
-//       gender: "여아",
-//       profileImage: "/assets/sports.png"
-//     },
-//     {
-//       id: 2,
-//       name: "금정",
-//       birthDate: "2024년 03월 4일",
-//       age: "2살",
-//       gender: "남아",
-//       profileImage: "/assets/sports.png"
-//     }
-//   ];
