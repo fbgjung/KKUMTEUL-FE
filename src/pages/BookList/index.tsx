@@ -1,74 +1,102 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [books, setBooks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // 페이지 인덱스를 1부터 시작
+  const [totalPages, setTotalPages] = useState(0);
+  const booksPerPage = 12;
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const booksPerPage = 12; // 한 페이지당 도서 수
+  const fetchBooks = async (page) => {
+    try {
+      const response = await axios.get(`/api/books?page=${page - 1}&size=${booksPerPage}`); // 페이지 인덱스는 0부터 시작하므로 -1
+      setBooks(response.data.response.content);
+      setTotalPages(response.data.response.totalPages);  // 전체 페이지 수를 설정
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  };
 
-  // 현재 페이지에 따라 보여줄 도서 계산
-  const indexOfLastBook = currentPage * booksPerPage;
-  const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
+  useEffect(() => {
+    fetchBooks(currentPage);
+  }, [currentPage]);  // currentPage가 변경될 때마다 데이터 다시 로드
 
-  // 페이지 번호 변경 함수
-  const paginate = (pageNumber:number) => setCurrentPage(pageNumber);
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-  // 총 페이지 수 계산
-  const totalPages = Math.ceil(books.length / booksPerPage);
+  const handleBookClick = (id) => {
+    navigate(`/${id}`);
+  };
 
-  const handleBookClick = (id:number) => {
-    navigate(`/booklist/${id}`); // 해당 도서의 상세 페이지로 이동
+  // 현재 페이지 기준으로 페이지 버튼 범위를 설정합니다.
+  const getPaginatedPages = () => {
+    const pages = [];
+    const startPage = Math.max(1, currentPage - 2); // 현재 페이지 기준으로 2개 전부터 시작
+    const endPage = Math.min(totalPages, startPage + 4); // 5개 페이지 버튼 보이기
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   };
 
   return (
     <Container color="#f3f3f3">
-      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/'/>
+      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/' />
       <SearchContainer>
-          <Input placeholder="입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" />
-          <SearchButton/>
+        <Input placeholder="입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" />
+        <SearchButton />
       </SearchContainer>
-
       <GridContainer>
-          {currentBooks.map((book) => (
-            <BookCard key={book.id} onClick={() => handleBookClick(book.id)}>
-              <BookImage src={book.book_image} alt={book.title} />
-              <BookInfo>
-                  <BookTitle>{book.title}</BookTitle>
-                  <BookTopic>{book.topic}</BookTopic>
-              </BookInfo>
-            </BookCard>
-          ))}
+        {books.map((book) => (
+          <BookCard key={book.bookId} onClick={() => handleBookClick(book.bookId)}>
+            <BookImage src={`data:image/jpeg;base64,${book.bookImage}`} alt={book.bookTitle} />
+            <BookInfo>
+              <BookTitle>{book.bookTitle}</BookTitle>
+              <BookTopic>{book.topicNames.join(', ')}</BookTopic>
+            </BookInfo>
+          </BookCard>
+        ))}
       </GridContainer>
-
       <Pagination>
-        {[...Array(totalPages)].map((_, index) => (
-          <PageButton key={index + 1} onClick={() => paginate(index + 1)}>
-            {index + 1}
+        <PageButton onClick={() => handlePageClick(currentPage - 1)} disabled={currentPage === 1}>
+          이전
+        </PageButton>
+        {getPaginatedPages().map((page) => (
+          <PageButton
+            key={page}
+            onClick={() => handlePageClick(page)}
+            isActive={page === currentPage}
+          >
+            {page}
           </PageButton>
         ))}
+        <PageButton onClick={() => handlePageClick(currentPage + 1)} disabled={currentPage === totalPages}>
+          다음
+        </PageButton>
       </Pagination>
     </Container>
   );
-}
+};
 
 export default Index;
 
-// Grid 레이아웃을 위한 스타일
+// 스타일 컴포넌트 부분은 기존 코드 그대로 사용
 const GridContainer = styled.div`
   display: flex;
-  grid-template-columns: repeat(3, 1fr); 
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 90%;
   flex-wrap: wrap;
   justify-content: space-around;
-`
+`;
 
-// 책 카드 스타일
 const BookCard = styled.div`
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -82,42 +110,35 @@ const BookCard = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-
   &:hover {
     background-color: #FFD869;
   }
+`;
 
-`
-
-// 책 표지 스타일
 const BookImage = styled.img`
   width: 80px;
   height: 120px;
-  object-fit: cover; 
+  object-fit: cover;
   margin-bottom: 0px;
-`
+`;
 
-// 책 정보 스타일 (제목, 주제어)
 const BookInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
-// 책 제목 스타일
 const BookTitle = styled.h3`
   font-size: 12px;
   font-weight: bold;
   margin: 8px 0 0 0;
-`
+`;
 
-// 책 주제어 스타일
 const BookTopic = styled.span`
   font-size: 10px;
   color: #888;
-`
+`;
 
-// 검색 입력과 버튼을 위한 스타일
 const SearchContainer = styled.div`
   display: flex;
   align-items: center;
@@ -134,44 +155,22 @@ const SearchButton = styled.button`
   margin-left: 10px;
 `;
 
-
-// 페이지네이션 스타일
 const Pagination = styled.div`
   display: flex;
   justify-content: center;
   margin: 20px 0;
-`
+`;
 
-// 페이지 버튼 스타일
 const PageButton = styled.button`
   border: none;
-  background-color: #FFD869;
+  background-color: ${props => (props.isActive ? '#fac737' : '#FFD869')};
   color: white;
   width: 30px;
   height: 30px;
   margin: 0 5px;
   cursor: pointer;
   border-radius: 5px;
-
   &:hover {
     background-color: #fac737;
   }
-`
-
-const books = [
-    { id: 1, title: "구름 버스 둥둥", author: "작가 1", price: 10000, publisher: "출판사 1", page: 200, summary: "이 책은 환경 보호에 관한 이야기입니다.", age_group: "6세 이상", book_image: "/assets/book1.svg", mbti: "INFJ", topic: "환경", genre: "자연" },
-    { id: 2, title: "자신감 안경", author: "작가 2", price: 10000, publisher: "출판사 2", page: 180, summary: "이 책은 동물의 생태를 다룹니다.", age_group: "9세 이상", book_image: "/assets/book2.svg", mbti: "ENTP", topic: "동물", genre: "만화" },
-    { id: 3, title: "숲속에 숨어 있어", author: "작가 1", price: 10000, publisher: "출판사 3", page: 150, summary: "이 책은 가족의 소중함을 이야기합니다.", age_group: "6세 이상", book_image: "/assets/book3.svg", mbti: "ISFP", topic: "가족", genre: "그림책" },
-    { id: 4, title: "책 4", author: "작가 3", price: 10000, publisher: "출판사 1", page: 250, summary: "이 책은 성장에 관한 내용을 담고 있습니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESTJ", topic: "성장", genre: "동화(옛날이야기)" },
-    { id: 5, title: "책 5", author: "작가 2", price: 10000, publisher: "출판사 2", page: 220, summary: "이 책은 과학의 원리를 설명합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "INTP", topic: "과학", genre: "생활과 과학" },
-    { id: 6, title: "책 6", author: "작가 3", price: 10000, publisher: "출판사 3", page: 190, summary: "이 책은 인물에 대한 흥미로운 이야기입니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ENFP", topic: "인물", genre: "역사" },
-    { id: 7, title: "책 7", author: "작가 1", price: 10000, publisher: "출판사 1", page: 170, summary: "이 책은 스포츠의 중요성을 강조합니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "ISFJ", topic: "스포츠", genre: "기타" },
-    { id: 8, title: "책 8", author: "작가 2", price: 10000, publisher: "출판사 2", page: 210, summary: "이 책은 꿈을 이루는 방법에 대해 설명합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ENTJ", topic: "꿈", genre: "예술" },
-    { id: 9, title: "책 9", author: "작가 3", price: 10000, publisher: "출판사 3", page: 240, summary: "이 책은 과거와 현재의 관계를 탐구합니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESTP", topic: "역사", genre: "사회" },
-    { id: 10, title: "책 10", author: "작가 1", price: 10000, publisher: "출판사 1", page: 160, summary: "이 책은 협동의 중요성을 다룹니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "INFP", topic: "협동", genre: "시" },
-    { id: 11, title: "책 11", author: "작가 2", price: 10000, publisher: "출판사 2", page: 200, summary: "이 책은 사랑의 의미를 탐구합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ENFJ", topic: "사랑", genre: "동화(옛날이야기)" },
-    { id: 12, title: "책 12", author: "작가 3", price: 10000, publisher: "출판사 3", page: 230, summary: "이 책은 외계인의 이야기를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ISTJ", topic: "외계인", genre: "자연" },
-    { id: 13, title: "책 13", author: "작가 1", price: 10000, publisher: "출판사 1", page: 190, summary: "이 책은 음악의 아름다움을 탐구합니다.", age_group: "6세 이상", book_image: "/assets/book.jpg", mbti: "ESFP", topic: "음악", genre: "예술" },
-    { id: 14, title: "책 14", author: "작가 2", price: 10000, publisher: "출판사 2", page: 220, summary: "이 책은 기계의 원리를 설명합니다.", age_group: "9세 이상", book_image: "/assets/book.jpg", mbti: "ISTP", topic: "기계", genre: "생활과 과학" },
-    { id: 15, title: "책 15", author: "작가 3", price: 10000, publisher: "출판사 3", page: 210, summary: "이 책은 식물의 신비로운 세계를 다룹니다.", age_group: "12세 이상", book_image: "/assets/book.jpg", mbti: "ESFJ", topic: "식물", genre: "자연" }
-];
+`;
