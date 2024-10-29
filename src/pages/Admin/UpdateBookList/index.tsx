@@ -14,7 +14,7 @@ const ImageContainer = styled.div<{ imageUrl?: string }>`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background-image: ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
+    background-image: ${({ imageurl }) => (imageurl ? `url(${imageurl})` : 'none')};
     // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
     background-size: cover;
     background-position: center;
@@ -156,7 +156,7 @@ const Index = () => {
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>
-          <ImageContainer imageUrl={book.book_image} onClick={handleImageClick}>
+          <ImageContainer imageurl={book.book_image} onClick={handleImageClick}>
             {!imageUrl}
             <input
               type="file"
