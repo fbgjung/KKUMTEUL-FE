@@ -30,8 +30,8 @@ const Index = () => {
     navigate(-1);
   }
 
-  const [childProfileId, setChildProfileId] = useState(
-    parseInt(sessionStorage.getItem('childProfileId') || '-1', 10)
+  const [childProfileId, setChildProfileId] = useState<number | null>(
+    parseInt(sessionStorage.getItem('childProfileId') || '0') || null
   );
 
   const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
@@ -57,6 +57,7 @@ const Index = () => {
 
   const onClickToggleMenuItem = (profile:ChildProfile) => {
     sessionStorage.setItem('childProfileId', profile.profileId.toString());
+    setChildProfileId(profile.profileId);
     setChildName(profile.childName);
     fetchRecommendedBooks(profile.profileId);
   };
@@ -78,7 +79,7 @@ const Index = () => {
     const fetchChildProfileAndRecommendedBooks = async () => {
       if (childProfileId) {
           try {
-              const response = await axios.get(`/kkumteul/api/users/1/childProfiles/${childProfileId}`);
+              const response = await axios.get(`/kkumteul/api/users/3/childProfiles/${childProfileId}`);
               console.log(response.data);
               fetchRecommendedBooks(childProfileId);
           } catch (error) {
@@ -106,7 +107,11 @@ const Index = () => {
       console.error('Failed to fetch recommended books:', error);
     }
   };
-  
+
+  const handleAddChildProfile = () => {
+    navigate('/mypage/createChildProfile');
+
+  }
 
   return (
     <Container color="#f3f3f3">
@@ -115,13 +120,21 @@ const Index = () => {
           <Title>꿈틀</Title>
           <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
           {isToggleMenuOpen && (
-            <DropdownMenu>
-            {childProfileList.map((profile) => (
-              <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
-                <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
-              </DropdownItem>
-            ))}
-            </DropdownMenu>
+          <DropdownMenu>
+            {childProfileList.length > 0 ? (
+              childProfileList.map((profile) => (
+                <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
+                  <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
+                </DropdownItem>
+              ))
+            ) : (
+              <>
+                <DropdownItem onClick={handleAddChildProfile}>
+                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
+                </DropdownItem>
+              </>
+            )}
+          </DropdownMenu>
         )}
       </Header>
 
