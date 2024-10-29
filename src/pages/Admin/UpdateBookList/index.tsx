@@ -1,21 +1,20 @@
-// import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import styled from 'styled-components';
+import { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 import { AdminContainer, Button, Input, TextArea } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
-import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const ImageContainer = styled.div<{ imageUrl?: string }>`
+const ImageContainer = styled.div<{ imageurl?: string }>`
     width: 150px;
     height: 200px;
-    background-color: #D3D3D3; /* 이미지가 들어갈 부분을 회색으로 표시 */
+    background-color: #D3D3D3;
     margin-right: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     background-image: ${({ imageurl }) => (imageurl ? `url(${imageurl})` : 'none')};
-    // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
     background-size: cover;
     background-position: center;
 `;
@@ -25,7 +24,7 @@ const FormContainer = styled.div`
     flex-direction: row;
     align-items: flex-start;
     gap: 40px;
-    width: 800px; /* 전체 너비를 800px로 설정 */
+    width: 800px;
     margin-top: 20px;
 `;
 
@@ -43,107 +42,160 @@ const ButtonFields = styled.div`
     flex: 1;
 `;
 
-
 const Label = styled.label`
     color: #6EA7D0;
     font-weight: bold;
 `;
 
 const StyledInput = styled(Input)`
-    width: 100%; /* 입력 필드의 너비를 부모 요소에 맞추도록 설정 */
+    width: 100%;
     padding-left: 15px;
     margin-top: 5px;
 `;
 
 const StyledTextArea = styled(TextArea)`
-    width: 100%; /* 텍스트 영역의 너비를 부모 요소에 맞추도록 설정 */
+    width: 100%;
     margin-top: 5px;
 `;
 
 const StyledButton = styled(Button)`
     margin-top: 20px;
-    width: 100%; /* 버튼의 너비를 부모 요소에 맞추도록 설정 */
+    width: 100%;
 `;
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { book_id } = useParams();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [bookImage, setBookImage] = useState<File | null>(null);
+  const [initialBookData, setInitialBookData] = useState({
+    id: '',
+    image: null,
+    title: '',
+    publisher: '',
+    author: '',
+    price: '',
+    ageGroup: '',
+    bookGenre: '',
+    bookTopicList: []  as string | string[],
+    bookMBTI: '',
+    summary: '',
+    page: '',
+  });
+  const [book, setBook] = useState({
+    title: '',
+    publisher: '',
+    author: '',
+    price: '',
+    ageGroup: '',
+    bookGenre: '',
+    bookTopicList: []  as string | string[],
+    bookMBTI: '',
+    summary: '',
+    page: '',
+  });
+
+  useEffect(() => {
+    const fetchBookDetail = async () => {
+      try {
+        const response = await axios.get(`/kkumteul/api/admin/books/${book_id}`);
+        const bookDetail = response.data.response;
+        setInitialBookData(bookDetail);
+        setBook({
+          title: bookDetail.title,
+          publisher: bookDetail.publisher,
+          author: bookDetail.author,
+          price: bookDetail.price,
+          ageGroup: bookDetail.ageGroup,
+          bookGenre: bookDetail.bookGenre,
+          bookTopicList: bookDetail.bookTopicList.join(', '),
+          bookMBTI: bookDetail.bookMBTI,
+          summary: bookDetail.summary,
+          page: bookDetail.page,
+        });
+        setImageUrl(bookDetail.image ? `data:image/jpeg;base64,${bookDetail.image}` : '/assets/home.svg');
+      } catch (error) {
+        console.error('도서 상세 조회 실패:', error);
+      }
+    };
+
+    if (book_id) {
+      fetchBookDetail();
+    }
+  }, [book_id]);
 
   const handleImageClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click(); // 파일 입력 필드를 클릭하여 파일 탐색기를 엽니다.
+      fileInputRef.current.click();
     }
   };
 
-  // 파일이 선택되면 FileReader를 사용해 해당 파일을 읽고, 이를 Data URL로 변환
-  // 변환된 Data URL을 imageUrl 상태로 설정하여 미리보기 이미지로 사용
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setBookImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUrl(reader.result as string); // 파일의 URL을 상태로 설정
+        setImageUrl(reader.result as string);
       };
-      reader.readAsDataURL(file); // 파일을 Data URL로 읽음
+      reader.readAsDataURL(file);
     }
   };
 
-  const { book_id } = useParams();
-  const [books] = useState([
-    {
-      book_id: 1,
-      title: "구름 버스 동동1",
-      author: "김작가",
-      publisher: "출판사",
-      price: 10000,
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      summary: "1줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
-      page: 1,
-      book_image: "/assets/home.svg"
-    },
-    {
-      book_id: 2,
-      title: "구름 버스 동동2",
-      author: "김작가",
-      publisher: "출판사",
-      price: 20000,
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      summary: "2줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
-      page: 2,
-      book_image: "/assets/home.svg"
-    },
-    {
-      book_id: 3,
-      title: "구름 버스 동동3",
-      author: "김작가",
-      publisher: "출판사",
-      price: 30000,
-      genre: "동화책",
-      age_group: "5세",
-      date: "2024-10-16",
-      subject: "우정",
-      mbti: "INFP",
-      summary: "3줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 줄거리입니다 ",
-      page: 3,
-      book_image: "/assets/home.svg"
-    }
-  ]);
-  if (!book_id) {
-    return <div>로딩 중...</div>;
-  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setBook((prevBook) => ({
+      ...prevBook,
+      [name]: name === 'bookTopicList' ? value.split(',').map((v) => v.trim()) : value,
+    }));
+  };
 
-  const book = books.find((b) => b.book_id === parseInt(book_id));
-  if (!book) {
-    return <div>도서를 찾을 수 없습니다.</div>;
-  }
+  const handleUpdateBook = async () => {
+    const updatedBookData = {
+      title: book.title,
+      author: book.author,
+      publisher: book.publisher,
+      price: book.price,
+      page: book.page,
+      ageGroup: book.ageGroup,
+      summary: book.summary,
+      bookMBTI: book.bookMBTI,
+      genre: book.bookGenre,
+      bookTopicList: Array.isArray(book.bookTopicList)
+        ? book.bookTopicList
+        : typeof book.bookTopicList === 'string'
+          ? book.bookTopicList.split(',').map((topic: string) => topic.trim())
+          : [],
+    };
+
+    const formData = new FormData();
+    if (bookImage) {
+      formData.append('image', bookImage);
+    } else if (initialBookData.image) {
+      // 기존 이미지를 유지할 수 있도록 추가
+      const byteCharacters = atob(initialBookData.image);
+      const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+      formData.append('image', blob, 'existing_image.jpg');
+    }
+    formData.append('book', new Blob([JSON.stringify(updatedBookData)], { type: 'application/json' }));
+
+    try {
+      const response = await axios.put(`/kkumteul/api/admin/books/${book_id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      alert('도서가 성공적으로 수정되었습니다!');
+      navigate('/book/manage');
+
+      console.log('도서 수정 성공:', response.data);
+    } catch (error) {
+      console.error('도서 수정 실패:', error);
+    }
+  };
 
   return (
     <AdminContainer color="#f3f3f3">
@@ -151,13 +203,12 @@ const Index = () => {
         title="도서 수정"
         textcolor="#000000"
         color="#6EA7D0"
-        nextBtnImageUrl="/assets/home.svg" // 홈 아이콘 URL 설정
-        nextPage="/" // 홈 페이지로 이동 설정
+        nextBtnImageUrl="/assets/home.svg"
+        nextPage="/"
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>
-          <ImageContainer imageurl={book.book_image} onClick={handleImageClick}>
-            {!imageUrl}
+          <ImageContainer imageurl={imageUrl} onClick={handleImageClick}>
             <input
               type="file"
               ref={fileInputRef}
@@ -169,49 +220,49 @@ const Index = () => {
           <FormFields>
             <div>
               <Label>도서명</Label>
-              <StyledInput placeholder="구름 버스 둥둥" color="#6EA7D0" inputcolor="#E6E6E6" value={book.title}/>
+              <StyledInput name="title" placeholder="구름 버스 둥둥" color="#6EA7D0" inputcolor="#E6E6E6" value={book.title} onChange={handleInputChange} />
             </div>
             <div>
               <Label>출판사</Label>
-              <StyledInput placeholder="꿈틀 출판사" color="#6EA7D0" inputcolor="#E6E6E6" value={book.publisher}/>
+              <StyledInput name="publisher" placeholder="꿈틀 출판사" color="#6EA7D0" inputcolor="#E6E6E6" value={book.publisher} onChange={handleInputChange} />
             </div>
             <div>
               <Label>작가</Label>
-              <StyledInput placeholder="작가명" color="#6EA7D0" inputcolor="#E6E6E6" value={book.author}/>
+              <StyledInput name="author" placeholder="작가명" color="#6EA7D0" inputcolor="#E6E6E6" value={book.author} onChange={handleInputChange} />
             </div>
             <div>
               <Label>가격</Label>
-              <StyledInput placeholder="13,000원" color="#6EA7D0" inputcolor="#E6E6E6" value={book.price}/>
+              <StyledInput name="price" placeholder="13,000원" color="#6EA7D0" inputcolor="#E6E6E6" value={book.price} onChange={handleInputChange} />
             </div>
             <div>
               <Label>연령대</Label>
-              <StyledInput placeholder="5세" color="#6EA7D0" inputcolor="#E6E6E6" value={book.age_group}/>
+              <StyledInput name="ageGroup" placeholder="5세" color="#6EA7D0" inputcolor="#E6E6E6" value={book.ageGroup} onChange={handleInputChange} />
             </div>
             <div>
               <Label>장르</Label>
-              <StyledInput placeholder="장르를 입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" value={book.genre}/>
+              <StyledInput name="bookGenre" placeholder="장르를 입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" value={book.bookGenre} onChange={handleInputChange} />
             </div>
             <div>
               <Label>주제어</Label>
-              <StyledInput placeholder="구름, 버스 등등" color="#6EA7D0" inputcolor="#E6E6E6"value={book.subject} />
+              <StyledInput name="bookTopicList" placeholder="구름, 버스 등등" color="#6EA7D0" inputcolor="#E6E6E6" value={book.bookTopicList} onChange={handleInputChange} />
             </div>
             <div>
               <Label>MBTI</Label>
-              <StyledInput placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" value={book.mbti}/>
+              <StyledInput name="bookMBTI" placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" value={book.bookMBTI} onChange={handleInputChange} />
             </div>
             <div>
               <Label>줄거리</Label>
-              <StyledTextArea placeholder="줄거리를 작성해주세요." color="#6EA7D0" inputcolor="#E6E6E6" rows={5}  value={book.summary}/>
+              <StyledTextArea name="summary" placeholder="줄거리를 작성해주세요." color="#6EA7D0" inputcolor="#E6E6E6" rows={5} value={book.summary} onChange={handleInputChange} />
             </div>
             <div>
               <Label>페이지 수</Label>
-              <StyledInput placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" value={book.page}/>
+              <StyledInput name="page" placeholder="30장" color="#6EA7D0" inputcolor="#E6E6E6" value={book.page} onChange={handleInputChange} />
             </div>
             <ButtonFields>
               <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
                 삭제하기
               </StyledButton>
-              <StyledButton color="#FFFFFF" backcolor="#6EA7D0">
+              <StyledButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleUpdateBook}>
                 수정하기
               </StyledButton>
             </ButtonFields>
