@@ -10,20 +10,25 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/api/users/login', {
-        username,
-        password,
-      });
-      localStorage.setItem('accessToken', response.data.accessToken);
-      navigate('/');
-    } catch (error) {
-      console.error('Login failed', error);
-      alert('로그인 실패');
-    }
-  };
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/kkumteul/api/auth/login', {
+                username,
+                password,
+            });
+
+            const accessToken = response.headers['authorization']?.split(' ')[1];
+            if (accessToken) {
+                sessionStorage.setItem('accessToken', accessToken);
+            }
+
+            navigate('/');
+        } catch (error) {
+            console.error('Login failed', error);
+            alert('로그인 실패');
+        }
+    };
 
   return (
     <Container color='#FDDC69'>
