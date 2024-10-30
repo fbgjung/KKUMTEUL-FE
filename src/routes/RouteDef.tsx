@@ -107,8 +107,6 @@ export const Screens = {
     path: '/record/:historyId',
     element: <ChildPersonalityHistoryDetail />
   }
-  
-
 
   
 };
