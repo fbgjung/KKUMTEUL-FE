@@ -38,7 +38,7 @@ const Index = () => {
         console.log("좋아요 성공/ 싫어요 성공");
       } catch (error) {
         console.error('Error processing like/dislike:', error);
-        alert('처리 중 오류가 발생했습니다: ' + error.response.data);
+        alert(error.response.data.message);
       }
     };
 
