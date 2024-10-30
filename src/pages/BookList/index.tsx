@@ -15,7 +15,7 @@ const Index = () => {
 
   const fetchBooks = async (page, keyword = "") => {
     try {
-      const response = await axios.get(`/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
+      const response = await axios.get(`/kkumteul/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
       setBooks(response.data.response.content);
       setTotalPages(response.data.response.totalPages);
     } catch (error) {
@@ -33,7 +33,7 @@ const Index = () => {
   };
 
   const handleBookClick = (id) => {
-    navigate(`/${id}`);
+    navigate(`/booklist/${id}`);
   };
 
   const handleSearch = () => {
