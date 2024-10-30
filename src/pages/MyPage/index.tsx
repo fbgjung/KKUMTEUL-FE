@@ -98,8 +98,13 @@ const Index = () => {
     console.log('로그아웃');
   };
 
-  const handleDeleteAccount = () => {
-    navigate('/delete-account');
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.delete(`/kkumteul/api/users/1`); // TODO: userId dummy
+      alert("정말 탈퇴하실 건가요?") // TODO: 모달 고려
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+    }
   };
 
   return (
