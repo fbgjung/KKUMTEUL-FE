@@ -15,8 +15,10 @@ const Index = () => {
     }
 
     const handleReSurveyButton = async () => {
+        const childProfileId = parseInt(sessionStorage.getItem('childProfileId') || '0');
+
         try {
-            await axios.delete('/kkumteul/api/survey');
+            await axios.delete(`/kkumteul/api/survey?childProfileId=${childProfileId}`);
             navigate('/survey');
         } catch (error) {
             console.error("Error deleting survey result:", error);

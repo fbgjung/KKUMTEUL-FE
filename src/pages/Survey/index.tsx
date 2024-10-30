@@ -48,8 +48,11 @@ const Index = () => {
   };
 
   const handleSubmit = async () => {
+    const childProfileId = parseInt(sessionStorage.getItem('childProfileId') || '0');
+
     try {
       const surveyData = {
+        childProfileId: childProfileId,
         answers: selectedAnswers.answers,
         favoriteGenres: selectedGenres,
         favoriteTopics: selectedKeywords,
