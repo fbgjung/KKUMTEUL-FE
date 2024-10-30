@@ -13,8 +13,8 @@ const Index = () => {
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        const response = await axios.get(`/api/books/${id}`);
-        setBook(response.data.response);  // response 구조 확인
+        const response = await axios.get(`/kkumteul/api/books/${id}`);
+        setBook(response.data.response);
       } catch (error) {
         console.error('Error fetching book details:', error);
       } finally {
@@ -25,12 +25,30 @@ const Index = () => {
     fetchBookDetail();
   }, [id]);
 
+    const handleLike = async (likeType) => {
+      try {
+        const response = await axios.post('/kkumteul/api/books/like', {
+          bookId: book.bookId,
+          childProfileId: 2, // 추후에 동적으로 설정
+          likeType: likeType,
+        },  {
+                 withCredentials: true, // 인증 정보를 포함하도록 설정
+               });
+        alert(response.data.response);
+        console.log("좋아요 성공/ 싫어요 성공");
+      } catch (error) {
+        console.error('Error processing like/dislike:', error);
+        alert('처리 중 오류가 발생했습니다: ' + error.response.data);
+      }
+    };
+
   if (loading) {
     return <Container color="null">로딩 중...</Container>;
   }
 
   if (!book) {
-    return <Container color="null">도서를 찾을 수 없습니다.</Container>;
+    console.log("Book object is null or undefined");
+    return;
   }
 
   return (
@@ -83,8 +101,12 @@ const Index = () => {
       </BookInfo>
 
       <ButtonContainer>
-        <LikeButton color="#757575" backcolor="#ffffff">좋아요</LikeButton>
-        <DisLikeButton color="#757575" backcolor="#ffffff">싫어요</DisLikeButton>
+        <LikeButton onClick={() => handleLike('LIKE')} color="#757575" backcolor="#ffffff">
+          좋아요
+        </LikeButton>
+        <DisLikeButton onClick={() => handleLike('DISLIKE')} color="#757575" backcolor="#ffffff">
+          싫어요
+        </DisLikeButton>
       </ButtonContainer>
     </Container>
   );
