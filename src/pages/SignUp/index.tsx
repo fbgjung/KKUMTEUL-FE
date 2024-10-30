@@ -11,8 +11,8 @@ const SignUp: React.FC = () => {
         password: '',
         passwordConfirm: '',
         name: '',
-        nickname: '',
-        phone: '',
+        nickName: '',
+        phoneNumber: '',
         birth: ''
     });
     const navigate = useNavigate();
@@ -105,8 +105,8 @@ const SignUp: React.FC = () => {
                         <InputStyled
                             color='#FFCB05'
                             placeholder="닉네임"
-                            name="nickname"
-                            value={formData.nickname}
+                            name="nickName"
+                            value={formData.nickName}
                             onChange={handleChange}
                         />
                         <CheckButton type="button" onClick={() => handleDuplicateCheck('닉네임')}>중복확인</CheckButton>
@@ -114,8 +114,8 @@ const SignUp: React.FC = () => {
                     <InputStyled
                         color='#FFCB05'
                         placeholder="전화번호"
-                        name="phone"
-                        value={formData.phone}
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
                         onChange={handleChange}
                     />
                     <InputStyled
