@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import axios from 'axios';
+import LoginModal from '../../modal/LoginModal';
 
 interface PopularBooks {
   bookId: number
@@ -44,6 +45,8 @@ const Index = () => {
   const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
   const [popularBooks, setPopularBooks] = useState<PopularBooks[]>([]);
   const [childName, setChildName] = useState<string>();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const menus: Menu[] = [
     {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png'},
@@ -52,7 +55,10 @@ const Index = () => {
   ]
 
   const toggleMenu = () => {
-    setIsToggleMenuOpen((prev) => !prev);
+    if(!isLoggedIn) {
+      setIsModalOpen(true); // 로그인 안했을 때 모달창 보여주기
+    }
+      setIsToggleMenuOpen(prev => !prev); // 로그인 했을 때 토글 목록 보여주기
   };
 
 
@@ -68,7 +74,12 @@ const Index = () => {
     fetchRecommendedBooks(profile.profileId);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
+    // TODO: 로그인 확인 하고 isLoggedIn에 세팅하는 로직 추가하기 
     // 자녀 프로필 리스트 조회
     const fetchChildProfiles = async () => {
       try {
@@ -95,72 +106,97 @@ const Index = () => {
         }
     };
 
+    setIsLoggedIn(false);
+
     fetchChildProfiles();
-    fetchChildProfileAndRecommendedBooks();
+    fetchChildProfileAndRecommendedBooks();  
 
   }, []);
 
-    console.log(childProfileList);
+  console.log(childProfileList);
 
-    // 추천 도서 목록 조회
-    const fetchRecommendedBooks = async (childProfileId: number) => {
-        try {
-            const response = await axios.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
-            const recommendedBooks = response.data.response.recommendedBooks;
-            const popularBooks = response.data.response.popularBooks;
-            console.log("추천책:", recommendedBooks);
-            console.log("인기책(추천도서가 없을경우): ", popularBooks);
-            setRecommendedBooks(recommendedBooks);
-            setPopularBooks(popularBooks);
-        } catch (error) {
-            console.error('Failed to fetch recommended books:', error);
-        }
-    };
+  // 추천 도서 목록 조회
+  const fetchRecommendedBooks = async (childProfileId: number) => {
+      try {
+          const response = await axios.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
+          const recommendedBooks = response.data.response.recommendedBooks;
+          const popularBooks = response.data.response.popularBooks;
+          console.log("추천책:", recommendedBooks);
+          console.log("인기책(추천도서가 없을경우): ", popularBooks);
+          setRecommendedBooks(recommendedBooks);
+          setPopularBooks(popularBooks);
+      } catch (error) {
+          console.error('Failed to fetch recommended books:', error);
+      }
+  };
 
-    const handleAddChildProfile = () => {
-        navigate('/mypage/createChildProfile');
+  const handleAddChildProfile = () => {
+      navigate('/mypage/createChildProfile');
+  }
+  
+  const formatImageSrc = (imageData: string | null) => {
+      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+  };
 
-    }
+  return (
+    <Container color="#f3f3f3">
+      <Header>
+          <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
+          <Title>꿈틀</Title>
+          <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
+          {!isLoggedIn && isModalOpen && (
+          <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />
+         )}
+          
+          {isLoggedIn && isToggleMenuOpen && (
+          <DropdownMenu>
+            {childProfileList.length > 0 ? (
+              childProfileList.map((profile) => (
+                <DropdownItem
+                  key={profile.profileId}
+                  onClick={() => onClickToggleMenuItem(profile)}
+                >
+                  <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
+                </DropdownItem>
+              ))
+            ) : (
+              <>
+                <DropdownItem onClick={handleAddChildProfile}>
+                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
+                </DropdownItem>
+              </>
+            )}
+          </DropdownMenu>
+        )}
+      </Header>
 
-    const formatImageSrc = (imageData: string | null) => {
-        return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
-    };
-
-    return (
-      <Container color="#f3f3f3">
-          <Header>
-              <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
-              <Title>꿈틀</Title>
-              <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
-              {isToggleMenuOpen && (
-                  <DropdownMenu>
-                      {childProfileList.length > 0 ? (
-                          childProfileList.map((profile) => (
-                              <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
-                                  <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
-                              </DropdownItem>
-                          ))
-                      ) : (
-                          <>
-                              <DropdownItem onClick={handleAddChildProfile}>
-                                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
-                              </DropdownItem>
-                          </>
-                      )}
-                  </DropdownMenu>
-              )}
-          </Header>
-
-          <ImageWrapper>
-              <Image src="/assets/advertisement.png" alt="Main Test"/>
-          </ImageWrapper>
-          <MenuSection>
-              {menus.map((menu) => (
-                  <Menus key={menu.id} onClick={() => navigate(menu.link)}>
-                      <LinkButton src={menu.image}/>
-                      <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
-                  </Menus>
-              ))}
+      <ImageWrapper>
+        <Image src="/assets/advertisement.png" alt="Main Test" />      
+      </ImageWrapper>
+      <MenuSection>
+      {menus.map((menu) => (
+        <Menus key={menu.id} onClick={() => navigate(menu.link)}>
+          <LinkButton src={menu.image}/>
+          <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
+        </Menus>
+      ))}
+      </MenuSection>   
+      <EventBanner onClick={onClickEventBanner}>
+        <EventTitle>선착순 100명 이벤트</EventTitle>
+      </EventBanner>
+      <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
+      <RecommendBookSection>
+          <ArrowBubble>
+              <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
+          </ArrowBubble>
+          <RecommendContainer>
+            <MbtiImage></MbtiImage>
+            {recommendedBooks.map((book) => (
+                <RecommendItem key={book.bookId}>
+                    <RecommendBookImage onClick = {() => navigate(`/booklist/${book.bookId}`)} $imageurl={book.bookImage || '/assets/book1.svg'} />
+                    <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                </RecommendItem>
+            ))}
           </MenuSection>
           <EventBanner onClick={onClickEventBanner}>
               <EventTitle>선착순 100명 이벤트</EventTitle>
