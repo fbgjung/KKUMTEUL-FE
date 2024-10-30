@@ -148,12 +148,18 @@ type Book = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState<Book[]>([]); //  useState<Book[]>([])
+  const [books, setBooks] = useState<Book[]>([]); // 전체 도서 목록
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]); // 필터링된 도서 목록
   const [searchText, setSearchText] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
+  // 새로운 상태 추가
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
+  const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [selectedMBTI, setSelectedMBTI] = useState<string>('');
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -164,7 +170,8 @@ const Index = () => {
             size: 7,
           },
         });
-        setBooks(response.data.response.content);
+        setBooks(response.data.response.content); // 전체 목록 저장
+        setFilteredBooks(response.data.response.content); // 초기 필터링 목록도 설정
         setTotalPages(response.data.response.totalPages);
       } catch (error) {
         console.error('도서 목록 조회 실패:', error);
@@ -172,6 +179,59 @@ const Index = () => {
     };
     fetchBooks();
   }, [currentPage]);
+
+  // 도서 필드 effect 기능
+  useEffect(() => {
+    applyFilters();
+  }, [selectedGenre, selectedSubject, selectedMBTI]);
+
+  const applyFilters = () => {
+    // 기본값을 확인하여 필터링을 제외할 항목을 설정
+    const isGenreSelected = selectedGenre && selectedGenre !== "장르";
+    const isSubjectSelected = selectedSubject && selectedSubject !== "주제어";
+    const isMBTISelected = selectedMBTI && selectedMBTI !== "MBTI";
+
+    let filteredBooksList = books;
+
+    // 필터링 로직: 각각의 상태가 변경되었을 때만 해당 조건을 추가하여 필터링 수행
+    if (isGenreSelected && !isSubjectSelected && !isMBTISelected) {
+      // 장르만 선택되었을 때
+      filteredBooksList = books.filter((book) => book.bookGenre === selectedGenre);
+    } else if (!isGenreSelected && isSubjectSelected && !isMBTISelected) {
+      // 주제어만 선택되었을 때
+      filteredBooksList = books.filter((book) => book.bookTopicList.includes(selectedSubject));
+    } else if (!isGenreSelected && !isSubjectSelected && isMBTISelected) {
+      // MBTI만 선택되었을 때
+      filteredBooksList = books.filter((book) => book.bookMBTI === selectedMBTI);
+    } else if (isGenreSelected && isSubjectSelected && !isMBTISelected) {
+      // 장르와 주제어만 선택되었을 때
+      filteredBooksList = books.filter(
+        (book) => book.bookGenre === selectedGenre && book.bookTopicList.includes(selectedSubject)
+      );
+    } else if (isGenreSelected && !isSubjectSelected && isMBTISelected) {
+      // 장르와 MBTI만 선택되었을 때
+      filteredBooksList = books.filter(
+        (book) => book.bookGenre === selectedGenre && book.bookMBTI === selectedMBTI
+      );
+    } else if (!isGenreSelected && isSubjectSelected && isMBTISelected) {
+      // MBTI와 주제어만 선택되었을 때
+      filteredBooksList = books.filter(
+        (book) => book.bookMBTI === selectedMBTI && book.bookTopicList.includes(selectedSubject)
+      );
+    } else if (isGenreSelected && isSubjectSelected && isMBTISelected) {
+      // 장르, 주제어, MBTI 모두 선택되었을 때
+      filteredBooksList = books.filter(
+        (book) =>
+          book.bookGenre === selectedGenre &&
+          book.bookTopicList.includes(selectedSubject) &&
+          book.bookMBTI === selectedMBTI
+      );
+    }
+
+    // 필터링된 결과를 상태로 업데이트
+    setFilteredBooks(filteredBooksList); // 필터링된 결과를 업데이트
+    // setBooks(filteredBooks);
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -189,6 +249,7 @@ const Index = () => {
         },
       });
       setBooks(response.data.response.content);
+      setFilteredBooks(response.data.response.content); // 검색어 결과 목록도 설정
       setTotalPages(response.data.response.totalPages);
     } catch (error) {
       console.error('도서 검색 실패:', error);
@@ -290,7 +351,7 @@ const Index = () => {
             </DeleteAddContainer>
           </InputContainer>
           <SelectContainer>
-            <Select color="#FFFFFF" bordercolor="#6EA7D0">
+            <Select color="#FFFFFF" bordercolor="#6EA7D0" onChange={(e) => setSelectedGenre(e.target.value)}>
               <option value="">장르</option>
               {GenreOptions.map((genre, index) => (
                 <option key={index} value={genre}>
@@ -298,7 +359,7 @@ const Index = () => {
                 </option>
               ))}
             </Select>
-            <Select color="#FFFFFF" bordercolor="#6EA7D0">
+            <Select color="#FFFFFF" bordercolor="#6EA7D0" onChange={(e) => setSelectedSubject(e.target.value)}>
               <option value="">주제어</option>
               {SubjectOptions.map((subject, index) => (
                 <option key={index} value={subject}>
@@ -306,7 +367,7 @@ const Index = () => {
                 </option>
               ))}
             </Select>
-            <Select color="#FFFFFF" bordercolor="#6EA7D0">
+            <Select color="#FFFFFF" bordercolor="#6EA7D0"  onChange={(e) => setSelectedMBTI(e.target.value)}>
               <option value="">MBTI</option>
               {MbtiOptions.map((mbti, index) => (
                 <option key={index} value={mbti}>
@@ -335,7 +396,7 @@ const Index = () => {
               </tr>
               </thead>
               <tbody>
-              {books.map((book, index) => (
+              {filteredBooks.map((book, index) => (
                 <TableRow key={book.id}>
                   <TableCell>
                     <input
