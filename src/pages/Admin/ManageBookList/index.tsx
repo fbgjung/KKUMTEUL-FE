@@ -131,9 +131,24 @@ const MbtiOptions = [
   "INTP", "INTJ", "INFP", "INFJ", "ISTP", "ISTJ", "ISFP", "ISFJ"
 ];
 
+type Book = {
+  id: number;
+  image: string | null;
+  title: string;
+  publisher: string;
+  author: string;
+  price: string;
+  ageGroup: string;
+  bookGenre: string;
+  bookTopicList: string[];
+  bookMBTI: string;
+  summary: string;
+  page: string;
+};
+
 const Index = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<Book[]>([]); //  useState<Book[]>([])
   const [searchText, setSearchText] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
@@ -287,6 +302,7 @@ const Index = () => {
                   <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
                 </CheckboxHeader>
                 <TableHeader>No</TableHeader>
+                <TableHeader></TableHeader>
                 <TableHeader>도서명</TableHeader>
                 <TableHeader>작가</TableHeader>
                 <TableHeader>출판사</TableHeader>
@@ -309,10 +325,8 @@ const Index = () => {
                     />
                   </TableCell>
                   <TableCell>{index + 1 + currentPage * 7}</TableCell>
-                  <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                    <ImagePlaceholder src={book.image ? `data:image/png;base64,${book.image}` : '/assets/home.svg'} alt="이미지 준비중" />
-                    <TitleContainer>{book.title}</TitleContainer>
-                  </TableCell>
+                  <TableCell style={{ width: '1px'}}><ImagePlaceholder src={book.image ? `data:image/png;base64,${book.image}` : '/assets/home.svg'} alt="이미지 준비중" /></TableCell>
+                  <TableCell><TitleContainer>{book.title}</TitleContainer></TableCell>
                   <TableCell>{book.author}</TableCell>
                   <TableCell>{book.publisher}</TableCell>
                   <TableCell>{book.bookGenre}</TableCell>
