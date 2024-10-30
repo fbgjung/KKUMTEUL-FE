@@ -104,11 +104,9 @@ export const Screens = {
   },
 
   ChildPersonalityHistoryDetail: {
-    path: '/record/:recordId',
+    path: '/record/:historyId',
     element: <ChildPersonalityHistoryDetail />
   }
-  
-
 
   
 };

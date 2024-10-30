@@ -90,8 +90,10 @@ const Index = () => {
     });
   };
 
-  const handleViewChildProfile = (childId: number) => {
-    navigate(RouteDef.MyPageDetailChildProfile.path.replace(':childId', String(childId)));
+  const handleViewChildProfile = (child: ChildProfileProps) => {
+    navigate(RouteDef.MyPageDetailChildProfile.path.replace(':childId', String(child.childProfileId)), {
+      state: { child }
+    });
   };
 
   const handleLogout = () => {
@@ -140,8 +142,8 @@ const Index = () => {
                 <ChildInfoText>{child.age}</ChildInfoText>
                 <ChildInfoText>{formatGender(child.childGender)}</ChildInfoText>
               </ChildInfo>
-              <ArrowButton onClick={() => handleViewChildProfile(child.childProfileId)}>{'>'}</ArrowButton>
-            </ChildProfile>
+              <ArrowButton onClick={() => handleViewChildProfile(child)}>{'>'}</ArrowButton>
+              </ChildProfile>
           ))}
 
         </ProfileCard>
