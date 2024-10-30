@@ -1,9 +1,14 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Container } from '../../styles/globalStyles';
+import {useNavigate} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {Container} from '../../styles/globalStyles';
 import axios from 'axios';
 
+interface PopularBooks {
+  bookId: number
+  bookTitle: string
+  bookImage: string
+}
 
 interface RecommendBook {
   bookId: number;
@@ -19,8 +24,8 @@ interface Menu {
 }
 
 interface ChildProfile {
-  childName:string;
-  profileId:number;
+  childName: string;
+  profileId: number;
 }
 
 const Index = () => {
@@ -37,12 +42,13 @@ const Index = () => {
   const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
   const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
   const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
+  const [popularBooks, setPopularBooks] = useState<PopularBooks[]>([]);
   const [childName, setChildName] = useState<string>();
 
   const menus: Menu[] = [
-    { id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png' },
-    { id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png' },
-    { id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png' },
+    {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png'},
+    {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png'},
+    {id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png'},
   ]
 
   const toggleMenu = () => {
@@ -51,11 +57,11 @@ const Index = () => {
 
 
   const onClickEventBanner = () => {
-    navigate('/event');
+      navigate('/event');
   }
 
 
-  const onClickToggleMenuItem = (profile:ChildProfile) => {
+  const onClickToggleMenuItem = (profile: ChildProfile) => {
     sessionStorage.setItem('childProfileId', profile.profileId.toString());
     setChildProfileId(profile.profileId);
     setChildName(profile.childName);
@@ -65,110 +71,120 @@ const Index = () => {
   useEffect(() => {
     // 자녀 프로필 리스트 조회
     const fetchChildProfiles = async () => {
-        try {
-            const response = await axios.get(`/kkumteul/api/childProfiles`);
-            const childProfiles = response.data.response;
-            console.log(childProfiles);
-            setChildProfileList(childProfiles);
-        } catch (error) {
-            console.error('Failed to fetch child profiles:', error);
-        }
+      try {
+        const response = await axios.get(`/kkumteul/api/childProfiles`);
+        const childProfiles = response.data.response;
+        console.log(childProfiles);
+        setChildProfileList(childProfiles);
+      } catch (error) {
+        console.error('Failed to fetch child profiles:', error);
+      }
     };
 
     // 자녀 프로필 유효성 검증 api 연동 및 추천 도서 조회 함수 호출
     const fetchChildProfileAndRecommendedBooks = async () => {
-      if (childProfileId) {
-          try {
-              const response = await axios.get(`/kkumteul/api/users/3/childProfiles/${childProfileId}`);
-              console.log(response.data);
-              fetchRecommendedBooks(childProfileId);
-          } catch (error) {
-              console.error('Failed to fetch child profile:', error);
-              alert('잘못된 접근입니다.');
-          }
-      }
-  };
+        if (childProfileId) {
+            try {
+                const response = await axios.get(`/kkumteul/api/users/1/childProfiles/${childProfileId}`);
+                console.log(response.data);
+                fetchRecommendedBooks(childProfileId);
+            } catch (error) {
+                console.error('Failed to fetch child profile:', error);
+                alert('잘못된 접근입니다.');
+            }
+        }
+    };
 
-  fetchChildProfiles();
-  fetchChildProfileAndRecommendedBooks();  
-      
+    fetchChildProfiles();
+    fetchChildProfileAndRecommendedBooks();
+
   }, []);
 
-  console.log(childProfileList);
+    console.log(childProfileList);
 
-  // 추천 도서 목록 조회
-  const fetchRecommendedBooks = async (childProfileId: number) => {
-    try {
-      const response = await axios.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
-      const recommendedBooks = response.data.response;
-      console.log(recommendedBooks);
-      setRecommendedBooks(recommendedBooks);
-    } catch (error) {
-      console.error('Failed to fetch recommended books:', error);
+    // 추천 도서 목록 조회
+    const fetchRecommendedBooks = async (childProfileId: number) => {
+        try {
+            const response = await axios.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
+            const recommendedBooks = response.data.response.recommendedBooks;
+            const popularBooks = response.data.response.popularBooks;
+            console.log("추천책:", recommendedBooks);
+            console.log("인기책(추천도서가 없을경우): ", popularBooks);
+            setRecommendedBooks(recommendedBooks);
+            setPopularBooks(popularBooks);
+        } catch (error) {
+            console.error('Failed to fetch recommended books:', error);
+        }
+    };
+
+    const handleAddChildProfile = () => {
+        navigate('/mypage/createChildProfile');
+
     }
-  };
 
-  const handleAddChildProfile = () => {
-    navigate('/mypage/createChildProfile');
+    const formatImageSrc = (imageData: string | null) => {
+        return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+    };
 
-  }
+    return (
+      <Container color="#f3f3f3">
+          <Header>
+              <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
+              <Title>꿈틀</Title>
+              <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
+              {isToggleMenuOpen && (
+                  <DropdownMenu>
+                      {childProfileList.length > 0 ? (
+                          childProfileList.map((profile) => (
+                              <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
+                                  <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
+                              </DropdownItem>
+                          ))
+                      ) : (
+                          <>
+                              <DropdownItem onClick={handleAddChildProfile}>
+                                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
+                              </DropdownItem>
+                          </>
+                      )}
+                  </DropdownMenu>
+              )}
+          </Header>
 
-  return (
-    <Container color="#f3f3f3">
-      <Header>
-          <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
-          <Title>꿈틀</Title>
-          <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
-          {isToggleMenuOpen && (
-          <DropdownMenu>
-            {childProfileList.length > 0 ? (
-              childProfileList.map((profile) => (
-                <DropdownItem key={profile.profileId} onClick={() => onClickToggleMenuItem(profile)}>
-                  <LinkTitle $color='#6EA7D0'>{profile.childName}</LinkTitle>
-                </DropdownItem>
-              ))
-            ) : (
-              <>
-                <DropdownItem onClick={handleAddChildProfile}>
-                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
-                </DropdownItem>
-              </>
-            )}
-          </DropdownMenu>
-        )}
-      </Header>
-
-      <ImageWrapper>
-        <Image src="/assets/advertisement.png" alt="Main Test" />      
-      </ImageWrapper>
-      <MenuSection>
-      {menus.map((menu) => (
-        <Menus key={menu.id} onClick={() => navigate(menu.link)}>
-          <LinkButton src={menu.image}/>
-          <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
-        </Menus>
-      ))}
-      </MenuSection>   
-      <EventBanner onClick={onClickEventBanner}>
-        <EventTitle>선착순 100명 이벤트</EventTitle>
-      </EventBanner>
-      <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
-      <RecommendBookSection>
-          <ArrowBubble>
-              <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
-          </ArrowBubble>
-          <RecommendContainer>
-              <MbtiImage></MbtiImage>
-              {recommendedBooks.map((book) => (
-                  <RecommendItem key={book.bookId}>
-                      <RecommendBookImage onClick = {() => navigate(`/booklist/${book.bookId}`)} $imageurl={book.bookImage || '/assets/book1.svg'} />
-                      <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
-                  </RecommendItem>
+          <ImageWrapper>
+              <Image src="/assets/advertisement.png" alt="Main Test"/>
+          </ImageWrapper>
+          <MenuSection>
+              {menus.map((menu) => (
+                  <Menus key={menu.id} onClick={() => navigate(menu.link)}>
+                      <LinkButton src={menu.image}/>
+                      <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
+                  </Menus>
               ))}
-          </RecommendContainer>
-      </RecommendBookSection>
-    </Container>
-  );
+          </MenuSection>
+          <EventBanner onClick={onClickEventBanner}>
+              <EventTitle>선착순 100명 이벤트</EventTitle>
+          </EventBanner>
+          <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
+          <RecommendBookSection>
+              <ArrowBubble>
+                  <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
+              </ArrowBubble>
+              <RecommendContainer>
+                  <MbtiImage/>
+                  {recommendedBooks.map((book) => (
+                      <RecommendItem key={book.bookId}>
+                          <RecommendBookImage
+                              onClick={() => navigate(`/booklist/${book.bookId}`)}
+                              $imageurl={formatImageSrc(book.bookImage)}
+                          />
+                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                      </RecommendItem>
+                  ))}
+              </RecommendContainer>
+          </RecommendBookSection>
+      </Container>
+    );
 };
 
 export default Index;
@@ -177,9 +193,9 @@ const Header = styled.div`
   width: 100%;
   height: 60px;
   background-color: #F3F3F3;
-  align-items: center; 
+  align-items: center;
   position: sticky;
-  top: 0; 
+  top: 0;
   left: 0;
   z-index: 1000;
   padding: 10px 20px;
@@ -217,17 +233,17 @@ const Title = styled.h2`
   font-size: 18px;
 `;
 
-const PrevButton = styled.button<{$imageurl: string}>`
+const PrevButton = styled.button<{ $imageurl: string }>`
   width: 30px;
   height: 30px;
-  padding:0;
-  background: no-repeat center/cover url(${({ $imageurl }) => $imageurl});
+  padding: 0;
+  background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
 `
-const NextButton = styled.button<{$imageurl: string}>`
+const NextButton = styled.button<{ $imageurl: string }>`
   width: 25px;
   height: 25px;
   padding: 0;
-  background: no-repeat center/cover url(${({ $imageurl }) => $imageurl});
+  background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
   overflow: hidden;
 `
 
@@ -239,7 +255,7 @@ const ImageWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
+    width: 100%;
 `
 
 // 링크
@@ -272,14 +288,15 @@ const LinkButton = styled.img`
   margin-bottom: 8px;
 `
 
-const LinkTitle = styled.p<{$color: string}>`
+const LinkTitle = styled.p<{ $color: string }>`
   font-size: 12px;
   padding: 0;
   margin: 0;
+
   &:hover {
-    color: ${({ $color }) => $color}
+      color: ${({$color}) => $color}
   }
-  
+
 `
 
 // 이벤트 배너
@@ -340,8 +357,8 @@ const ArrowBubble = styled.div`
   border: #FFC317 solid 3px;
 
   @media screen and (max-width: 500px) {
-    width: 90%;
-    height: auto;
+      width: 90%;
+      height: auto;
   }
 
   ::after {
@@ -356,7 +373,7 @@ const ArrowBubble = styled.div`
     bottom: -4px;
     left: 15px;
     @media screen and (max-width: 650px) {
-      left: 5px;
+        left: 5px;
     }
   }
 
@@ -372,13 +389,13 @@ const ArrowBubble = styled.div`
     bottom: -8px;
     left: 18px;
     @media screen and (max-width: 650px) {
-      left: 8px;
+        left: 8px;
     }
   }
 `;
 
 const RecommendContainer = styled.div`
-  display: flex; 
+  display: flex;
   flex-wrap: nowrap;
   overflow-x: scroll;
   gap: 0;
@@ -405,10 +422,10 @@ const RecommendItem = styled.div`
   cursor: pointer;
 `;
 
-const RecommendBookImage = styled.svg<{$imageurl: string}>`
+const RecommendBookImage = styled.img<{ $imageurl: string }>`
   width: 80px;
   height: 100px;
-  background: no-repeat center/cover url(${({ $imageurl }) => $imageurl});
+  background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
   padding: 0;
   margin: 0;
 `;
