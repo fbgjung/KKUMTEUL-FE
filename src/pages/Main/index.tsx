@@ -184,23 +184,6 @@ const Index = () => {
       <EventBanner onClick={onClickEventBanner}>
         <EventTitle>선착순 100명 이벤트</EventTitle>
       </EventBanner>
-      <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
-      <RecommendBookSection>
-          <ArrowBubble>
-              <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
-          </ArrowBubble>
-          <RecommendContainer>
-            <MbtiImage></MbtiImage>
-            {recommendedBooks.map((book) => (
-                <RecommendItem key={book.bookId}>
-                    <RecommendBookImage onClick = {() => navigate(`/booklist/${book.bookId}`)} $imageurl={book.bookImage || '/assets/book1.svg'} />
-                    <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
-                </RecommendItem>
-            ))}
-          </MenuSection>
-          <EventBanner onClick={onClickEventBanner}>
-              <EventTitle>선착순 100명 이벤트</EventTitle>
-          </EventBanner>
           <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
           <RecommendBookSection>
               <ArrowBubble>
