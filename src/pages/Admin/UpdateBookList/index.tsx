@@ -63,6 +63,19 @@ const StyledButton = styled(Button)`
     width: 100%;
 `;
 
+const genres = [
+  '그림책', '만화', '동화', '외국동화', '자연의 세계', '역사', '사회', '생활과 과학', '예술', '시', '옛날이야기'
+];
+
+const topics = [
+  '환경', '동물', '성장', '가족', '과학', '생명', '수학', '세계 문화', '인물', '스포츠', '협동', '미술', '모험', '기계', '식물', '꿈', '관찰', '사랑', '영웅', '외국어', '우주', '유머', '음악', '의학', '이별'
+];
+
+const mbtis = [
+  'INFP', 'INFJ', 'INTP', 'INTJ', 'ISFP', 'ISFJ', 'ISTP', 'ISTJ',
+  'ENFP', 'ENFJ', 'ENTP', 'ENTJ', 'ESFP', 'ESFJ', 'ESTP', 'ESTJ'
+];
+
 const Index = () => {
   const navigate = useNavigate();
   const { book_id } = useParams();
@@ -90,7 +103,7 @@ const Index = () => {
     price: '',
     ageGroup: '',
     bookGenre: '',
-    bookTopicList: []  as string | string[],
+    bookTopicList: [] as string | string[],
     bookMBTI: '',
     summary: '',
     page: '',
@@ -152,6 +165,77 @@ const Index = () => {
   };
 
   const handleUpdateBook = async () => {
+
+    // 필수 입력 필드 검증
+    const requiredFields = [
+      { name: '도서명', value: book.title },
+      { name: '출판사', value: book.publisher },
+      { name: '작가', value: book.author },
+      { name: '가격', value: book.price },
+      { name: '연령대', value: book.ageGroup },
+      { name: '줄거리', value: book.summary },
+      { name: '페이지 수', value: book.page }
+    ];
+
+    for (const field of requiredFields) {
+      if (!field.value) {
+        alert(`${field.name}을(를) 입력해주세요!`);
+        return;
+      }
+    }
+    // 기존 이미지와 업데이트한 이미지가 모두 없는 경우, 경고 메시지 표시
+    if (!bookImage && !initialBookData.image) {
+      alert('이미지를 추가해주세요!' + bookImage + initialBookData.image);
+      return;
+    }
+    // 가격 필드 검증
+    if (isNaN(Number(book.price.replace(/원$/, '')))) {
+      alert('가격은 숫자로 입력해주세요!');
+      return;
+    }
+    // 가격 필드에 '원' 추가
+    if (/^\d+$/.test(book.price)) {
+      book.price += '원';
+    }
+    // 연령대 필드 검증
+    if (isNaN(Number(book.ageGroup.replace(/세부터$/, '')))) {
+      alert('연령대는 숫자로 입력해주세요!');
+      return;
+    }
+    // 연령대 필드에 '쪽' 추가
+    if (/^\d+$/.test(book.ageGroup)) {
+      book.ageGroup += '세부터';
+    }
+    // 페이지 수 필드 검증
+    if (isNaN(Number(book.page.replace(/쪽$/, '')))) {
+      alert('페이지 수는 숫자로 입력해주세요!');
+      return;
+    }
+    // 페이지 수 필드에 '쪽' 추가
+    if (/^\d+$/.test(book.page)) {
+      book.page += '쪽';
+    }
+    // 장르 검증
+    if (!genres.includes(book.bookGenre)) {
+      alert('예시를 참고하여 장르를 다시 입력해주세요!');
+      return;
+    }
+    // bookTopicList가 단일 문자열인지 배열인지 확인하고, 문자열인 경우 콤마로 구분된 배열로 변환
+    const topicList = Array.isArray(book.bookTopicList)
+      ? book.bookTopicList
+      : book.bookTopicList.split(',');
+
+    // 토픽 검증
+    if (topicList.some((topic) => !topics.includes(topic.trim()))) {
+      alert('예시를 참고하여 주제어를 다시 입력해주세요!');
+      return;
+    }
+    // MBTI 검증
+    if (!mbtis.includes(book.bookMBTI)) {
+      alert('유효한 MBTI를 입력해주세요!');
+      return;
+    }
+
     const updatedBookData = {
       title: book.title,
       author: book.author,
@@ -209,23 +293,11 @@ const Index = () => {
 
   return (
     <AdminContainer color="#f3f3f3">
-      <Header
-        title="도서 수정"
-        textcolor="#000000"
-        color="#6EA7D0"
-        nextBtnImageUrl="/assets/home.svg"
-        nextPage="/"
-      />
+      <Header title="도서 수정" textcolor="#000000" color="#6EA7D0" nextBtnImageUrl="/assets/home.svg" nextPage="/" />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>
           <ImageContainer imageurl={imageUrl} onClick={handleImageClick}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+            <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleFileChange} />
           </ImageContainer>
           <FormFields>
             <div>
@@ -249,11 +321,11 @@ const Index = () => {
               <StyledInput name="ageGroup" placeholder="5세" color="#6EA7D0" inputcolor="#E6E6E6" value={book.ageGroup} onChange={handleInputChange} />
             </div>
             <div>
-              <Label>장르</Label>
+              <Label>장르{' '}<a href="#" onClick={() => alert(`장르 예시:\n${genres.join(', ')}`)}>[예시]</a></Label>
               <StyledInput name="bookGenre" placeholder="장르를 입력하세요" color="#6EA7D0" inputcolor="#E6E6E6" value={book.bookGenre} onChange={handleInputChange} />
             </div>
             <div>
-              <Label>주제어</Label>
+              <Label>주제어{' '}<a href="#" onClick={() => alert(`주제어 예시:\n${topics.join(', ')}`)}>[예시]</a></Label>
               <StyledInput name="bookTopicList" placeholder="구름, 버스 등등" color="#6EA7D0" inputcolor="#E6E6E6" value={book.bookTopicList} onChange={handleInputChange} />
             </div>
             <div>
@@ -262,7 +334,15 @@ const Index = () => {
             </div>
             <div>
               <Label>줄거리</Label>
-              <StyledTextArea name="summary" placeholder="줄거리를 작성해주세요." color="#6EA7D0" inputcolor="#E6E6E6" rows={5} value={book.summary} onChange={handleInputChange} />
+              <StyledTextArea
+                name="summary"
+                placeholder="줄거리를 작성해주세요."
+                color="#6EA7D0"
+                inputcolor="#E6E6E6"
+                rows={5}
+                value={book.summary}
+                onChange={handleInputChange}
+              />
             </div>
             <div>
               <Label>페이지 수</Label>
