@@ -2,13 +2,37 @@ import {Container, Button, Input} from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useState } from 'react';
 
 const Index = () => {
     const navigate = useNavigate();
 
+    const [username, setUsername] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const eventId = 1; // TODO: 메인에서 id 가져오는 걸로 수정해야함
+
     const onClickResultPage = () => {
         navigate('/event/result')
     }
+
+    const handleJoinEventButton = async (userId:number) => {
+      // 이벤트 참여 api 매핑
+      try {
+        const response = await axios.post(`/kkumteul/api/events/${userId}`, {
+          eventId, 
+          phoneNumber,
+          username,
+        });
+        console.log("이벤트에 성공적으로 참여하였습니다.")
+        console.log(response.data.response);
+
+      } catch (error) {
+        console.error('이벤트 참여 중 오류 발생:', error);
+            alert('이벤트 참여에 실패하였습니다. 다시 시도해 주세요.');
+      }
+    }
+
     return(
         <Container color="#f3f3f3">
             <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="이벤트" nextPage='/'/>
@@ -33,13 +57,13 @@ const Index = () => {
                 </DescriptionSection>
 
                 <InputDiv>
-                    <Input placeholder="이름" color="#FFFFFF" inputcolor='#FFFFFF'></Input>
-                    <Input placeholder="전화번호" color="#FFFFFF" inputcolor='#FFFFFF'></Input>
+                    <Input placeholder="이름" color="#FFFFFF" inputcolor='#FFFFFF' onChange={(e) => setUsername(e.target.value)}></Input>
+                    <Input placeholder="전화번호" color="#FFFFFF" inputcolor='#FFFFFF' onChange={(e) => setPhoneNumber(e.target.value)}></Input>
 
                     <Description color="#565656">이벤트에 참여할 이름과 전화번호를 작성해주세요.</Description>
                 </InputDiv>
 
-                <JoinEventButton color="#000000" backcolor='#FFD869'>참여</JoinEventButton>
+                <JoinEventButton color="#000000" backcolor='#FFD869' onClick={() => handleJoinEventButton(2)}>참여</JoinEventButton>
             </EventContainer>
         </Container>
     )
