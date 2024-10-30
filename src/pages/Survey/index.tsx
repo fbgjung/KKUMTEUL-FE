@@ -13,6 +13,7 @@ import ProgressLine from '../../components/survey/ProgressLine';
 import PrevButton from '../../components/survey/PrevButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosWithToken from "../../axiosWithToken.ts";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const Index = () => {
         favoriteTopics: selectedKeywords,
       };
 
-      const response = await axios.post('/kkumteul/api/survey', surveyData);
+      const response = await axiosWithToken.post('/kkumteul/api/survey', surveyData);
       if (response.status === 200) {
         navigate('/survey/result', { state: response.data });
       }

@@ -96,8 +96,16 @@ const Index = () => {
     });
   };
 
-  const handleLogout = () => {
-    console.log('로그아웃');
+  const handleLogout = async () => {
+    try {
+      await axios.post('/kkumteul/api/auth/logout');
+      sessionStorage.removeItem('accessToken');
+      alert("로그아웃 되었습니다.");
+      navigate('/login');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+      alert('로그아웃에 실패했습니다.');
+    }
   };
 
   const handleDeleteAccount = async () => {
