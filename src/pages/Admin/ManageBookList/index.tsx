@@ -173,6 +173,12 @@ const Index = () => {
     fetchBooks();
   }, [currentPage]);
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchBook();
+    }
+  };
+
   const handleSearchBook = async () => {
     try {
       const response = await axios.get('/kkumteul/api/admin/books/search', {
@@ -265,6 +271,7 @@ const Index = () => {
                 placeholder="도서 제목 또는 작가를 검색해보세요"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={handleKeyDown} // 엔터키 이벤트 추가
                 color="#6EA7D0"
                 inputcolor="#E6E6E6"
               />
