@@ -183,6 +183,24 @@ const Index = () => {
                   ))}
               </RecommendContainer>
           </RecommendBookSection>
+          <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle>
+          <RecommendBookSection>
+              <ArrowBubble>
+                  <RecommendText>요즘 인기 있는 도서는 뭘까??</RecommendText>
+              </ArrowBubble>
+              <RecommendContainer>
+                  <MbtiImage/>
+                  {popularBooks.map((book) => (
+                      <RecommendItem key={book.bookId}>
+                          <RecommendBookImage
+                              onClick={() => navigate(`/booklist/${book.bookId}`)}
+                              $imageurl={formatImageSrc(book.bookImage)}
+                          />
+                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                      </RecommendItem>
+                  ))}
+              </RecommendContainer>
+          </RecommendBookSection>
       </Container>
     );
 };
@@ -324,7 +342,7 @@ const RecommendBookSection = styled.div`
   width: 90%;
   background-color: #ffffff;
   border-radius: 20px;
-  margin: 12px 10px 90px 10px;
+  margin: 12px 10px 20px 10px;
   padding: 20px 20px 40px 20px;
   text-align: left;
   display: flex;
