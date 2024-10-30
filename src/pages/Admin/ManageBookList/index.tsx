@@ -189,8 +189,22 @@ const Index = () => {
     }
   };
 
-  const handleDeleteAll = () => {
-    setBooks([]);
+  const handleDeleteAll = async () => {
+    try {
+      // 선택된 도서 ID마다 삭제 요청 보내기
+      await Promise.all(selectedBooks.map(async (bookId) => {
+        await axios.delete(`/kkumteul/api/admin/books/${bookId}`);
+      }));
+
+      alert("선택된 도서가 삭제되었습니다!");
+
+      // 삭제 후 목록 갱신
+      const remainingBooks = books.filter((book) => !selectedBooks.includes(book.id));
+      setBooks(remainingBooks);
+      setSelectedBooks([]); // 선택 항목 초기화
+    } catch (error) {
+      console.error('도서 삭제 실패:', error);
+    }
   };
 
   const handleAddBook = () => {
