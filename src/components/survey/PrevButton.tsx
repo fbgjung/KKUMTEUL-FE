@@ -32,7 +32,7 @@ const Button = styled.button`
   display: flex;
   padding: 0;
   margin: 20px 0 0 0;
-  background-color: #ffffff;
+  background-color: #fdf8d7;
 `;
 
 const Image = styled.svg`
@@ -42,7 +42,7 @@ const Image = styled.svg`
 `;
 
 const ProgressStep = styled.p`
-  background-color: #ffffff;
+  background-color: #fdf8d7;
   border-radius: 50px;
   padding: 5px;
   margin: 3px 0;

@@ -18,13 +18,13 @@ const MbtiForth = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
   ]
   
   const scores = [
-    {id: 0, name:'전혀 아니에요', score: 1, color:'#6EA7D0', size: '45px' },
-    {id: 1, name:'', score: 2, color:'#6EA7D0', size: '40px' },
-    {id: 2, name:'', score: 3, color:'#6EA7D0', size: '30px' },
+    {id: 0, name:'전혀 아니에요', score: 1, color:'#40ca28', size: '45px' },
+    {id: 1, name:'', score: 2, color:'#40ca28', size: '40px' },
+    {id: 2, name:'', score: 3, color:'#40ca28', size: '30px' },
     {id: 3, name:'', score: 4, color:'#d9d9d9', size: '20px' },
-    {id: 4, name:'', score: 5, color:'#FFC317', size: '30px' },
-    {id: 5, name:'', score: 6, color:'#FFC317', size: '40px' },
-    {id: 6, name:'항상 그래요', score: 7, color:'#FFC317', size: '45px' },
+    {id: 4, name:'', score: 5, color:'#fee208', size: '30px' },
+    {id: 5, name:'', score: 6, color:'#fee208', size: '40px' },
+    {id: 6, name:'항상 그래요', score: 7, color:'#fee208', size: '45px' },
   ]
 
   const onNextPage = () => {
@@ -57,8 +57,8 @@ const MbtiForth = ({onNextStep, updateAnswer, selectedAnswers}:Props) => {
         </Question>
       ))}
       <NextButton 
-        color={isAllAnswersSelected() ? "#FFFFFF" : "#999999"} 
-        backcolor={isAllAnswersSelected() ? '#FFC317' : '#d9d9d9'}  
+        color={isAllAnswersSelected() ? "#565656" : "#999999"} 
+        backcolor={isAllAnswersSelected() ? '#fee208' : '#d9d9d9'}  
         onClick={onNextPage} disabled={!isAllAnswersSelected()} >다음</NextButton>
     </Container>
   )
@@ -69,8 +69,8 @@ export default MbtiForth;
 
 const Container = styled.div`
   margin: 30px 0;
-  width: calc(100% - 40px);
-  background-color: #ffffff;
+  width: 90%;
+  background-color: #fdf8d7;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -128,6 +128,6 @@ const NextButton = styled(Button)`
   justify-content: center;
   align-items: center;
   margin: 20px 0;
-  width: calc(100% - 40px);
+  width: 90%;
 
 `

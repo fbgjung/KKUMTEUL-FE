@@ -13,16 +13,17 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const genres = [
-    { id: 1, name: '그림책', image: '/assets/sports.png' },
-    { id: 2, name: '만화', image: '/assets/sports.png' },
-    { id: 3, name: '동화책', image: '/assets/sports.png' },
-    { id: 4, name: '외국동화', image: '/assets/sports.png' },
-    { id: 5, name: '자연', image: '/assets/sports.png' },
-    { id: 6, name: '역사', image: '/assets/sports.png' },
-    { id: 7, name: '사회', image: '/assets/sports.png' },
-    { id: 8, name: '생활과 과학', image: '/assets/sports.png' },
-    { id: 9, name: '예술', image: '/assets/sports.png' },
-    { id: 10, name: '시', image: '/assets/sports.png' },
+    { id: 1, name: '그림책', image: '/assets/genre/picture_book.png' },
+    { id: 2, name: '만화', image: '/assets/genre/comic_book.png' },
+    { id: 3, name: '동화책', image: '/assets/genre/tale_book.png' },
+    { id: 4, name: '외국동화', image: '/assets/genre/world_book.png' },
+    { id: 5, name: '자연', image: '/assets/genre/natural_book.png' },
+    { id: 6, name: '역사', image: '/assets/genre/history_book.png' },
+    { id: 7, name: '사회', image: '/assets/genre/social_book.png' },
+    { id: 8, name: '생활과 과학', image: '/assets/genre/science_book.png' },
+    { id: 9, name: '예술', image: '/assets/genre/art_book.png' },
+    { id: 10, name: '시', image: '/assets/genre/poem_book.png' },
+    { id: 11, name: '기타', image: '/assets/genre/other_book.png' },
   ];
 
   const keywords = [
@@ -74,7 +75,10 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
 
   return (
       <Container>
-        <GenreTitle>📚 우리 아이가 좋아하는 도서 장르 (3개 선택)</GenreTitle>
+        <GenreTitleContainer>
+          <GenreImage src='/assets/genre/genre_image.png'></GenreImage>
+          <GenreTitle>우리 아이가 좋아하는 도서 장르 (3개 선택)</GenreTitle>
+        </GenreTitleContainer>
         <GenreList>
           {genres.map((genre) => (
               <Item
@@ -88,7 +92,11 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
           ))}
         </GenreList>
 
-        <KeyWordTitle>👀 우리 아이 관심사 (5개 선택)</KeyWordTitle>
+        <KeyWordTitleContainer>
+          <KeyWordImage src='/assets/genre/topic_image.png'></KeyWordImage>
+          <KeyWordTitle>우리 아이 관심사 (5개 선택)</KeyWordTitle>
+        </KeyWordTitleContainer>
+        
         <KeyWordList>
           {keywords.map((keyword) => (
               <Item
@@ -104,8 +112,8 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
 
         {/* handleSubmit 함수로 최종 제출 */}
         <NextButton
-            color={isButtonEnabled ? "#FFFFFF" : "#999999"}
-            backcolor={isButtonEnabled ? '#FFC317' : '#d9d9d9'}
+            color={isButtonEnabled ? "#565656" : "#999999"}
+            backcolor={isButtonEnabled ? '#fee208' : '#d9d9d9'}
             onClick={isButtonEnabled ? handleSubmit : undefined} // 버튼이 활성화된 경우에만 제출 가능
             disabled={!isButtonEnabled}
         >
@@ -119,47 +127,68 @@ export default Interest;
 
 const Container = styled.div`
   margin: 0;
-  width: calc(100% - 40px);
-  background-color: #ffffff;
+  width: 90%;
+  background-color: #fdf8d7;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const GenreTitle = styled.p`
+const GenreTitleContainer = styled.div`
   display: flex;
-  width: calc(100% - 40px);
+  width: 90%;
+  margin-top: 20px;
+  align-items: center;
+`
+
+const GenreImage = styled.img`
+  width: 40px;
+  height: 40px;
+  margin-right: 8px;
+  
+`
+const GenreTitle = styled.h3`
+  display: flex;
+  width: 100%;
   font-weight: bold;
 `;
 
 const GenreList = styled.div`
-  width: calc(100% - 40px);
-  height: 240px;
-  background-color: #f3f3f3;
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
+  width: 95%;
+  /* height: 240px; */
+  background-color: #ffffff;
+  /* box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03); */
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   padding: 30px;
+  margin-bottom: 30px;
 `;
 
 const Item = styled.div<{ isSelected: boolean }>`
-  width: 20%;
+  width: 100px; /* 정원 형태를 유지하기 위해 고정된 너비 */
+  height: 100px; /* 높이도 너비와 동일하게 설정 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 0 5px 20px 5px;
   cursor: pointer;
-  background-color: ${({ isSelected }) => (isSelected ? '#d9d9d9' : 'transparent')};
-  border-radius: 100px;
+  margin: 12px 6px;
+  background-color: ${({ isSelected }) => (isSelected ? '#fee208' : 'transparent')};
+  border-radius: 50%;
   padding: 10px;
-  transition: background-color 0.3s ease;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  color: #565656;
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 const Image = styled.img`
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 10px;
 `;
@@ -170,18 +199,32 @@ const Name = styled.p`
   text-align: center;
 `;
 
-const KeyWordTitle = styled.p`
+const KeyWordTitleContainer = styled.div`
   display: flex;
-  width: calc(100% - 40px);
+  width: 90%;
+  margin-top: 20px;
+  align-items: center;
+`
+
+const KeyWordImage = styled.img`
+  width: 40px;
+  height: 40px;
+  margin-right: 8px;
+  
+`
+
+const KeyWordTitle = styled.h3`
+  display: flex;
+  width: 100%;
   margin-top: 30px;
   font-weight: bold;
 `;
 
 const KeyWordList = styled.div`
-  width: calc(100% - 40px);
-  height: 520px;
-  background-color: #f3f3f3;
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
+  width: 95%;
+  /* height: 520px; */
+  background-color: #ffffff;
+  /* box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03); */
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -190,9 +233,9 @@ const KeyWordList = styled.div`
 `;
 
 const NextButton = styled(Button)`
-  width: calc(100% - 40px);
+  width: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0 0 0;
+  margin: 16px 0;
 `;
