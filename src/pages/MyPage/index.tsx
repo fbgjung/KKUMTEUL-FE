@@ -110,8 +110,11 @@ const Index = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      await axios.delete(`/kkumteul/api/users/1`); // TODO: userId dummy
+      await axiosWithToken.delete(`/kkumteul/api/users`); // TODO: userId dummy
       alert("정말 탈퇴하실 건가요?") // TODO: 모달 고려
+      sessionStorage.removeItem('childProfileId');
+      sessionStorage.removeItem('accessToken');
+      navigate('/')
     } catch (error) {
       console.error('Failed to delete account:', error);
     }
