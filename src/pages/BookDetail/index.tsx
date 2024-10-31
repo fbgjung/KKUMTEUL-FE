@@ -3,19 +3,23 @@ import styled from 'styled-components';
 import { Container, Button } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import axiosWithToken from '../../axiosWithToken.ts';
-
 
 const Index = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [likeStatus, setLikeStatus] = useState(false);
+  const [childProfileId, setChildProfileId] = useState<number | null>(() => {
+    const storedId = sessionStorage.getItem('childProfileId');
+    return storedId ? parseInt(storedId) : null;
+  });
 
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
         const response = await axiosWithToken.get(`/kkumteul/api/books/${id}`);
+        console.log(response.data.response);
         setBook(response.data.response);
       } catch (error) {
         console.error('Error fetching book details:', error);
@@ -27,34 +31,49 @@ const Index = () => {
     fetchBookDetail();
   }, [id]);
 
-    const [childProfileId, setChildProfileId] = useState<number | null>(() => {
-      const storedId = sessionStorage.getItem('childProfileId');
-      return storedId ? parseInt(storedId) : null;
-    });
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (childProfileId !== null) {
+        try {
+          const response = await axiosWithToken.get('/kkumteul/api/books/like', {
+            params: {
+              bookId: id,
+              childProfileId: childProfileId,
+            },
+          });
+          console.log(response.data.response);
+          setLikeStatus(response.data.response.isLiked);
+        } catch (error) {
+          console.error('Error fetching like status:', error);
+        }
+      }
+    };
 
-    const handleLike = async (likeType) => {
+    fetchLikeStatus();
+  }, [id, childProfileId]);
 
-      if (childProfileId === null) {
-        alert("🌈 자녀를 선택해 주세요 🌈");
-        return;
+  const handleLike = async (likeType) => {
+    if (childProfileId === null) {
+      alert("🌈 자녀를 선택해 주세요 🌈");
+      return;
+    }
+
+    try {
+      const response = await axiosWithToken.post('/kkumteul/api/books/like', {
+        bookId: book.bookId,
+        childProfileId: childProfileId,
+        likeType: likeType,
+      });
+      alert(response.data.response);
+
+      // 상태 업데이트
+      if (likeType === 'LIKE') {
+        setLikeStatus(true);
+      } else if (likeType === 'DISLIKE') {
+        setLikeStatus(false);
       }
 
-      try {
-        const response = await axiosWithToken.post('/kkumteul/api/books/like',
-          {
-            bookId: book.bookId,
-            childProfileId: childProfileId,
-            likeType: likeType,
-          },
-        );
-        alert(response.data.response);
-        console.log("좋아요 성공 / 싫어요 성공");
     } catch (error) {
-      // 오류 발생 시 childProfileId를 sessionStorage에서 다시 가져와 업데이트
-      const storedId = sessionStorage.getItem('childProfileId');
-      if (storedId) {
-        setChildProfileId(parseInt(storedId));
-      }
       console.error('Error processing like/dislike:', error);
       alert(error.response?.data || '오류가 발생했습니다.');
     }
@@ -66,7 +85,7 @@ const Index = () => {
 
   if (!book) {
     console.log("Book object is null or undefined");
-    return;
+    return null;
   }
 
   return (
@@ -87,7 +106,7 @@ const Index = () => {
         <TitleText>MBTI</TitleText>
         <MbtiValue>{book.mbtiInfo}</MbtiValue>
 
-        <TitleText>줄거리 </TitleText>
+        <TitleText>줄거리</TitleText>
         <SummaryContainer>
           <Summary>{book.bookSummary}</Summary>
         </SummaryContainer>
@@ -119,10 +138,20 @@ const Index = () => {
       </BookInfo>
 
       <ButtonContainer>
-        <LikeButton onClick={() => handleLike('LIKE')} color="#757575" backcolor="#ffffff">
+        <LikeButton
+          onClick={() => handleLike('LIKE')}
+          color={likeStatus ? "#FFC317" : "#757575"}
+          backcolor={likeStatus ? "#FFD869" : "#ffffff"}
+          active={likeStatus} // 눌려있는 상태 표시
+        >
           좋아요
         </LikeButton>
-        <DisLikeButton onClick={() => handleLike('DISLIKE')} color="#757575" backcolor="#ffffff">
+        <DisLikeButton
+          onClick={() => handleLike('DISLIKE')}
+          color={likeStatus ? "#757575" : "#6EA7D0"}
+          backcolor={likeStatus ? "#ffffff" : "#6EA7D0"}
+          active={!likeStatus} // 눌려있는 상태 표시
+        >
           싫어요
         </DisLikeButton>
       </ButtonContainer>
@@ -132,6 +161,7 @@ const Index = () => {
 
 export default Index;
 
+// 스타일 컴포넌트 정의
 const BookImage = styled.img`
   width: 180px;
   height: 240px;
@@ -186,7 +216,7 @@ const SummaryContainer = styled.div`
   border-radius: 12px;
   margin: 10px 0 20px 0;
   padding: 0 20px;
-  overflow-y: auto; // 줄거리 길이에 따라
+  overflow-y: auto;
 `;
 
 const Summary = styled.p`
@@ -209,9 +239,12 @@ const ButtonContainer = styled.div`
   margin: 60px 0;
 `;
 
+// 스타일 컴포넌트 정의
 const LikeButton = styled(Button)`
   border: 4px solid #FFC317;
   font-size: 16px;
+  background-color: ${(props) => (props.active ? '#FFC317' : '#ffffff')};
+  color: ${(props) => (props.active ? '#ffffff' : '#757575')};
   &:hover {
     background-color: #FFC317;
     color: #ffffff;
@@ -221,8 +254,11 @@ const LikeButton = styled(Button)`
 const DisLikeButton = styled(Button)`
   border: 4px solid #6EA7D0;
   font-size: 16px;
+  background-color: ${(props) => (props.active ? '#6EA7D0' : '#ffffff')};
+  color: ${(props) => (props.active ? '#ffffff' : '#757575')};
   &:hover {
     background-color: #6EA7D0;
     color: #ffffff;
   }
 `;
+
