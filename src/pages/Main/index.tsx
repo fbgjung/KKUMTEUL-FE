@@ -83,9 +83,6 @@ const Index = () => {
     fetchRecommendedBooks(profile.profileId);
 
     alert("프로필 변경이 완료되었습니다.");
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
   };
   
 
