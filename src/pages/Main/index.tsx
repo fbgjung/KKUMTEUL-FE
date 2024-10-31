@@ -4,7 +4,16 @@ import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import axios from 'axios';
 import LoginModal from '../../modal/LoginModal';
-import axiosWithToken from "../../axiosWithToken.ts";
+import axiosWithToken from '../../axiosWithToken.ts';
+
+interface Event {
+  eventId: number;
+  eventName: string;
+  eventDescription: string;
+  startDate: string;
+  expiredDate: string;
+}
+
 
 interface PopularBooks {
     bookId: number
@@ -31,202 +40,224 @@ interface ChildProfile {
 }
 
 const Index = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const onClickPrevButton = () => {
-        navigate(-1);
+  const onClickPrevButton = () => {
+    navigate(-1);
+  }
+
+  const [childProfileId, setChildProfileId] = useState<number | null>(
+    parseInt(sessionStorage.getItem('childProfileId') || '0') || null
+  );
+
+  const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
+  const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
+  const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
+  const [eventData, setEventData] = useState<Event>();
+  const [popularBooks, setPopularBooks] = useState<PopularBooks[]>([]);
+  const [childName, setChildName] = useState<string>();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const menus: Menu[] = [
+    {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png'},
+    {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png'},
+    {id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png'},
+  ]
+
+  const toggleMenu = () => {
+    if(!isLoggedIn) {
+      setIsModalOpen(true); // 로그인 안했을 때 모달창 보여주기
     }
-
-    const [childProfileId, setChildProfileId] = useState<number | null>(
-        parseInt(sessionStorage.getItem('childProfileId') || '0') || null
-    );
-
-    const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
-    const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
-    const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
-    const [popularBooks, setPopularBooks] = useState<PopularBooks[]>([]);
-    const [childName, setChildName] = useState<string>();
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    const menus: Menu[] = [
-        {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png'},
-        {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png'},
-        {id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png'},
-    ]
-
-    const toggleMenu = () => {
-        if (!isLoggedIn) {
-            setIsModalOpen(true); // 로그인 안했을 때 모달창 보여주기
-        }
-        setIsToggleMenuOpen(prev => !prev); // 로그인 했을 때 토글 목록 보여주기
-    };
+      setIsToggleMenuOpen(prev => !prev); // 로그인 했을 때 토글 목록 보여주기
+  };
 
 
-    const onClickEventBanner = () => {
-        navigate('/event');
+  const onClickEventBanner = () => {
+      navigate('/event', {state: eventData});
+  }
+
+  const onClickToggleMenuItem = (profile: ChildProfile) => {
+      sessionStorage.setItem('childProfileId', profile.profileId.toString());
+      setChildProfileId(profile.profileId);
+      setChildName(profile.childName);
+      fetchRecommendedBooks(profile.profileId);
+
+      alert("프로필 변경이 완료되었습니다.");
+      setTimeout(() => {
+          window.location.reload();
+  }, 1000);
+    
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+      const accessToken = sessionStorage.getItem('accessToken');
+      setIsLoggedIn(!!accessToken);
+      // 자녀 프로필 리스트 조회
+      const fetchChildProfiles = async () => {
+          try {
+              const response = await axiosWithToken.get(`/kkumteul/api/childProfiles`);
+              const childProfiles = response.data.response;
+              console.log(childProfiles);
+              setChildProfileList(childProfiles);
+          } catch (error) {
+              console.error('Failed to fetch child profiles:', error);
+          }
+      };
+
+      // 자녀 프로필 유효성 검증 api 연동 및 추천 도서 조회 함수 호출
+      const fetchChildProfileAndRecommendedBooks = async () => {
+          if (childProfileId) {
+              try {
+                  const response = await axiosWithToken.get(`/kkumteul/api/users/childProfiles/${childProfileId}`);
+                  console.log(response.data);
+                  fetchRecommendedBooks(childProfileId);
+              } catch (error) {
+                  console.error('Failed to fetch child profile:', error);
+                  alert('잘못된 접근입니다.');
+              }
+          }
+      };
+
+      setIsLoggedIn(false);
+
+      fetchChildProfiles();
+      fetchChildProfileAndRecommendedBooks();  
+      fetchCurrentEvent();
+
+  }, []);
+
+  console.log(childProfileList);
+    
+  const handleAddChildProfile = () => {
+    navigate('/mypage/createChildProfile');
+  }
+
+  const formatImageSrc = (imageData: string | null) => {
+      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+  };
+
+  // 추천 도서 목록 조회
+  const fetchRecommendedBooks = async (childProfileId: number) => {
+      try {
+          const response = await axiosWithToken.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
+          const recommendedBooks = response.data.response.recommendedBooks;
+          const popularBooks = response.data.response.popularBooks;
+          console.log("추천책:", recommendedBooks);
+          console.log("인기책(추천도서가 없을경우): ", popularBooks);
+          setRecommendedBooks(recommendedBooks);
+          setPopularBooks(popularBooks);
+      } catch (error) {
+          console.error('Failed to fetch recommended books:', error);
+      }
+  };
+    
+
+  // 현재 진행중인 이벤트 정보 조회
+  const fetchCurrentEvent = async() => {
+    try {
+      const response = await axiosWithToken.get(`/kkumteul/api/events`);
+      console.log(response.data.response);
+      setEventData(response.data.response);
+    } catch (error) {
+      console.log(error);
     }
+  }
+  
+  const handleAddChildProfile = () => {
+      navigate('/mypage/createChildProfile');
+  }
+  
+  const formatImageSrc = (imageData: string | null) => {
+      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+  };
 
+  return (
+    <Container color="#f3f3f3">
+      <Header>
+          <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
+          <Title>꿈틀</Title>
+          <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
+          {!isLoggedIn && isModalOpen && (
+          <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />
+         )}
+          
+          {isLoggedIn && isToggleMenuOpen && (
+          <DropdownMenu>
+            {childProfileList.length > 0 ? (
+              childProfileList.map((profile) => (
+                <DropdownItem
+                  key={profile.profileId}
+                  onClick={() => onClickToggleMenuItem(profile)}
+                >
+                  <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
+                </DropdownItem>
+              ))
+            ) : (
+              <>
+                <DropdownItem onClick={handleAddChildProfile}>
+                  <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
+                </DropdownItem>
+              </>
+            )}
+          </DropdownMenu>
+        )}
+      </Header>
 
-    const onClickToggleMenuItem = (profile: ChildProfile) => {
-        sessionStorage.setItem('childProfileId', profile.profileId.toString());
-        setChildProfileId(profile.profileId);
-        setChildName(profile.childName);
-        fetchRecommendedBooks(profile.profileId);
-
-        alert("프로필 변경이 완료되었습니다.");
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    useEffect(() => {
-        // TODO: 로그인 확인 하고 isLoggedIn에 세팅하는 로직 추가하기
-        const accessToken = sessionStorage.getItem('accessToken');
-        setIsLoggedIn(!!accessToken);
-        // 자녀 프로필 리스트 조회
-        const fetchChildProfiles = async () => {
-            try {
-                const response = await axiosWithToken.get(`/kkumteul/api/childProfiles`);
-                const childProfiles = response.data.response;
-                console.log(childProfiles);
-                setChildProfileList(childProfiles);
-            } catch (error) {
-                console.error('Failed to fetch child profiles:', error);
-            }
-        };
-
-        // 자녀 프로필 유효성 검증 api 연동 및 추천 도서 조회 함수 호출
-        const fetchChildProfileAndRecommendedBooks = async () => {
-            if (childProfileId) {
-                try {
-                    const response = await axiosWithToken.get(`/kkumteul/api/users/childProfiles/${childProfileId}`);
-                    console.log(response.data);
-                    fetchRecommendedBooks(childProfileId);
-                } catch (error) {
-                    console.error('Failed to fetch child profile:', error);
-                    alert('잘못된 접근입니다.');
-                }
-            }
-        };
-
-        fetchChildProfiles();
-        fetchChildProfileAndRecommendedBooks();
-
-    }, []);
-
-    console.log(childProfileList);
-
-    // 추천 도서 목록 조회
-    const fetchRecommendedBooks = async (childProfileId: number) => {
-        try {
-            const response = await axiosWithToken.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
-            const recommendedBooks = response.data.response.recommendedBooks;
-            const popularBooks = response.data.response.popularBooks;
-            console.log("추천책:", recommendedBooks);
-            console.log("인기책(추천도서가 없을경우): ", popularBooks);
-            setRecommendedBooks(recommendedBooks);
-            setPopularBooks(popularBooks);
-        } catch (error) {
-            console.error('Failed to fetch recommended books:', error);
-        }
-    };
-
-    const handleAddChildProfile = () => {
-        navigate('/mypage/createChildProfile');
-    }
-
-    const formatImageSrc = (imageData: string | null) => {
-        return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
-    };
-
-    return (
-        <Container color="#f3f3f3">
-            <Header>
-                <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
-                <Title>꿈틀</Title>
-                <NextButton onClick={toggleMenu} $imageurl="/assets/menu.svg"></NextButton>
-                {!isLoggedIn && isModalOpen && (
-                    <LoginModal isOpen={isModalOpen} onClose={handleCloseModal}/>
-                )}
-
-                {isLoggedIn && isToggleMenuOpen && (
-                    <DropdownMenu>
-                        {childProfileList.length > 0 ? (
-                            childProfileList.map((profile) => (
-                                <DropdownItem
-                                    key={profile.profileId}
-                                    onClick={() => onClickToggleMenuItem(profile)}
-                                >
-                                    <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
-                                </DropdownItem>
-                            ))
-                        ) : (
-                            <>
-                                <DropdownItem onClick={handleAddChildProfile}>
-                                    <LinkTitle $color='#FFC317'>자녀 추가하기</LinkTitle>
-                                </DropdownItem>
-                            </>
-                        )}
-                    </DropdownMenu>
-                )}
-            </Header>
-
-            <ImageWrapper>
-                <Image src="/assets/advertisement.png" alt="Main Test"/>
-            </ImageWrapper>
-            <MenuSection>
-                {menus.map((menu) => (
-                    <Menus key={menu.id} onClick={() => navigate(menu.link)}>
-                        <LinkButton src={menu.image}/>
-                        <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
-                    </Menus>
-                ))}
-            </MenuSection>
-            <EventBanner onClick={onClickEventBanner}>
-                <EventTitle>선착순 100명 이벤트</EventTitle>
-            </EventBanner>
-            <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
-            <RecommendBookSection>
-                <ArrowBubble>
-                    <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
-                </ArrowBubble>
-                <RecommendContainer>
-                    <MbtiImage/>
-                    {recommendedBooks.map((book) => (
-                        <RecommendItem key={book.bookId}>
-                            <RecommendBookImage
-                                onClick={() => navigate(`/booklist/${book.bookId}`)}
-                                $imageurl={formatImageSrc(book.bookImage)}
-                            />
-                            <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
-                        </RecommendItem>
-                    ))}
-                </RecommendContainer>
-            </RecommendBookSection>
-            <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle>
-            <RecommendBookSection>
-                <ArrowBubble>
-                    <RecommendText>요즘 인기 있는 도서는 뭘까??</RecommendText>
-                </ArrowBubble>
-                <RecommendContainer>
-                    <MbtiImage/>
-                    {popularBooks.map((book) => (
-                        <RecommendItem key={book.bookId}>
-                            <RecommendBookImage
-                                onClick={() => navigate(`/booklist/${book.bookId}`)}
-                                $imageurl={formatImageSrc(book.bookImage)}
-                            />
-                            <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
-                        </RecommendItem>
-                    ))}
-                </RecommendContainer>
-            </RecommendBookSection>
-        </Container>
+      <ImageWrapper>
+        <Image src="/assets/advertisement.png" alt="Main Test" />      
+      </ImageWrapper>
+      <MenuSection>
+      {menus.map((menu) => (
+        <Menus key={menu.id} onClick={() => navigate(menu.link)}>
+          <LinkButton src={menu.image}/>
+          <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
+        </Menus>
+      ))}
+      </MenuSection>   
+      <EventBanner onClick={onClickEventBanner}>
+        <EventTitle>선착순 100명 이벤트</EventTitle>
+      </EventBanner>
+          <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
+          <RecommendBookSection>
+              <ArrowBubble>
+                  <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
+              </ArrowBubble>
+              <RecommendContainer>
+                  <MbtiImage/>
+                  {recommendedBooks.map((book) => (
+                      <RecommendItem key={book.bookId}>
+                          <RecommendBookImage
+                              onClick={() => navigate(`/booklist/${book.bookId}`)}
+                              $imageurl={formatImageSrc(book.bookImage)}
+                          />
+                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                      </RecommendItem>
+                  ))}
+              </RecommendContainer>
+          </RecommendBookSection>
+          <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle>
+          <RecommendBookSection>
+              <ArrowBubble>
+                  <RecommendText>요즘 인기 있는 도서는 뭘까??</RecommendText>
+              </ArrowBubble>
+              <RecommendContainer>
+                  <MbtiImage/>
+                  {popularBooks.map((book) => (
+                      <RecommendItem key={book.bookId}>
+                          <RecommendBookImage
+                              onClick={() => navigate(`/booklist/${book.bookId}`)}
+                              $imageurl={formatImageSrc(book.bookImage)}
+                          />
+                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                      </RecommendItem>
+                  ))}
+              </RecommendContainer>
+          </RecommendBookSection>
+      </Container>
     );
 };
 
