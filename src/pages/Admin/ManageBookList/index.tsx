@@ -63,7 +63,7 @@ const SearchContainer = styled.div`
 
 const SearchInput = styled(Input)`
     width: 88%;
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     color: #6EA7D0;
     margin-left: 0px;
 `;
@@ -310,6 +310,18 @@ const Index = () => {
     }
   };
 
+  const getVisiblePageNumbers = () => {
+    const maxVisibleButtons = 5;
+    const totalPageButtons = Math.min(totalPages, maxVisibleButtons);
+
+    // 시작 페이지 계산
+    const start = Math.floor(currentPage / maxVisibleButtons) * maxVisibleButtons;
+    const end = Math.min(start + totalPageButtons, totalPages);
+
+    return Array.from({ length: end - start }, (_, i) => start + i);
+  };
+
+
   const handlePageClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -428,21 +440,21 @@ const Index = () => {
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', position: 'relative', bottom: '0', width: '100%', paddingBottom: '20px' }}>
-          <Button color="#FFFFFF" backcolor="#6EA7D0" onClick={handlePreviousPage} disabled={currentPage === 0} style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}>
+          <Button color="#FFFFFF" backcolor="#708090" onClick={handlePreviousPage} disabled={currentPage === 0} style={{ height: '30px', width: '50px', fontSize: '15px', margin: '0 5px' }}>
             이전
           </Button>
-          {[...Array(totalPages)].map((_, index) => (
+          {getVisiblePageNumbers().map((pageNumber) => (
             <Button
-              key={index}
-              color={index === currentPage ? "#000000" : "#FFFFFF"}
-              backcolor={index === currentPage ? "#FFFFFF" : "#6EA7D0"}
-              onClick={() => handlePageClick(index)}
-              style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}
+              key={pageNumber}
+              color={pageNumber === currentPage ? "#000000" : "#FFFFFF"}
+              backcolor={pageNumber === currentPage ? "#FFFFFF" : "#6EA7D0"}
+              onClick={() => handlePageClick(pageNumber)}
+              style={{ height: '30px', width: '30px', fontSize: '15px', margin: '0 5px', borderRadius: '1px'}}
             >
-              {index + 1}
+              {pageNumber + 1}
             </Button>
           ))}
-          <Button color="#FFFFFF" backcolor="#6EA7D0" onClick={handleNextPage} disabled={currentPage === totalPages - 1} style={{ height: 'auto', width: 'auto', fontSize: '15px', margin: '0 5px' }}>
+          <Button color="#FFFFFF" backcolor="#708090" onClick={handleNextPage} disabled={currentPage === totalPages - 1} style={{ height: '30px', width: '50px', fontSize: '15px', margin: '0 5px' }}>
             다음
           </Button>
         </div>
