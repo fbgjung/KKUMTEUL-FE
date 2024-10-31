@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { AdminContainer, Button, Input, TextArea } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +35,11 @@ const FormFields = styled.div`
     flex: 1;
 `;
 
+const MBTIFields = styled.div`
+    display: flex;
+    flex-direction: row;
+`
+
 const Label = styled.label`
     color: #6EA7D0;
     font-weight: bold;
@@ -55,6 +60,14 @@ const StyledButton = styled(Button)`
     margin-top: 20px;
     width: 100%;
 `;
+
+const MBTIButton = styled(Button)`
+    margin-left: 20px;
+    width: 20%;
+    font-size: 15px;
+    height: auto;
+    background-color: darkgray;
+`
 
 const genres = [
   '그림책', '만화', '동화', '외국동화', '자연의 세계', '역사', '사회', '생활과 과학', '예술', '시', '옛날이야기'
@@ -112,6 +125,34 @@ const Index = () => {
       [name]: name === 'bookTopicList' ? value.split(',').map((v) => v.trim()) : value,
     }));
   };
+
+  const handleMBTIClick = async () => {
+    try {
+      const response = await axiosWithToken.post('/kkumteul/api/hugging/mbti', {
+        title: bookData.title,
+        summary: bookData.summary
+      });
+      const mbtiValue = response.data.response; // 서버에서 'mbti'가 'response'라는 키로 응답한다고 가정
+
+      setBookData(prevData => ({
+        ...prevData,
+        bookMBTI: mbtiValue
+      }));
+
+      console.log(mbtiValue);
+    } catch (error) {
+      console.error('MBTI 생성 오류:', error);
+      alert('MBTI 생성 중 오류가 발생했습니다.');
+    }
+  };
+
+// bookMBTI 값이 변경될 때 StyledInput에 반영
+  useEffect(() => {
+    const inputElement = document.getElementsByName('bookMBTI')[0] as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = bookData.bookMBTI;
+    }
+  }, [bookData.bookMBTI]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,7 +298,10 @@ const Index = () => {
             </div>
             <div>
               <Label>MBTI</Label>
-              <StyledInput name="bookMBTI" placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" onChange={handleInputChange} />
+              <MBTIFields>
+                <StyledInput name="bookMBTI" placeholder="INFP" color="#6EA7D0" inputcolor="#E6E6E6" onChange={handleInputChange} readOnly/>
+                <MBTIButton color="#FFFFFF" backcolor="#6EA7D0" onClick={handleMBTIClick}>MBTI 생성</MBTIButton>
+              </MBTIFields>
             </div>
             <div>
               <Label>줄거리</Label>
