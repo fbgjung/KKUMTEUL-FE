@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
-import axios from 'axios';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
 
@@ -78,16 +77,17 @@ const Index = () => {
   }
 
   const onClickToggleMenuItem = (profile: ChildProfile) => {
-      sessionStorage.setItem('childProfileId', profile.profileId.toString());
-      setChildProfileId(profile.profileId);
-      setChildName(profile.childName);
-      fetchRecommendedBooks(profile.profileId);
+    sessionStorage.setItem('childProfileId', profile.profileId.toString());
+    setChildProfileId(profile.profileId);
+    setChildName(profile.childName);
+    fetchRecommendedBooks(profile.profileId);
 
-      alert("프로필 변경이 완료되었습니다.");
-      setTimeout(() => {
-          window.location.reload();
-  }, 1000);
-    
+    alert("프로필 변경이 완료되었습니다.");
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+  };
+  
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -131,14 +131,6 @@ const Index = () => {
   }, []);
 
   console.log(childProfileList);
-    
-  const handleAddChildProfile = () => {
-    navigate('/mypage/createChildProfile');
-  }
-
-  const formatImageSrc = (imageData: string | null) => {
-      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
-  };
 
   // 추천 도서 목록 조회
   const fetchRecommendedBooks = async (childProfileId: number) => {
@@ -154,6 +146,14 @@ const Index = () => {
           console.error('Failed to fetch recommended books:', error);
       }
   };
+
+  const handleAddChildProfile = () => {
+    navigate('/mypage/createChildProfile');
+  }
+
+  const formatImageSrc = (imageData: string | null) => {
+      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+  };
     
 
   // 현재 진행중인 이벤트 정보 조회
@@ -167,14 +167,6 @@ const Index = () => {
     }
   }
   
-  const handleAddChildProfile = () => {
-      navigate('/mypage/createChildProfile');
-  }
-  
-  const formatImageSrc = (imageData: string | null) => {
-      return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
-  };
-
   return (
     <Container color="#f3f3f3">
       <Header>
@@ -259,7 +251,8 @@ const Index = () => {
           </RecommendBookSection>
       </Container>
     );
-};
+  };
+
 
 export default Index;
 
