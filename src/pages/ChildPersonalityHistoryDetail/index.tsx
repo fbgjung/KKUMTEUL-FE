@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ProgressLine from '../../components/surveyresult/ProgressLine';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import axiosWithToken from "../../axiosWithToken.ts";
 
 const Index = () => {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Index = () => {
     useEffect(() => {
         const fetchHistoryDetail = async () => {
             try {
-                const response = await axios.get(`/kkumteul/api/history/${historyId}`);
+                const response = await axiosWithToken.get(`/kkumteul/api/history/${historyId}`);
                 setSurveyResult(response.data.response);
             } catch (error) {
                 console.error("Error fetching history detail:", error);
