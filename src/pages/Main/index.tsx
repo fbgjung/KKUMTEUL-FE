@@ -1,9 +1,11 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
+import FontStyles from '../../styles/globalStyles.ts';
+
 
 interface Event {
   eventId: number;
@@ -36,6 +38,7 @@ interface Menu {
 interface ChildProfile {
     childName: string;
     profileId: number;
+    childProfileImage: string;
 }
 
 const Index = () => {
@@ -59,9 +62,9 @@ const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const menus: Menu[] = [
-    {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/survey.png'},
-    {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/book.png'},
-    {id: 2, name: '마이페이지', link: '/mypage', image: '/assets/mypage.png'},
+    {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/menu_mbti.png'},
+    {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/menu_book.png'},
+    {id: 2, name: '마이페이지', link: '/mypage', image: '/assets/menu_mypage.png'},
   ]
 
   const toggleMenu = () => {
@@ -199,7 +202,8 @@ const Index = () => {
   }
   
   return (
-    <Container color="#f3f3f3">
+    <Container color="#fdf8d7">
+      <FontStyles/>
       <Header>
           <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
           <Title>꿈틀</Title>
@@ -216,7 +220,11 @@ const Index = () => {
                   key={profile.profileId}
                   onClick={() => onClickToggleMenuItem(profile)}
                 >
-                  <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
+                <LinkContainer>
+                <LinkImage src={formatImageSrc(profile.childProfileImage)} alt={profile.childName} />
+                <LinkTitle $color="#6EA7D0">{profile.childName}</LinkTitle>
+                </LinkContainer>
+                
                 </DropdownItem>
               ))
             ) : (
@@ -231,24 +239,41 @@ const Index = () => {
       </Header>
 
       <ImageWrapper>
-        <Image src="/assets/advertisement.png" alt="Main Test" />      
-      </ImageWrapper>
+        <Image src="/assets/rabbit.png" alt="Main Test" />      
+      </ImageWrapper> 
+
       <MenuSection>
       {menus.map((menu) => (
         <Menus key={menu.id} onClick={() => onClickMenuItem(menu.id, menu.link)}>
           <LinkButton src={menu.image}/>
-          <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
+          <LinkTitle $color='#ffffff'>{menu.name}</LinkTitle>
         </Menus>
       ))}
-      </MenuSection>   
+      </MenuSection>  
+      
       <EventBanner onClick={onClickEventBanner}>
         <EventTitle>선착순 100명 이벤트</EventTitle>
+        <EventText>오늘 오후 1시! 행운의 당첨자는?</EventText>
       </EventBanner>
-          <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle>
+          {/* <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle> */}
+
+          <RecommendTitleSection>
+            <RecommendTitleImage src="/assets/help.png"></RecommendTitleImage>
+            <RecommendTitleText>
+            <RecommendTitle>책을 선택하는</RecommendTitle>
+            <RecommendTitle>고민의 시간을 덜어드려요 </RecommendTitle>
+            <RecommendExplainText>꿈틀이 맞춤 도서를 매일 알려드려요!</RecommendExplainText>
+          </RecommendTitleText>
+            
+          </RecommendTitleSection>
+          
+
+
           <RecommendBookSection>
               <ArrowBubble>
                   <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
               </ArrowBubble>
+              
               <RecommendContainer>
                   <MbtiImage/>
                   {recommendedBooks.map((book) => (
@@ -257,25 +282,23 @@ const Index = () => {
                               onClick={() => navigate(`/booklist/${book.bookId}`)}
                               $imageurl={formatImageSrc(book.bookImage)}
                           />
-                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
                       </RecommendItem>
                   ))}
               </RecommendContainer>
           </RecommendBookSection>
-          <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle>
+          {/* <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle> */}
           <RecommendBookSection>
               <ArrowBubble>
-                  <RecommendText>요즘 인기 있는 도서는 뭘까??</RecommendText>
+                  <RecommendText>꿈틀이의 친구들은 어떤 책을 좋아할까요?</RecommendText>
               </ArrowBubble>
               <RecommendContainer>
-                  <MbtiImage/>
                   {popularBooks.map((book) => (
                       <RecommendItem key={book.bookId}>
                           <RecommendBookImage
                               onClick={() => navigate(`/booklist/${book.bookId}`)}
                               $imageurl={formatImageSrc(book.bookImage)}
                           />
-                          <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle>
+                          {/* <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle> */}
                       </RecommendItem>
                   ))}
               </RecommendContainer>
@@ -290,7 +313,7 @@ export default Index;
 const Header = styled.div`
     width: 100%;
     height: 60px;
-    background-color: #F3F3F3;
+    background-color: #fee208;
     align-items: center;
     position: sticky;
     top: 0;
@@ -305,21 +328,22 @@ const DropdownMenu = styled.div`
     position: absolute;
     top: 60px;
     right: 10px;
-    width: 120px;
+    width: 200px;
     background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     z-index: 1001;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    border: 2px solid #fee208;;
 
 `;
 
 const DropdownItem = styled.div`
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 20px 0;
     cursor: pointer;
     width: 100%;
     justify-content: center;
@@ -329,6 +353,7 @@ const Title = styled.h2`
     margin: 0;
     color: #000000;
     font-size: 18px;
+    font-family: 'CookieRunRegular', sans-serif;
 `;
 
 const PrevButton = styled.button<{ $imageurl: string }>`
@@ -358,7 +383,7 @@ const Image = styled.img`
 
 // 링크
 const MenuSection = styled.div`
-    width: 90%;
+    width: 95%;
     height: 100px;
     background-color: #ffffff;
     margin: 20px 10px 0 10px;
@@ -380,10 +405,38 @@ const Menus = styled.div`
 `
 
 const LinkButton = styled.img`
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     padding: 0;
     margin-bottom: 8px;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
+`
+
+const LinkContainer = styled.div`
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin: 0;
+ padding: 0;
+ 
+`
+
+const LinkImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border: 2px solid #fee208;
+  border-radius: 100px;
+  margin-bottom: 4px;
+  transition: transform 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
+  
 `
 
 const LinkTitle = styled.p<{ $color: string }>`
@@ -399,10 +452,10 @@ const LinkTitle = styled.p<{ $color: string }>`
 
 // 이벤트 배너
 const EventBanner = styled.div`
-    width: 90%;
+    width: 95%;
     height: 100px;
-    background-color: #04cb94;
-    margin: 20px 10px 10px 10px;
+    background-color: #ffd8df;
+    margin: 20px 10px 30px 10px;
     border-radius: 20px;
     box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
     cursor: pointer;
@@ -410,17 +463,35 @@ const EventBanner = styled.div`
     justify-content: center;
     align-items: center;
     color: #ffffff;
+    border: 4px solid #ec8396;
+    flex-direction: column;
+    padding: 30px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
 `;
 
 const EventTitle = styled.p`
     font-weight: bold;
     font-size: 30px;
+    color: #ec8396;
+    margin: 0;
+`
+
+const EventText = styled.p`
+  margin: 0;
+  color: #7e4747;
+
 `
 
 // 도서 추천
+
 const RecommendBookSection = styled.div`
-    width: 90%;
-    background-color: #ffffff;
+    width: 95%;
+    background-color: #fee208;
     border-radius: 20px;
     margin: 12px 10px 20px 10px;
     padding: 20px 20px 40px 20px;
@@ -429,18 +500,58 @@ const RecommendBookSection = styled.div`
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    
 `;
 
-const RecommendTitle = styled.h3`
-    margin-bottom: 2px;
+const RecommendTitleSection = styled.div`
+  width: 90%;
+  display: flex;
+  margin-top: 20px;
+`
+
+
+const bounce = keyframes`
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+`;
+
+const RecommendTitleImage = styled.img`
+  width: 44px;
+  height: 44px;
+  margin-right: 20px;
+  animation: ${bounce} 1s infinite;
+`;
+
+
+const RecommendTitleText = styled.div`
+  width: 100%;
+  
+`
+
+const RecommendTitle = styled.h2`
+    margin-bottom: 0px;
     width: 90%;
+    color: #605951;
+    margin: 0;
 
 `;
+const RecommendExplainText = styled.p`
+  color: #FFC317;
+  margin: 2px;
+  font-weight: bold;
+`
 
 const RecommendText = styled.p`
     margin: 0;
-    color: #FFC317;
-    font-size: 16px;
+    color: #ffffff;
+    font-size: 18px;
     text-align: center;
 `;
 
@@ -450,7 +561,7 @@ const ArrowBubble = styled.div`
     width: 90%;
     height: auto;
     padding: 10px;
-    background: #ffffff;
+    background: #FFC317;
     border-radius: 30px;
     border: #FFC317 solid 3px;
 
@@ -464,7 +575,7 @@ const ArrowBubble = styled.div`
         position: absolute;
         border-style: solid;
         border-width: 10px 15px 0;
-        border-color: #ffffff transparent;
+        border-color: #FFC317 transparent;
         display: block;
         width: 0;
         z-index: 1;
@@ -498,6 +609,13 @@ const RecommendContainer = styled.div`
     overflow-x: scroll;
     gap: 0;
     width: 100%;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const MbtiImage = styled.div`
@@ -521,11 +639,22 @@ const RecommendItem = styled.div`
 `;
 
 const RecommendBookImage = styled.img<{ $imageurl: string }>`
-    width: 80px;
-    height: 100px;
-    background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
-    padding: 0;
-    margin: 0;
+  width: 90px;
+  height: 120px;
+  background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
+  padding: 0;
+  margin: 0;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  &:hover {
+        transform: scale(1.05);
+    }
+
+    &.active {
+        transform: scale(0.9); 
+        transition: transform 0.1s ease;
+    }
 `;
 
 const RecommendBookTitle = styled.p`
