@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import axios from 'axios';
 import LoginModal from '../../modal/LoginModal';
+import axiosWithToken from '../../axiosWithToken.ts';
 
 interface PopularBooks {
   bookId: number
@@ -110,6 +111,7 @@ const Index = () => {
 
     fetchChildProfiles();
     fetchChildProfileAndRecommendedBooks();  
+    fetchCurrentEvent();
 
   }, []);
 
@@ -129,6 +131,18 @@ const Index = () => {
           console.error('Failed to fetch recommended books:', error);
       }
   };
+
+  // 현재 진행중인 이벤트 정보 조회
+  const fetchCurrentEvent = async() => {
+    try {
+      const response = await axiosWithToken.get(`/kkumteul/api/events`);
+      console.log(response.data.response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+
 
   const handleAddChildProfile = () => {
       navigate('/mypage/createChildProfile');
