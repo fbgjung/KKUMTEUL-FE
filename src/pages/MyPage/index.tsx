@@ -98,7 +98,7 @@ const Index = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/kkumteul/api/auth/logout');
+      await axiosWithToken.post('/kkumteul/api/auth/logout');
       sessionStorage.removeItem('accessToken');
       alert("로그아웃 되었습니다.");
       navigate('/login');
