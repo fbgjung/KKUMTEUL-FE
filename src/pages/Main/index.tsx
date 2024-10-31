@@ -6,6 +6,14 @@ import axios from 'axios';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
 
+interface Event {
+  eventId: number;
+  eventName: string;
+  eventDescription: string;
+  startDate: string;
+  expiredDate: string;
+}
+
 interface PopularBooks {
   bookId: number
   bookTitle: string
@@ -44,6 +52,7 @@ const Index = () => {
   const [isToggleMenuOpen, setIsToggleMenuOpen] = useState(false);
   const [childProfileList, setChildProfileList] = useState<ChildProfile[]>([]);
   const [recommendedBooks, setRecommendedBooks] = useState<RecommendBook[]>([]);
+  const [eventData, setEventData] = useState<Event>();
   const [popularBooks, setPopularBooks] = useState<PopularBooks[]>([]);
   const [childName, setChildName] = useState<string>();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
@@ -64,7 +73,7 @@ const Index = () => {
 
 
   const onClickEventBanner = () => {
-      navigate('/event');
+      navigate('/event', {state: eventData});
   }
 
 
@@ -137,6 +146,7 @@ const Index = () => {
     try {
       const response = await axiosWithToken.get(`/kkumteul/api/events`);
       console.log(response.data.response);
+      setEventData(response.data.response);
     } catch (error) {
       console.log(error);
     }
