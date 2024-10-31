@@ -73,7 +73,12 @@ const Index = () => {
 
 
   const onClickEventBanner = () => {
-      navigate('/event', {state: eventData});
+      if (!isLoggedIn) {
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+      } else {
+          navigate('/event', {state: eventData});
+      }
   }
 
   const onClickToggleMenuItem = (profile: ChildProfile) => {
@@ -84,6 +89,21 @@ const Index = () => {
 
     alert("프로필 변경이 완료되었습니다.");
   };
+
+    const onClickMenuItem = (menuId: number, menuLink: string) => {
+        if (!isLoggedIn) {
+            alert('로그인이 필요합니다.');
+            navigate('/login'); // 로그인 화면으로 이동
+            return;
+        }
+
+        if (menuId === 0 && !childProfileId) {
+            alert('자녀 프로필을 선택해주세요.');
+            return;
+        }
+
+        navigate(menuLink);
+    };
   
 
   const handleCloseModal = () => {
@@ -199,7 +219,7 @@ const Index = () => {
       </ImageWrapper>
       <MenuSection>
       {menus.map((menu) => (
-        <Menus key={menu.id} onClick={() => navigate(menu.link)}>
+        <Menus key={menu.id} onClick={() => onClickMenuItem(menu.id, menu.link)}>
           <LinkButton src={menu.image}/>
           <LinkTitle $color='#000000'>{menu.name}</LinkTitle>
         </Menus>
