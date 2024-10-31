@@ -4,6 +4,8 @@ import Header from '../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const Index = () => {
 
   const fetchBooks = async (page, keyword = "") => {
     try {
-      const response = await axios.get(`/kkumteul/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
+      const response = await axiosWithToken.get(`/kkumteul/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
       setBooks(response.data.response.content);
       setTotalPages(response.data.response.totalPages);
     } catch (error) {

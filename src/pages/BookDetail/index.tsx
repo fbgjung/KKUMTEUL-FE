@@ -4,6 +4,8 @@ import { Container, Button } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 const Index = () => {
   const { id } = useParams();
@@ -13,7 +15,7 @@ const Index = () => {
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        const response = await axios.get(`/kkumteul/api/books/${id}`);
+        const response = await axiosWithToken.get(`/kkumteul/api/books/${id}`);
         setBook(response.data.response);
       } catch (error) {
         console.error('Error fetching book details:', error);
@@ -25,22 +27,32 @@ const Index = () => {
     fetchBookDetail();
   }, [id]);
 
+    const [childProfileId, setChildProfileId] = useState<number | null>(() => {
+      const storedId = sessionStorage.getItem('childProfileId');
+      return storedId ? parseInt(storedId) : null;
+    });
+
     const handleLike = async (likeType) => {
       try {
-        const response = await axios.post('/kkumteul/api/books/like', {
-          bookId: book.bookId,
-          childProfileId: 2, // 추후에 동적으로 설정
-          likeType: likeType,
-        },  {
-                 withCredentials: true, // 인증 정보를 포함하도록 설정
-               });
+        const response = await axiosWithToken.post('/kkumteul/api/books/like',
+          {
+            bookId: book.bookId,
+            childProfileId: childProfileId,
+            likeType: likeType,
+          },
+        );
         alert(response.data.response);
-        console.log("좋아요 성공/ 싫어요 성공");
-      } catch (error) {
-        console.error('Error processing like/dislike:', error);
-        alert(error.response.data.message);
+        console.log("좋아요 성공 / 싫어요 성공");
+    } catch (error) {
+      // 오류 발생 시 childProfileId를 sessionStorage에서 다시 가져와 업데이트
+      const storedId = sessionStorage.getItem('childProfileId');
+      if (storedId) {
+        setChildProfileId(parseInt(storedId));
       }
-    };
+      console.error('Error processing like/dislike:', error);
+      alert(error.response?.data || '오류가 발생했습니다.');
+    }
+  };
 
   if (loading) {
     return <Container color="null">로딩 중...</Container>;
