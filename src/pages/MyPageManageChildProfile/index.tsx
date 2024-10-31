@@ -50,6 +50,8 @@ const Index = () => {
     try {
       await axiosWithToken.delete(`/kkumteul/api/childProfiles/${childProfileId}`);
       setChildProfiles((prevProfiles) => prevProfiles.filter(child => child.childProfileId !== childProfileId));
+      const storedChildId = sessionStorage.getItem('childProfileId');
+      if(storedChildId && Number(storedChildId) === childProfileId) sessionStorage.removeItem('childProfileId');
       alert("삭제가 완료되었습니다.")
     } catch (error) {
       console.error('Failed deleting child profile:', error);
