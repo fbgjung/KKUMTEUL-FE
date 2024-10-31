@@ -122,8 +122,6 @@ const Index = () => {
           }
       };
 
-      setIsLoggedIn(false);
-
       fetchChildProfiles();
       fetchChildProfileAndRecommendedBooks();  
       fetchCurrentEvent();
