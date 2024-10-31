@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 interface ChildProfileProps {
   childName:string
@@ -46,7 +48,7 @@ const Index = () => {
 
   const handleDeleteChild = async (childProfileId: number) => {
     try {
-      await axios.delete(`/kkumteul/api/childProfiles/${childProfileId}`);
+      await axiosWithToken.delete(`/kkumteul/api/childProfiles/${childProfileId}`);
       setChildProfiles((prevProfiles) => prevProfiles.filter(child => child.childProfileId !== childProfileId));
       alert("삭제가 완료되었습니다.")
     } catch (error) {
