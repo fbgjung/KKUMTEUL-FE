@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { useRef, useState } from 'react';
-import axios from 'axios';
 import { AdminContainer, Button, Input, TextArea } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
+import axiosWithToken from "../../../axiosWithToken.ts";
 
 const ImageContainer = styled.div<{ imageurl?: string }>`
     width: 150px;
@@ -188,26 +188,20 @@ const Index = () => {
     }
     // 도서 관련 JSON 데이터를 문자열화하여 추가
     formData.append('book', new Blob([JSON.stringify(bookData)], { type: 'application/json' }));
+
     // 서버로 데이터 전송
     try {
-      const response = await axios.post('/kkumteul/api/admin/books', formData, {
+      const response = await axiosWithToken.post('/kkumteul/api/admin/books', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       alert("도서를 성공적으로 등록하였습니다!");
       navigate('/book/manage');
-
       console.log('도서 등록 성공:', response.data);
+
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        console.error('도서 등록 실패:', error.response.status, error.response.statusText);
-        if (error.response.status === 404) {
-          console.error('요청한 URL을 찾을 수 없습니다. 경로를 확인해주세요.');
-        }
-      } else {
-        console.error('도서 등록 실패:', error);
-      }
+      console.error('도서 등록 실패:', error);
     }
   };
 

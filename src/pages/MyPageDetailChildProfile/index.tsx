@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 interface BookLike {
     bookId: number;
@@ -37,7 +39,7 @@ const ChildProfile = () => {
 
     const fetchChildProfile = async (childProfileId: number) => {
         try {
-            const response = await axios.get(`/kkumteul/api/childProfiles/${childProfileId}`);
+            const response = await axiosWithToken.get(`/kkumteul/api/childProfiles/${childProfileId}`);
             setChildProfile(response.data.response);
             // console.log("히스토리 정보:",response.data.response);             
         } catch (error) {

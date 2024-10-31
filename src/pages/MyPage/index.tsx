@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { RouteDef } from "../../routes/RouteDef.tsx";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosWithToken from '../../axiosWithToken.ts';
 
 
 interface UserProps {
@@ -34,7 +35,7 @@ const Index = () => {
   // 유저 정보 조회
   const fetchUserData = async (userId: number) => {
     try {
-      const response = await axios.get(`/kkumteul/api/users/${userId}`);
+      const response = await axiosWithToken.get(`/kkumteul/api/users`);
       console.log('User data:', response.data.response);
       const userResponse = response.data.response;
 

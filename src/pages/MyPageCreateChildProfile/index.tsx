@@ -3,8 +3,9 @@ import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { ChangeEvent, MouseEvent } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const Index = () => {
     }
 
     try {
-      const response = await axios.post('/kkumteul/api/childProfiles', formData, {
+      const response = await axiosWithToken.post('/kkumteul/api/childProfiles', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
