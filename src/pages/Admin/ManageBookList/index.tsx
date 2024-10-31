@@ -243,9 +243,7 @@ const Index = () => {
     try {
       const response = await axiosWithToken.get('/kkumteul/api/admin/books/search', {
         params: {
-          search: searchText,
-          page: currentPage,
-          size: 7,
+          search: searchText
         },
       });
       setBooks(response.data.response.content);
