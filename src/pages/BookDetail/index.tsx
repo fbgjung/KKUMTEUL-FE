@@ -34,27 +34,25 @@ const Index = () => {
 
     const handleLike = async (likeType) => {
       try {
-        const response = await axiosWithToken.post(
-          '/kkumteul/api/books/like',
+        const response = await axiosWithToken.post('/kkumteul/api/books/like',
           {
             bookId: book.bookId,
             childProfileId: childProfileId,
             likeType: likeType,
           },
-          {
-            withCredentials: true, // 인증 정보를 포함
-            headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzMwMzM2MzAwLCJleHAiOjE3MzAzMzYzMzZ9.qYLV-pRttn10VQ7CV2sTwygTMYBziVV3RWFvurbUeP8`,
-            },
-          }
         );
         alert(response.data.response);
         console.log("좋아요 성공 / 싫어요 성공");
-      } catch (error) {
-        console.error('Error processing like/dislike:', error);
-        alert(error.response?.data?.message || '오류가 발생했습니다.');
+    } catch (error) {
+      // 오류 발생 시 childProfileId를 sessionStorage에서 다시 가져와 업데이트
+      const storedId = sessionStorage.getItem('childProfileId');
+      if (storedId) {
+        setChildProfileId(parseInt(storedId));
       }
-    };
+      console.error('Error processing like/dislike:', error);
+      alert(error.response?.data || '오류가 발생했습니다.');
+    }
+  };
 
   if (loading) {
     return <Container color="null">로딩 중...</Container>;
