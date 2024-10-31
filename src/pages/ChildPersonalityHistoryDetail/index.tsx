@@ -12,6 +12,10 @@ const Index = () => {
     const { historyId } = useParams();
     const [surveyResult, setSurveyResult] = useState(null);
 
+    const [childProfileId, setChildProfileId] = useState<number | null>(
+        parseInt(sessionStorage.getItem('childProfileId') || '0') || null
+    );
+
     const formatImageSrc = (imageData) => {
         return imageData
             ? `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`
@@ -21,7 +25,9 @@ const Index = () => {
     useEffect(() => {
         const fetchHistoryDetail = async () => {
             try {
-                const response = await axiosWithToken.get(`/kkumteul/api/history/${historyId}`);
+                const response = await axiosWithToken.get(`/kkumteul/api/history/${historyId}`, {
+                    params: { profileId: childProfileId }
+                });
                 setSurveyResult(response.data.response);
             } catch (error) {
                 console.error("Error fetching history detail:", error);
