@@ -29,9 +29,9 @@ axiosWithToken.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 // Refresh 토큰은 쿠키에 자동으로 담겨 전송됨
-                const { response } = await axios.post('/kkumteul/api/auth/refresh');
+                const { data } = await axios.post('/kkumteul/api/auth/refresh');
 
-                const newAccessToken = response.data.response.accessToken;
+                const newAccessToken = data.response.accessToken;
                 sessionStorage.setItem('accessToken', newAccessToken);
 
                 // 원래 요청에 새 Access 토큰 설정 후 재시도
