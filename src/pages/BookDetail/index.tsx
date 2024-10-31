@@ -9,7 +9,8 @@ const Index = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [likeStatus, setLikeStatus] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
   const [childProfileId, setChildProfileId] = useState<number | null>(() => {
     const storedId = sessionStorage.getItem('childProfileId');
     return storedId ? parseInt(storedId) : null;
@@ -31,53 +32,56 @@ const Index = () => {
     fetchBookDetail();
   }, [id]);
 
-  useEffect(() => {
-    const fetchLikeStatus = async () => {
-      if (childProfileId !== null) {
-        try {
-          const response = await axiosWithToken.get('/kkumteul/api/books/like', {
-            params: {
-              bookId: id,
-              childProfileId: childProfileId,
-            },
-          });
-          console.log(response.data.response);
-          setLikeStatus(response.data.response.isLiked);
-        } catch (error) {
-          console.error('Error fetching like status:', error);
+    useEffect(() => {
+      const fetchLikeStatus = async () => {
+        if (childProfileId !== null) {
+          try {
+            const response = await axiosWithToken.get('/kkumteul/api/books/like', {
+              params: {
+                bookId: id,
+                childProfileId: childProfileId,
+              },
+            });
+            console.log(response.data.response);
+            setIsLiked(response.data.response.liked);
+            setIsDisliked(response.data.response.disliked);
+          } catch (error) {
+            console.error('Error fetching like status:', error);
+          }
         }
-      }
+      };
+
+      fetchLikeStatus();
+    }, [id, childProfileId]);
+
+
+    const handleLike = async (likeType) => {
+        if (childProfileId === null) {
+            alert("🌈 자녀를 선택해 주세요 🌈");
+            return;
+        }
+
+        try {
+            const response = await axiosWithToken.post('/kkumteul/api/books/like', {
+                bookId: book.bookId,
+                childProfileId: childProfileId,
+                likeType: likeType,
+            });
+            alert(response.data.response);
+
+          if (likeType === 'LIKE') {
+            setIsLiked(true);
+            setIsDisliked(false);
+          } else if (likeType === 'DISLIKE') {
+            setIsLiked(false);
+            setIsDisliked(true);
+          }
+
+        } catch (error) {
+            console.error('Error processing like/dislike:', error);
+            alert(error.response?.data || '오류가 발생했습니다.');
+        }
     };
-
-    fetchLikeStatus();
-  }, [id, childProfileId]);
-
-  const handleLike = async (likeType) => {
-    if (childProfileId === null) {
-      alert("🌈 자녀를 선택해 주세요 🌈");
-      return;
-    }
-
-    try {
-      const response = await axiosWithToken.post('/kkumteul/api/books/like', {
-        bookId: book.bookId,
-        childProfileId: childProfileId,
-        likeType: likeType,
-      });
-      alert(response.data.response);
-
-      // 상태 업데이트
-      if (likeType === 'LIKE') {
-        setLikeStatus(true);
-      } else if (likeType === 'DISLIKE') {
-        setLikeStatus(false);
-      }
-
-    } catch (error) {
-      console.error('Error processing like/dislike:', error);
-      alert(error.response?.data || '오류가 발생했습니다.');
-    }
-  };
 
   if (loading) {
     return <Container color="null">로딩 중...</Container>;
@@ -140,17 +144,17 @@ const Index = () => {
       <ButtonContainer>
         <LikeButton
           onClick={() => handleLike('LIKE')}
-          color={likeStatus ? "#FFC317" : "#757575"}
-          backcolor={likeStatus ? "#FFD869" : "#ffffff"}
-          active={likeStatus} // 눌려있는 상태 표시
+          color={isLiked ? "#FFC317" : "#757575"}
+          backcolor={isLiked ? "#FFD869" : "#ffffff"}
+          active={isLiked}
         >
           좋아요
         </LikeButton>
         <DisLikeButton
           onClick={() => handleLike('DISLIKE')}
-          color={likeStatus ? "#757575" : "#6EA7D0"}
-          backcolor={likeStatus ? "#ffffff" : "#6EA7D0"}
-          active={!likeStatus} // 눌려있는 상태 표시
+          color={isDisliked ? "#757575" : "#6EA7D0"}
+          backcolor={isDisliked ? "#ffffff" : "#6EA7D0"}
+          active={isDisliked}
         >
           싫어요
         </DisLikeButton>
