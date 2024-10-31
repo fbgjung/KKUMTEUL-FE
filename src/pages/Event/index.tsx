@@ -29,6 +29,7 @@ const Index = () => {
         });
         console.log("이벤트에 성공적으로 참여하였습니다.")
         console.log(response.data.response);
+        alert('이벤트 참여 완료!');
 
       } catch (error) {
         console.error('이벤트 참여 중 오류 발생:', error);
