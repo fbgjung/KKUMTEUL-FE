@@ -43,7 +43,7 @@ const SignUp: React.FC = () => {
             if (field === '아이디') {
                 apiUrl = `/kkumteul/api/users/duplicate/username/${formData.username}`;
             } else if (field === '닉네임') {
-                apiUrl = `/kkumteul/api/users/duplicate/nickname/${formData.nickname}`;
+                apiUrl = `/kkumteul/api/users/duplicate/nickname/${formData.nickName}`;
             }
 
             const response = await axios.get(apiUrl);
