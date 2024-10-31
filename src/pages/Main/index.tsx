@@ -76,8 +76,10 @@ const Index = () => {
       if (!isLoggedIn) {
           alert('로그인이 필요합니다.');
           navigate('/login');
+      } else if (eventData == null){
+        alert("진행중인 이벤트가 없습니다!");
       } else {
-          navigate('/event', {state: eventData});
+        navigate('/event', {state: eventData});
       }
   }
 
@@ -150,7 +152,7 @@ const Index = () => {
       if(isLoggedIn){
         fetchChildProfiles();
         fetchChildProfileAndRecommendedBooks();  
-        // fetchCurrentEvent();
+        fetchCurrentEvent();
       } else{        
         fetchChildProfileAndRecommendedBooks();  
       }
@@ -189,7 +191,7 @@ const Index = () => {
   const fetchCurrentEvent = async() => {
     try {
       const response = await axiosWithToken.get(`/kkumteul/api/events`);
-      console.log(response.data.response);
+      console.log("이벤트:", response.data.response);
       setEventData(response.data.response);
     } catch (error) {
       console.log(error);
