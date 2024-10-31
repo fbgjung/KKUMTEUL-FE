@@ -3,11 +3,12 @@ import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { ChangeEvent, MouseEvent } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import axiosWithToken from '../../axiosWithToken.ts';
+
 
 const EditProfile = () => {
-
+  const navigate = useNavigate();
   const location = useLocation();
   const userData = location.state?.userData; // 유저 데이터 넘어온 거 받기
   console.log(userData);
@@ -28,7 +29,7 @@ const EditProfile = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [nicknameValid, setNicknameValid] = useState<boolean>(true); // 닉네임 중복 확인 여부
+  const [nicknameValid, setNicknameValid] = useState<boolean>(false); // 닉네임 중복 확인 여부
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 비밀번호 확인 여부
   // const [profileImage, setProfileImage] = useState<string>('/assets/default_profile.svg'); // 프로필 추가
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null); // 프로필 이미지를 위한 File 타입
@@ -44,11 +45,18 @@ const EditProfile = () => {
       }
   };
 
-  const handleNicknameCheck = (nickname: string) => {
-    if (nickname === '이미 있는 닉네임') {
-      setNicknameValid(false);
-    } else {
-      setNicknameValid(true);
+  const handleNicknameCheck = async (nickname: string) => {
+    try {
+      const response = await axiosWithToken.get(`/kkumteul/api/users/duplicate/nickname/${nickname}`);
+      if (response.data.response === true) {
+        alert(`${nickname}은 이미 사용중 입니다.`);
+        setNicknameValid(false);
+      } else {
+        alert(`${nickname}은 사용할 수 있는 닉네임입니다.`);
+        setNicknameValid(true);
+      }
+    } catch (error) {
+      console.error("Error checking nickname:", error);
     }
   };
 
@@ -85,8 +93,8 @@ const EditProfile = () => {
         return;
     }
 
-    if (nickname !== originalNickname) {
-      alert("닉네임을 변경하셨습니다. 중복검사를 해주세요.");
+    if (nickname !== originalNickname && !nicknameValid) {
+      alert('닉네임 중복 검사를 해주세요.');
       return;
     }
   
@@ -107,12 +115,13 @@ const EditProfile = () => {
     }
 
     try {
-        const response = await axios.patch('/kkumteul/api/users/1', formData, {
+        const response = await axiosWithToken.patch('/kkumteul/api/users', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
         console.log(response.data);
+        navigate('/mypage');
     } catch (error) {
         console.error("Error updating user:", error);
     }
