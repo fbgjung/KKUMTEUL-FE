@@ -162,22 +162,26 @@ const Index = () => {
   const [selectedMBTI, setSelectedMBTI] = useState<string>('');
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axiosWithToken.get('/kkumteul/api/admin/books', {
-          params: {
-            page: currentPage,
-            size: 7,
-          },
-        });
-        setBooks(response.data.response.content); // 전체 목록 저장
-        setFilteredBooks(response.data.response.content); // 초기 필터링 목록도 설정
-        setTotalPages(response.data.response.totalPages);
-      } catch (error) {
-        console.error('도서 목록 조회 실패:', error);
-      }
-    };
-    fetchBooks();
+    if (searchText) {
+      handleSearchBook();
+    } else {
+      const fetchBooks = async () => {
+        try {
+          const response = await axiosWithToken.get('/kkumteul/api/admin/books', {
+            params: {
+              page: currentPage,
+              size: 7,
+            },
+          });
+          setBooks(response.data.response.content); // 전체 목록 저장
+          setFilteredBooks(response.data.response.content); // 초기 필터링 목록도 설정
+          setTotalPages(response.data.response.totalPages);
+        } catch (error) {
+          console.error('도서 목록 조회 실패:', error);
+        }
+      };
+      fetchBooks();
+    }
   }, [currentPage]);
 
   // 도서 필드 effect 기능
@@ -243,10 +247,12 @@ const Index = () => {
     try {
       const response = await axiosWithToken.get('/kkumteul/api/admin/books/search', {
         params: {
+          page: currentPage,
+          size: 7,
           search: searchText
         },
       });
-      setBooks(response.data.response.content);
+      // setBooks(response.data.response.content);
       setFilteredBooks(response.data.response.content); // 검색어 결과 목록도 설정
       setTotalPages(response.data.response.totalPages);
     } catch (error) {
