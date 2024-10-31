@@ -33,7 +33,7 @@ const Index = () => {
   const [childProfiles, setChildProfiles] = useState<ChildProfileProps[]>([]);
 
   // 유저 정보 조회
-  const fetchUserData = async (userId: number) => {
+  const fetchUserData = async () => {
     try {
       const response = await axiosWithToken.get(`/kkumteul/api/users`);
       console.log('User data:', response.data.response);
@@ -75,8 +75,7 @@ const Index = () => {
   };
   
   useEffect(() => {
-    const userId = 1; // TODO: 토큰에서 꺼내오는 방식으로 변경
-    fetchUserData(userId);
+    fetchUserData();
   }, []);
 
   const handleEditProfile = () => {
