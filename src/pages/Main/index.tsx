@@ -96,6 +96,7 @@ const Index = () => {
   useEffect(() => {
       const accessToken = sessionStorage.getItem('accessToken');
       setIsLoggedIn(!!accessToken);
+      
       // 자녀 프로필 리스트 조회
       const fetchChildProfiles = async () => {
           try {
@@ -110,30 +111,43 @@ const Index = () => {
 
       // 자녀 프로필 유효성 검증 api 연동 및 추천 도서 조회 함수 호출
       const fetchChildProfileAndRecommendedBooks = async () => {
-          if (childProfileId) {
+          if (childProfileId && childProfileId > 0) {
               try {
                   const response = await axiosWithToken.get(`/kkumteul/api/users/childProfiles/${childProfileId}`);
                   console.log(response.data);
-                  fetchRecommendedBooks(childProfileId);
+                  await fetchRecommendedBooks(childProfileId);
               } catch (error) {
                   console.error('Failed to fetch child profile:', error);
                   alert('잘못된 접근입니다.');
               }
+          } else {
+            // 없으면 childProfileId = 0
+            setChildName('다른');
+            await fetchRecommendedBooks(0);
           }
       };
 
-      fetchChildProfiles();
-      fetchChildProfileAndRecommendedBooks();  
-      fetchCurrentEvent();
+      console.log('로그인상태' + isLoggedIn);
+      console.log('토큰' + accessToken);
 
-  }, []);
+      if(isLoggedIn){
+        fetchChildProfiles();
+        fetchChildProfileAndRecommendedBooks();  
+        // fetchCurrentEvent();
+      } else{        
+        fetchChildProfileAndRecommendedBooks();  
+      }
+      
+
+  }, [isLoggedIn]);
 
   console.log(childProfileList);
 
   // 추천 도서 목록 조회
   const fetchRecommendedBooks = async (childProfileId: number) => {
       try {
-          const response = await axiosWithToken.get(`/kkumteul/api/recommendation/books/${childProfileId}`);
+          const url = childProfileId != 0 ? `/kkumteul/api/recommendation/books?childProfileId=${childProfileId}`: `/kkumteul/api/recommendation/books`;
+          const response = await axiosWithToken.get(url);
           const recommendedBooks = response.data.response.recommendedBooks;
           const popularBooks = response.data.response.popularBooks;
           console.log("추천책:", recommendedBooks);
