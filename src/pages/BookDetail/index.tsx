@@ -33,6 +33,12 @@ const Index = () => {
     });
 
     const handleLike = async (likeType) => {
+
+      if (childProfileId === null) {
+        alert("🌈 자녀를 선택해 주세요 🌈");
+        return;
+      }
+
       try {
         const response = await axiosWithToken.post('/kkumteul/api/books/like',
           {
