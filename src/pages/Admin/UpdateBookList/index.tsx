@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { useRef, useState, useEffect } from 'react';
-import axios from 'axios';
 import { AdminContainer, Button, Input, TextArea } from '../../../styles/globalStyles';
 import Header from '../../../components/layout/Header';
 import { useNavigate, useParams } from 'react-router-dom';
+import axiosWithToken from "../../../axiosWithToken.ts";
 
 const ImageContainer = styled.div<{ imageurl?: string }>`
     width: 150px;
@@ -112,7 +112,7 @@ const Index = () => {
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        const response = await axios.get(`/kkumteul/api/admin/books/${book_id}`);
+        const response = await axiosWithToken.get(`/kkumteul/api/admin/books/${book_id}`);
         const bookDetail = response.data.response;
         setInitialBookData(bookDetail);
         setBook({
@@ -267,7 +267,7 @@ const Index = () => {
     formData.append('book', new Blob([JSON.stringify(updatedBookData)], { type: 'application/json' }));
 
     try {
-      const response = await axios.put(`/kkumteul/api/admin/books/${book_id}`, formData, {
+      const response = await axiosWithToken.put(`/kkumteul/api/admin/books/${book_id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -283,7 +283,7 @@ const Index = () => {
 
   const handleDeleteBook = async () => {
     try {
-      await axios.delete(`/kkumteul/api/admin/books/${book_id}`);
+      await axiosWithToken.delete(`/kkumteul/api/admin/books/${book_id}`);
       alert('도서가 성공적으로 삭제되었습니다!');
       navigate('/book/manage');
     } catch (error) {
