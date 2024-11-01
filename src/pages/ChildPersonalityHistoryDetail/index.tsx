@@ -52,14 +52,15 @@ interface MbtiResult {
 
 const Index = () => {
     const navigate = useNavigate();
-    const { historyId } = useParams();
+    const { childProfileId, historyId } = useParams();
     const [surveyResult, setSurveyResult] = useState<ChildHistoryDetail>();
     const location = useLocation();
     const historyCreatedType = location.state;
 
-    const [childProfileId, setChildProfileId] = useState<number | null>(
-        parseInt(sessionStorage.getItem('childProfileId') || '0') || null
-    );
+    // const [childProfileId, setChildProfileId] = useState<number | null>(
+    //     parseInt(sessionStorage.getItem('childProfileId') || '0') || null
+    // );
+
     const formatImageSrc = (imageData: string) => {
         return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
     };
@@ -69,10 +70,9 @@ const Index = () => {
         const fetchHistoryDetail = async () => {
             try {
                 const response = await axiosWithToken.get(`/kkumteul/api/history/${historyId}`, {
-                    params: { profileId: childProfileId }
+                    params: { childProfileId }
                 });
                 setSurveyResult(response.data.response);
-                console.log(response.data.response);
             } catch (error) {
                 console.error("Error fetching history detail:", error);
             }
