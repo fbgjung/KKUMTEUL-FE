@@ -3,19 +3,32 @@ import { Container, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import axiosWithToken from '../../axiosWithToken.ts';
+import { KeyboardEvent } from 'react';
 
+interface Book {
+  ageGroup:string;
+  bookAuthor:string;
+  bookId:number;
+  bookImage:string;
+  bookPage:string;
+  bookSummary:string;
+  bookTitle:string;
+  genreName:string;
+  mbtiInfo:string;
+  publisher:string;
+  topicNames:string[];
+}
 
 const Index = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [keyword, setKeyword] = useState("");
   const booksPerPage = 12;
 
-  const fetchBooks = async (page, keyword = "") => {
+  const fetchBooks = async (page:number, keyword = "") => {
     try {
       const response = await axiosWithToken.get(`/kkumteul/api/books?page=${page}&size=${booksPerPage}&keyword=${keyword}`);
       setBooks(response.data.response.content);
@@ -29,12 +42,12 @@ const Index = () => {
     fetchBooks(currentPage, keyword); // 초기 로딩 시 전체 도서 목록 조회
   }, []);
 
-  const handlePageClick = (pageNumber) => {
+  const handlePageClick = (pageNumber:number) => {
     fetchBooks(pageNumber, keyword);
     setCurrentPage(pageNumber);
   };
 
-  const handleBookClick = (id) => {
+  const handleBookClick = (id:number) => {
     navigate(`/booklist/${id}`);
   };
 
@@ -43,7 +56,7 @@ const Index = () => {
     fetchBooks(0, keyword); // 페이지를 0으로 설정하고 키워드로 다시 데이터 로드
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e:KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
@@ -96,13 +109,13 @@ const Index = () => {
   };
 
   return (
-    <Container color="#f3f3f3">
-      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/' />
+    <Container color="#fdf8d7">
+      <Header textcolor="#000000" color="#fee208" nextBtnImageUrl="/assets/home.svg" title="도서 목록" nextPage='/' />
       <SearchContainer>
         <Input
-          placeholder="검색어 입력"
-          color="#6EA7D0"
-          inputcolor="#E6E6E6"
+          placeholder="검색어를 입력하세요"
+          color=""
+          inputcolor="#d4ebcb"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
@@ -130,43 +143,47 @@ const Index = () => {
 export default Index;
 
 const GridContainer = styled.div`
+  margin-top: 20px;
   display: flex;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 18px;
   width: 90%;
   flex-wrap: wrap;
   justify-content: space-around;
 `;
 
 const BookCard = styled.div`
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 140px;
-  height: 200px;
+  height: 220px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   cursor: pointer;
-  &:hover {
-    background-color: #FFD869;
-  }
+
 `;
 
 const BookImage = styled.img`
-  width: 80px;
-  height: 120px;
+  width: 100%;
+  height: 180px;
   object-fit: cover;
   margin-bottom: 0px;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+
+  ${BookCard}:hover & {
+    transform: translateY(-8px);
+  }
 `;
 
 const BookInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 
 const BookTitle = styled.h3`
@@ -184,13 +201,13 @@ const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   margin: 20px 0;
-  width: 90%;
+  width: 85%;
 `;
 
 const SearchButton = styled.button`
-  width: 24px;
-  height: 24px;
-  background: url('/assets/search.svg') center / contain no-repeat;
+  width: 40px;
+  height: 40px;
+  background: url('/assets/search.png') center / contain no-repeat;
   border: none;
   cursor: pointer;
   margin-left: 10px;
