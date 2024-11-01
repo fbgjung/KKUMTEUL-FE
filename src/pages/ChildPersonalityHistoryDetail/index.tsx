@@ -1,32 +1,76 @@
 import styled from 'styled-components';
 import { Container, Button } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ProgressLine from '../../components/surveyresult/ProgressLine';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import axiosWithToken from "../../axiosWithToken.ts";
 
+interface ChildHistoryDetail {
+    childBirthDate:string;
+    childName:string;
+    diagnosisDate:string;
+    favoriteGenres:FavoriteGenres[];
+    favoriteTopics:FavoriteTopics[];
+    mbtiPercentages:MbtiPercentages;
+    mbtiResult:MbtiResult;
+    profileImage:string;
+
+}
+
+interface FavoriteGenres {
+    name:string;
+    image:string;
+}
+
+interface FavoriteTopics {
+    name:string;
+    image:string;
+}
+
+interface MbtiPercentages {
+    epercent:number;
+    fpercent:number;
+    ipercent:number;
+    jpercent:number;
+    npercent:number;
+    ppercent:number;
+    spercent:number;
+    tpercent:number;
+}
+
+interface MbtiResult {
+    mbtiDescription:string;
+    mbtiImage:string;
+    mbtiName:string;
+    mbtiTitle:string;
+}
+
+
+
+
 const Index = () => {
     const navigate = useNavigate();
-    const { historyId } = useParams();
-    const [surveyResult, setSurveyResult] = useState(null);
+    const { childProfileId, historyId } = useParams();
+    const [surveyResult, setSurveyResult] = useState<ChildHistoryDetail>();
+    const location = useLocation();
+    const historyCreatedType = location.state;
 
-    const [childProfileId, setChildProfileId] = useState<number | null>(
-        parseInt(sessionStorage.getItem('childProfileId') || '0') || null
-    );
+    // const [childProfileId, setChildProfileId] = useState<number | null>(
+    //     parseInt(sessionStorage.getItem('childProfileId') || '0') || null
+    // );
 
-    const formatImageSrc = (imageData) => {
-        return imageData
-            ? `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`
-            : '/assets/dog.svg';
+    const formatImageSrc = (imageData: string) => {
+        return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
     };
+    
 
     useEffect(() => {
         const fetchHistoryDetail = async () => {
             try {
                 const response = await axiosWithToken.get(`/kkumteul/api/history/${historyId}`, {
-                    params: { profileId: childProfileId }
+                    params: { childProfileId }
                 });
                 setSurveyResult(response.data.response);
             } catch (error) {
@@ -49,11 +93,11 @@ const Index = () => {
         }
     };
 
-    const calculateIsReverse = (left, right) => {
+    const calculateIsReverse = (left:string, right:string) => {
         return parseInt(left) < parseInt(right);
     };
 
-    const calculateAge = (birthDate) => {
+    const calculateAge = (birthDate:string) => {
         const birth = new Date(birthDate);
         const today = new Date();
         let age = today.getFullYear() - birth.getFullYear();
@@ -76,19 +120,22 @@ const Index = () => {
     };
 
     return (
-        <Container color="#FFD869">
-            <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="내 성향 상세" nextPage='/' />
+        <Container color="#fdf8d7">
+            <Header textcolor="#000000" color="#fdf8d7" nextBtnImageUrl="/assets/home.svg" title="자녀 성향 상세보기" nextPage='/' />
             <SurveyContainer>
                 <MbtiSection>
                     <MbtiImage src={formatImageSrc(surveyResult.mbtiResult.mbtiImage) || "/assets/default-mbti.png"} alt="MBTI 이미지" />
                     <MbtiInfo>
                         <MbtiTitle>{surveyResult.mbtiResult.mbtiName}</MbtiTitle>
                         <MbtiText>{surveyResult.mbtiResult.mbtiTitle}</MbtiText>
-                        <MbtiDate>진단일: {new Date(surveyResult.diagnosisDate).toLocaleDateString('ko-KR', {
+                        <MbtiDate>
+                        {historyCreatedType === "DIAGNOSIS" ? "진단일: " : "생성일: "}
+                        {new Date(surveyResult.diagnosisDate).toLocaleDateString('ko-KR', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
-                        })}</MbtiDate>
+                        })}
+                    </MbtiDate>
                     </MbtiInfo>
                 </MbtiSection>
 
@@ -197,7 +244,7 @@ const Index = () => {
                     </InterestList>
                 </ResultSection>
 
-                <DeleteSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleDeleteButton}>
+                <DeleteSurveyButton color="#FFFFFF" backcolor='#fee208' onClick={handleDeleteButton}>
                     삭제하기
                 </DeleteSurveyButton>
             </SurveyContainer>
@@ -215,7 +262,7 @@ const SurveyContainer = styled.div`
 `;
 
 const MbtiSection = styled.div`
-    background-color: #FFC317;
+    background-color: #b0c8f9;
     width: 100%;
     margin: 10px 0;
     padding: 0 0 0 50px;
@@ -239,7 +286,7 @@ const MbtiInfo = styled.div`
 const MbtiTitle = styled.span`
     font-size: 60px;
     font-weight: 700;
-    color: #ff6f00;
+    color: #77a5fe;
     text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
 `;
 
@@ -289,7 +336,7 @@ const ChildBirth = styled.span<{ $color: string }>`
 `;
 
 const ResultSection = styled.div`
-    background-color: #FFD869;
+    background-color: #fdf8d7;
     width: 90%;
     display: flex;
     align-items: center;
@@ -297,17 +344,17 @@ const ResultSection = styled.div`
 `;
 
 const Title = styled.h3`
-    margin: 60px 0 0 0;
+    margin: 40px 0 0 0;
     width: 100%;
 `;
 
 const MbtiDescription = styled.p`
-    margin: 10px;
+    margin: 10px 0 0 0;
 `;
 
 const Graph = styled.div`
     width: 100%;
-    background-color: #FFD869;
+    background-color: #fdf8d7;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -343,21 +390,21 @@ const Image = styled.img`
 const InterestList = styled.div`
     width: 100%;
     height: auto;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     display: flex;
     flex-wrap: wrap;
     box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
     border-radius: 20px;
-    margin-top: 14px;
+    margin-top: 10px;
     align-items: center;
-    padding: 0 0 0 20px;
+    padding: 10px 0 10px 20px;
 `;
 
 const List = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 18%;
+    width: 15%;
 `;
 
 const Name = styled.p`
@@ -367,5 +414,5 @@ const Name = styled.p`
 
 const DeleteSurveyButton = styled(Button)`
     width: 90%;
-    margin: 30px 0;
+    margin: 40px 0;
 `;

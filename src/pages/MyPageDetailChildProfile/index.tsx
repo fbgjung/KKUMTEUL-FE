@@ -3,9 +3,7 @@ import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import axiosWithToken from '../../axiosWithToken.ts';
-
 
 interface BookLike {
     bookId: number;
@@ -28,73 +26,88 @@ interface ChildProfile {
     childPersonalityHistoryList: ChildPersonalityHistory[];
 }
 
-
 const ChildProfile = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const {child} = location.state;
-    // console.log("넘어온 자녀정보", child);
+    const { child } = location.state;
     const [childProfile, setChildProfile] = useState<ChildProfile>();
 
     const fetchChildProfile = async (childProfileId: number) => {
         try {
             const response = await axiosWithToken.get(`/kkumteul/api/childProfiles/${childProfileId}`);
             setChildProfile(response.data.response);
-            // console.log("히스토리 정보:",response.data.response);             
         } catch (error) {
             console.error("Error fetching child profile:", error);
         }
     };
 
     useEffect(() => {
-        if (child) {
-            fetchChildProfile(child.childProfileId);
-          }
-    },[child])
+      if (child) {
+          fetchChildProfile(child.childProfileId);
+      }
+    }, [child]);
 
-    console.log(childProfile);
-
-
-    const handleRecordClick = (recordId: number) => {
-        navigate(`/record/${recordId}`);
-    };
+    const handleRecordClick = (recordId: number, historyCreatedType: string) => {
+      navigate(`/record/${child.childProfileId}/${recordId}`, {state: historyCreatedType});
+  };
 
     const handleBookClick = (bookId: number) => {
         navigate(`/booklist/${bookId}`);
-    }
+    };
 
-    const latestPersonality = childProfile?.childPersonalityHistoryList[0]; // 가장 최신 성향 히스토리 기록
+    const latestPersonality = childProfile?.childPersonalityHistoryList[0];
 
     return (
-        <Container color="#f3f3f3">
-            <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="내 자녀 프로필"
-                    nextPage="/" />
+        <Container color="#fdf8d7">
+            <Header
+                textcolor="#000000"
+                color="#fdf8d7"
+                nextBtnImageUrl="/assets/home.svg"
+                title="내 자녀 프로필"
+                nextPage="/"
+            />
 
             <ChildProfileDetailContainer>
-                {/* 가장 최신 성향 기록 */}
                 {latestPersonality && (
-                    <ProfileCard onClick={() => handleRecordClick(latestPersonality.historyId)}>
-                        {/* src={`data:image/jpeg;base64,${book.bookImage}`} */}
+                    <ProfileCard
+                        onClick={() => handleRecordClick(latestPersonality.historyId, latestPersonality.historyCreatedType)}
+                        bgColor= "#fee208"
+                    >
                         <ProfileImage src={`data:image/jpeg;base64,${latestPersonality.mbtiImage}`} alt="Character" />
                         <ProfileText>
-                            <h3>{latestPersonality.mbti}</h3>
+                            <ProfileMbti>{latestPersonality.mbti}</ProfileMbti>
                             <p>{latestPersonality.mbtiTitle}</p>
                         </ProfileText>
+                        <RecordTo>
+                          <RecordButton onClick={() => handleRecordClick(latestPersonality.historyId, latestPersonality.historyCreatedType)}>상세보기</RecordButton>
+                          <RecordDate>
+                          {new Date(latestPersonality.createdAt).toLocaleDateString('ko-KR').replace(/\.$/, '')}
+                        </RecordDate>                               
+                          </RecordTo>
                     </ProfileCard>
                 )}
 
                 <SectionTitle>{childProfile?.childName} 성향 기록</SectionTitle>
                 <SectionWrapper>
                     <RecordWrapper>
-                        {childProfile?.childPersonalityHistoryList.slice(1).map((history, index) => (
-                            <RecordCard key={index} onClick={() => handleRecordClick(history.historyId)}>
+                        {childProfile?.childPersonalityHistoryList.slice(0).map((history, index) => (
+                            <RecordCard
+                                key={index}
+                                bgColor={history.historyCreatedType === "DIAGNOSIS" ? "#D0E8FF" : "#F3F3F3"}
+                            >
                                 <RecordImage src={`data:image/jpeg;base64,${history.mbtiImage}`} alt="Record" />
                                 <RecordText>
                                     <h4>{history.mbti}</h4>
-                                    <p>{history.mbtiTitle}</p>
+                                    <RecordMbtiTitle>{history.mbtiTitle}</RecordMbtiTitle>
                                 </RecordText>
-                                <RecordDate>{new Date(history.createdAt).toLocaleDateString()}</RecordDate>
+                                <RecordTo>
+                                <RecordButton onClick={() => handleRecordClick(history.historyId, history.historyCreatedType)}>상세보기</RecordButton>
+                                <RecordDate>
+                                {new Date(history.createdAt).toLocaleDateString('ko-KR').replace(/\.$/, '')}
+                              </RecordDate>                               
+                               </RecordTo>
+                                                              
                             </RecordCard>
                         ))}
                     </RecordWrapper>
@@ -102,11 +115,10 @@ const ChildProfile = () => {
 
                 <SectionTitle>좋아요 한 책 목록</SectionTitle>
                 <BookGrid>
-                    {childProfile?.bookLikeList.map((book:BookLike) => (
-                        <BookCard key={book.bookId} onClick={() => handleBookClick(book.bookId)}>
-                        <BookImage src={`data:image/jpeg;base64,${book.bookImage}`} alt="Book Cover" />
-                            <BookTitle>{book.bookTitle}</BookTitle>
-                        </BookCard>
+                    {childProfile?.bookLikeList.map((book: BookLike) => (
+                        <BookImageCard key={book.bookId} onClick={() => handleBookClick(book.bookId)}>
+                            <BookImage src={`data:image/jpeg;base64,${book.bookImage}`} alt="Book Cover" />
+                        </BookImageCard>
                     ))}
                 </BookGrid>
             </ChildProfileDetailContainer>
@@ -120,15 +132,17 @@ export default ChildProfile;
 const ChildProfileDetailContainer = styled.div`
   margin-top: 30px;
   width: 90%;
-`
-const ProfileCard = styled.div`
+`;
+
+const ProfileCard = styled.div<{ bgColor: string }>`
   width: 100%;
-  background-color: #FFD869;
+  background-color: ${(props) => props.bgColor};
   border-radius: 12px;
   padding: 30px;
   display: flex;
   align-items: center;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
+  justify-content: space-between;
   cursor: pointer;
 `;
 
@@ -138,18 +152,21 @@ const ProfileImage = styled.img`
   margin-right: 20px;
 `;
 
-const ProfileText = styled.div`
-  h3 {
-    margin: 0;
-    font-size: 24px;
-  }
-
+const ProfileText = styled.div`  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   p {
     margin: 4px 0 0;
     font-size: 14px;
     color: #888888;
   }
 `;
+
+const ProfileMbti = styled.h1`
+  margin:0;
+  font-weight: 900;
+`
 
 const SectionWrapper = styled.div`
   width: 100%;
@@ -165,8 +182,6 @@ const SectionTitle = styled.h3`
   margin: 5px;
   padding-left: 5px;
   text-align: left;
-  box-sizing: border-box;
-  width: calc(100% - 3px);
 `;
 
 const RecordWrapper = styled.div`
@@ -174,17 +189,17 @@ const RecordWrapper = styled.div`
   overflow-y: auto;
 `;
 
-const RecordCard = styled.div`
+const RecordCard = styled.div<{ bgColor: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: white;
+  background-color: ${(props) => props.bgColor};
   border-radius: 12px;
   padding: 12px;
   margin-bottom: 10px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
- transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
@@ -201,7 +216,9 @@ const RecordImage = styled.img`
 const RecordText = styled.div`
   flex-grow: 1;
   text-align: center;
-
+  display: flex;
+  gap: 12px;
+  margin-left: 10px;
   h4 {
     margin: 0;
     font-size: 20px;
@@ -212,9 +229,33 @@ const RecordText = styled.div`
   }
 `;
 
-const RecordDate = styled.p`
-  margin: 0;
+const RecordMbtiTitle = styled.p`
   font-size: 14px;
+  color: #8a8a8a;
+`
+
+const RecordTo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+const RecordButton = styled.span`
+  width: 60px;
+  height: 20px;
+  background-color: #ffffff;
+  text-align: center;
+  border-radius: 20px;
+  padding: 3px;
+  font-size:12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`
+
+const RecordDate = styled.p`
+  margin: 2px;
+  font-size: 10px;
   color: #888888;
 `;
 
@@ -226,31 +267,24 @@ const BookGrid = styled.div`
   width: 100%;
 `;
 
-const BookCard = styled.div`
-  background-color: white;
-  border-radius: 12px;
-  width: 90%;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+const BookImageCard = styled.div`
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
 `;
 
 const BookImage = styled.img`
-  width: 80%;
-  height: auto;
-  margin: 10px 0;
-  border-radius: 12px;
-`;
+    width: 100px;
+    height: 150px;
+    border-radius: 12px;
+    background-color: white;
+    object-fit: cover;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-const BookTitle = styled.p`
-  margin-top: 8px;
-  font-size: 14px;
-  color: #757575;
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 `;

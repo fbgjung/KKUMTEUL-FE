@@ -7,10 +7,11 @@ interface HeaderProps {
     color: string
     textcolor: string
     nextPage: string
+    fontSize:string
 }
 
 
-const Header = ({ title, nextBtnImageUrl, color, textcolor, nextPage }: HeaderProps) => {
+const Header = ({ title, nextBtnImageUrl, color, textcolor, nextPage, fontSize }: HeaderProps) => {
     const navigate = useNavigate();
 
     const onClickPrevButton = () => {
@@ -24,7 +25,7 @@ const Header = ({ title, nextBtnImageUrl, color, textcolor, nextPage }: HeaderPr
     return (
         <Container color={color}>
             <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
-            <Title textcolor={textcolor}>{title}</Title>
+            <Title textcolor={textcolor} fontSize={fontSize}>{title}</Title>
             <NextButton onClick={onClickNextButton} $imageurl={nextBtnImageUrl}></NextButton>
         </Container>
     );
@@ -46,10 +47,11 @@ const Container = styled.div<{color: string}>`
   justify-content: space-between;
 `;
 
-const Title = styled.h2<{textcolor: string}>`
+const Title = styled.p<{textcolor: string, fontSize?:string}>`
   margin: 0;
   color: ${({ textcolor }) => textcolor};
-  font-size: 18px;
+  font-size: ${({ fontSize }) => fontSize || '18px'};
+  font-weight: bold;
 `;
 
 const PrevButton = styled.button<{$imageurl: string}>`

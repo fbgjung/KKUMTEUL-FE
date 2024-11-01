@@ -44,8 +44,8 @@ const LoginButton = styled.button`
   width: 400px;
   height: 50px;
   font-size: 16px;
-  background: #ace601;
-  color: white;
+  background: #fdf8d7;
+  color: #e7cc00;
   border: none;
   border-radius: 18px;
   cursor: pointer;
@@ -56,7 +56,8 @@ const LoginButton = styled.button`
   transition: background-color 0.3s ease;
   
   &:hover {
-    background-color: #40ca28;
+    background-color: #fee208;
+    color: #fdf8d7;
   }
 `;
 
