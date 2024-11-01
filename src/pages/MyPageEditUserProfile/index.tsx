@@ -20,7 +20,7 @@ const EditProfile = () => {
       setConfirmPassword('');
       setPhoneNumber(userData.phoneNumber || '');
       setOriginalNickname(userData.nickName || ''); // 기존 닉네임 저장
-      // setProfileImageFile(userData.profileImage);
+      setProfileImage(userData.profileImage);
     }
   }, [userData]);
 
@@ -31,7 +31,7 @@ const EditProfile = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [nicknameValid, setNicknameValid] = useState<boolean>(false); // 닉네임 중복 확인 여부
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 비밀번호 확인 여부
-  // const [profileImage, setProfileImage] = useState<string>('/assets/default_profile.svg'); // 프로필 추가
+  const [profileImage, setProfileImage] = useState<string>('/assets/default_profile.svg'); // 프로필 추가
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null); // 프로필 이미지를 위한 File 타입
 
   
@@ -77,6 +77,10 @@ const EditProfile = () => {
         setPasswordMatch(true);
      }
   };
+
+  const formatImageSrc = (imageData: string) => {
+    return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
+};
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -129,16 +133,18 @@ const EditProfile = () => {
   
 
   return (
-    <Container color="#f3f3f3">
-      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="내 정보 수정" nextPage="/" />
+    <Container color="#ffffff">
+      <Header textcolor="#000000" color="#77a5fe" nextBtnImageUrl="/assets/home.svg" title="내 정보 수정" nextPage="/" />
       
       <ProfileEditContainer>
       <ProfileImageWrapper>
         <ProfileImageLabel htmlFor="profile-upload">
         {profileImageFile ? (
+          // formatImageSrc
               <ProfileImage src={URL.createObjectURL(profileImageFile)} alt="profile" />
             ) : (
-              <ProfileImage src="/assets/default_profile.svg" alt="default profile" />
+              // <ProfileImage src="/assets/default_profile.svg" alt="default profile" />
+              <ProfileImage src={formatImageSrc(profileImage)} alt="default profile" />
             )}
         </ProfileImageLabel>
         <input type="file" id="profile-upload" style={{ display: 'none' }} onChange={handleProfileImageChange} />
@@ -147,44 +153,44 @@ const EditProfile = () => {
         
         <FormWrapper>
         <InputWrapper>
-        <Input
+        <ChildProfileInput
         placeholder="닉네임"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
-        color="#6EA7D0"
-        inputcolor="#E6E6E6"
+        color="#77a5fe"
+        inputcolor="#ffffff"
         />
         <NicknameCheckButton onClick={() => handleNicknameCheck(nickname)}>중복확인</NicknameCheckButton>
         </InputWrapper>
-        {!nicknameValid && <WarningText>이미 존재하는 닉네임입니다.</WarningText>}
-        <Input
+        {/* {!nicknameValid && <WarningText>이미 존재하는 닉네임입니다.</WarningText>} */}
+        <ChildProfileInput
         placeholder="비밀번호"
         type="password"
         value={password}
         onChange={handlePasswordChange}
-        color="#6EA7D0"
-        inputcolor="#E6E6E6"
+        color="#77a5fe"
+        inputcolor="#ffffff"
         />
 
-        <Input
+        <ChildProfileInput
         placeholder="비밀번호 확인"
         type="password"
         value={confirmPassword}
         onChange={handleConfirmPasswordChange}
-        color="#6EA7D0"
-        inputcolor="#E6E6E6"
+        color="#77a5fe"
+        inputcolor="#e1ebfe"
         />
         {!passwordMatch && <WarningText>비밀번호가 일치하지 않습니다.</WarningText>}
 
-        <Input
+        <ChildProfileInput
         placeholder="전화번호"
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
-        color="#6EA7D0"
-        inputcolor="#E6E6E6"
+        color="#77a5fe"
+        inputcolor="#ffffff"
         />
         </FormWrapper>
-      <EditButton backcolor="#6EA7D0" color="#FFFFFF" onClick={handleSubmit}>수정하기</EditButton>
+      <EditButton backcolor="#77a5fe" color="#FFFFFF" onClick={handleSubmit}>수정하기</EditButton>
       </ProfileEditContainer>
     </Container>
   );
@@ -205,18 +211,19 @@ const ProfileImageWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: 60px;
 `;
 
 const ProfileImageLabel = styled.label`
   cursor: pointer;
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #E6E6E6;
+  background-color: #ffffff;
   border: 2px solid #6EA7D0;
 `;
 
@@ -229,7 +236,7 @@ const ProfileImage = styled.img`
 const ProfileName = styled.p`
   font-size: 16px;
   font-weight: bold;
-  color: #6EA7D0;
+  color: #77a5fe;
 `;
 
 
@@ -249,7 +256,7 @@ const InputWrapper = styled.div`
 `;
 
 const NicknameCheckButton = styled.button`
-  background-color: #6EA7D0;
+  background-color: #77a5fe;
   color: white;
   border: none;
   border-radius: 12px;
@@ -268,4 +275,10 @@ const WarningText = styled.p`
 
 const EditButton = styled(Button)`
   width: 100%;
+  margin-top: 20px;
+`
+
+const ChildProfileInput = styled(Input)`
+  border: 2px solid #77a5fe;
+  
 `
