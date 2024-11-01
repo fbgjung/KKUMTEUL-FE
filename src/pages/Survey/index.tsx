@@ -11,7 +11,6 @@ import MbtiFifth from '../../components/survey/MbtiFifth';
 import Interest from '../../components/survey/Interest';
 import ProgressLine from '../../components/survey/ProgressLine';
 import PrevButton from '../../components/survey/PrevButton';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import axiosWithToken from "../../axiosWithToken.ts";
 
@@ -69,8 +68,8 @@ const Index = () => {
   };
 
   return (
-      <Container color="#ffffff">
-        <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="우리 아이 진단" nextPage='/' />
+      <Container color="#fdf8d7">
+        <Header textcolor="#000000" color="#fee208" nextBtnImageUrl="/assets/home.svg" title="우리 아이 진단" nextPage='/' />
         {step > 1 && <PrevButton onClick={handlePrevStep} progressStep={step} totalProgressStep={6} />}
         <ProgressLine percentage={progressPercentage} />
         {step === 1 && <MbtiFirst onNextStep={handleNextStep} updateAnswer={handleUpdateMbtiAnswer} selectedAnswers={selectedAnswers} />}
