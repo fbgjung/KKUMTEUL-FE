@@ -95,20 +95,31 @@ const Index = () => {
     alert("프로필 변경이 완료되었습니다.");
   };
 
-    const onClickMenuItem = (menuId: number, menuLink: string) => {
-        if (!isLoggedIn) {
-            alert('로그인이 필요합니다.');
-            navigate('/login'); // 로그인 화면으로 이동
-            return;
-        }
+  const onClickMenuItem = (menuId: number, menuLink: string) => {
+      if (!isLoggedIn) {
+          alert('로그인이 필요합니다.');
+          navigate('/login'); // 로그인 화면으로 이동
+          return;
+      }
 
-        if (menuId === 0 && !childProfileId) {
-            alert('자녀 프로필을 선택해주세요.');
-            return;
-        }
+      if (menuId === 0 && !childProfileId) {
+          alert('자녀 프로필을 선택해주세요.');
+          return;
+      }
 
-        navigate(menuLink);
-    };
+      navigate(menuLink);
+  };
+
+    const onClickSurvey = () => {
+      if (!isLoggedIn) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      if(!childProfileId) {
+        alert('자녀 프로필을 선택해주세요.');
+      }
+    }
   
 
   const handleCloseModal = () => {
@@ -252,53 +263,65 @@ const Index = () => {
       </MenuSection>  
       
       <EventBanner onClick={onClickEventBanner}>
-        <EventTitle>선착순 100명 이벤트</EventTitle>
+      <EventImage src="/assets/donut.png" alt="Event" /> {/* 이미지 경로 설정 */}
+        <EventTitle>선착순 쿠키 100개 Event!!</EventTitle>
         <EventText>오늘 오후 1시! 행운의 당첨자는?</EventText>
       </EventBanner>
-          {/* <RecommendTitle>🐰 꿈틀이를 위한 오늘의 책 추천</RecommendTitle> */}
-
           <RecommendTitleSection>
             <RecommendTitleImage src="/assets/help.png"></RecommendTitleImage>
             <RecommendTitleText>
             <RecommendTitle>책을 선택하는</RecommendTitle>
             <RecommendTitle>고민의 시간을 덜어드려요 </RecommendTitle>
-            <RecommendExplainText>꿈틀이 맞춤 도서를 매일 알려드려요!</RecommendExplainText>
+            <RecommendExplainText>매일매일 새로운 꿈틀이 맞춤 도서를 만날 수 있어요!</RecommendExplainText>
           </RecommendTitleText>
-            
           </RecommendTitleSection>
-          
-
-
+        
           <RecommendBookSection>
-              <ArrowBubble>
-                  <RecommendText>{childName} 꿈틀이는 어떤 책을 좋아할까??</RecommendText>
-              </ArrowBubble>
-              
+              <RecommendBookTitle>자녀 성향 진단으로 책 추천받기</RecommendBookTitle>
+              <RecommendBookText>MBTI 검사로 맞춤 도서 추천을 받아보세요.</RecommendBookText>
+              <RecommendBookText>진단 내역이 없을 시 연령대 별 도서를 추천해 드려요.</RecommendBookText>
               <RecommendContainer>
-                  <MbtiImage/>
-                  {recommendedBooks.map((book) => (
-                      <RecommendItem key={book.bookId}>
-                          <RecommendBookImage
-                              onClick={() => navigate(`/booklist/${book.bookId}`)}
-                              $imageurl={formatImageSrc(book.bookImage)}
-                          />
-                      </RecommendItem>
-                  ))}
+              <RecommendInfo $backgroundColor="#ffc127">
+                <RecommendInfoTitle>꿈틀이 맞춤</RecommendInfoTitle>
+                <RecommendInfoTitle>추천도서</RecommendInfoTitle>
+                <RecommendInfoText $textColor='#f7eeac'>성향 진단 결과 맞춤 추천 도서에요!</RecommendInfoText>
+                <SurveyButton onClick={onClickSurvey}>진단하기</SurveyButton>
+                <RecommendInfoImage src="/assets/kkumteul_character.png" alt="Description" />
+              </RecommendInfo>
+              {recommendedBooks.map((book) => (
+                <RecommendItem key={book.bookId}>
+                    <RecommendBookImage
+                        onClick={() => navigate(`/booklist/${book.bookId}`)}
+                        $imageurl={formatImageSrc(book.bookImage)}
+                        $borderColor='#fee208'
+                    />
+                </RecommendItem>
+              ))}
               </RecommendContainer>
           </RecommendBookSection>
-          {/* <RecommendTitle>🦊 꿈틀이를 위한 인기 도서</RecommendTitle> */}
+
           <RecommendBookSection>
-              <ArrowBubble>
-                  <RecommendText>꿈틀이의 친구들은 어떤 책을 좋아할까요?</RecommendText>
-              </ArrowBubble>
+
+            <RecommendTitleWrapper>
+              <RecommendImage src = "/assets/genre/topic_image.png"></RecommendImage>
+              <RecommendBookTitle>[HOT] 요즘 인기 도서</RecommendBookTitle>
+            </RecommendTitleWrapper>
+          
               <RecommendContainer>
-                  {popularBooks.map((book) => (
+              <RecommendInfo $backgroundColor="#fd7193">
+                <RecommendInfoTitle>친구들은</RecommendInfoTitle>
+                <RecommendInfoTitle>어떤 책을?</RecommendInfoTitle>
+                <RecommendInfoText $textColor='#fcbbcb'>좋아요를 가장 많이 받았어요!</RecommendInfoText>
+                <RecommendInfoImage src="/assets/kkumteul_character.png" alt="Description" />
+              </RecommendInfo>
+                  {popularBooks.map((book, index) => (
                       <RecommendItem key={book.bookId}>
-                          <RecommendBookImage
+                        <RankBadge>{index + 1}</RankBadge>  
+                          <RecommendBookImage 
                               onClick={() => navigate(`/booklist/${book.bookId}`)}
                               $imageurl={formatImageSrc(book.bookImage)}
+                              $borderColor='#fd7193'
                           />
-                          {/* <RecommendBookTitle>{book.bookTitle}</RecommendBookTitle> */}
                       </RecommendItem>
                   ))}
               </RecommendContainer>
@@ -467,6 +490,7 @@ const EventBanner = styled.div`
     flex-direction: column;
     padding: 30px;
     cursor: pointer;
+    position: relative;
     transition: transform 0.2s ease;
     
     &:hover {
@@ -487,20 +511,29 @@ const EventText = styled.p`
 
 `
 
+const EventImage = styled.img`
+    position: absolute;
+    top: -30px;
+    right: 10px;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+`;
+
+
 // 도서 추천
 
 const RecommendBookSection = styled.div`
-    width: 95%;
-    background-color: #fee208;
-    border-radius: 20px;
-    margin: 12px 10px 20px 10px;
-    padding: 20px 20px 40px 20px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    
+  width: 95%;
+  background-color: #ffffff;
+  border-radius: 20px;
+  margin: 12px 10px 20px 10px;
+  padding: 20px 20px 40px 20px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 const RecommendTitleSection = styled.div`
@@ -548,60 +581,25 @@ const RecommendExplainText = styled.p`
   font-weight: bold;
 `
 
-const RecommendText = styled.p`
-    margin: 0;
-    color: #ffffff;
-    font-size: 18px;
-    text-align: center;
-`;
+const RecommendTitleWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`
+const RecommendImage = styled.img`
+  width: 34px;
+  height: 34px;
+`
+const RecommendBookTitle = styled.h3`
+  margin: 10px 0 6px 10px;
+  width: 100%;
+`
 
-const ArrowBubble = styled.div`
-    margin: 10px;
-    position: relative;
-    width: 90%;
-    height: auto;
-    padding: 10px;
-    background: #FFC317;
-    border-radius: 30px;
-    border: #FFC317 solid 3px;
-
-    @media screen and (max-width: 500px) {
-        width: 90%;
-        height: auto;
-    }
-
-    ::after {
-        content: "";
-        position: absolute;
-        border-style: solid;
-        border-width: 10px 15px 0;
-        border-color: #FFC317 transparent;
-        display: block;
-        width: 0;
-        z-index: 1;
-        bottom: -4px;
-        left: 15px;
-        @media screen and (max-width: 650px) {
-            left: 5px;
-        }
-    }
-
-    ::before {
-        content: "";
-        position: absolute;
-        border-style: solid;
-        border-width: 8px 12px 0;
-        border-color: #FFC317 transparent;
-        display: block;
-        width: 0;
-        z-index: 0;
-        bottom: -8px;
-        left: 18px;
-        @media screen and (max-width: 650px) {
-            left: 8px;
-        }
-    }
-`;
+const RecommendBookText = styled.p`
+  margin: 0 0 0 10px;
+  width: 100%;
+  font-size:12px;
+  color: #9f9f9f;
+`
 
 const RecommendContainer = styled.div`
     display: flex;
@@ -618,14 +616,50 @@ const RecommendContainer = styled.div`
     }
 `;
 
-const MbtiImage = styled.div`
-    width: 80px;
-    height: 80px;
-    background: no-repeat center/contain url("/assets/kkumteul_character.png");
-    padding: 0;
-    flex-shrink: 0;
-    margin-top: 20px;
+const RecommendInfo = styled.div<{ $backgroundColor?: string}>` 
+  width: 134px;
+  height: 160px;
+  background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFC317'};
+  padding: 20px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  margin: 10px 20px 10px 0;
+  display: flex;
+  position: relative;
+  flex-direction: column;
 `;
+
+
+const RecommendInfoTitle = styled.h4`
+  color: #ffffff;
+  margin: 0;
+`
+
+const RecommendInfoText = styled.p<{ $textColor: string}>` 
+  font-size:12px;
+  margin:0px;
+  color: ${({ $textColor }) => $textColor || '#000000'};
+`
+
+const SurveyButton = styled.span`
+  margin-top: 30px;
+  width: 40px;
+  background-color: #ffff;
+  border-radius: 20px;
+  font-size:10px;
+  padding: 4px 10px;
+  text-align: center;
+  cursor: pointer;
+`
+
+const RecommendInfoImage = styled.img`
+  position: absolute; 
+  bottom: -10px;
+  right: -20px;
+  width: 75px;
+  height: 75px;
+`
+
 
 // 추천 책 리스트
 const RecommendItem = styled.div`
@@ -636,17 +670,19 @@ const RecommendItem = styled.div`
     margin: 10px 10px 0 0;
     justify-content: flex-start;
     cursor: pointer;
+    position: relative;
 `;
 
-const RecommendBookImage = styled.img<{ $imageurl: string }>`
-  width: 90px;
-  height: 120px;
+const RecommendBookImage = styled.img<{ $imageurl: string, $borderColor:string }>`
+  width: 100px;
+  height: 140px;
   background: no-repeat center/cover url(${({$imageurl}) => $imageurl});
   padding: 0;
   margin: 0;
   border-radius: 18px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  border: 2px solid ${({ $borderColor }) => $borderColor || '#ffffff'};
   &:hover {
         transform: scale(1.05);
     }
@@ -657,11 +693,16 @@ const RecommendBookImage = styled.img<{ $imageurl: string }>`
     }
 `;
 
-const RecommendBookTitle = styled.p`
-    margin: 2px 0 0 0;
-    font-size: 12px;
-    color: #757575;
-    word-wrap: break-word;
-    white-space: normal;
-    text-align: center;
+const RankBadge = styled.div`
+    position: absolute;
+    top: 100px;
+    left: 72px;
+    color: #fd7193;
+    font-weight: 900;
+    border-radius: 50%;
+    font-size: 60px;
+    z-index: 1;
+    -webkit-text-stroke: 1px #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Nunito', sans-serif;
 `;
