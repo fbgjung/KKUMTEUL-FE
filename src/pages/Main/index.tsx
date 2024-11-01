@@ -277,7 +277,10 @@ const Index = () => {
           </RecommendTitleSection>
         
           <RecommendBookSection>
+          <RecommendTitleWrapper>
+              <RecommendImage src = "/assets/topic/science.png"></RecommendImage>
               <RecommendBookTitle>자녀 성향 진단으로 책 추천받기</RecommendBookTitle>
+            </RecommendTitleWrapper>
               <RecommendBookText>MBTI 검사로 맞춤 도서 추천을 받아보세요.</RecommendBookText>
               <RecommendBookText>진단 내역이 없을 시 연령대 별 도서를 추천해 드려요.</RecommendBookText>
               <RecommendContainer>
@@ -595,7 +598,7 @@ const RecommendBookTitle = styled.h3`
 `
 
 const RecommendBookText = styled.p`
-  margin: 0 0 0 10px;
+  margin: 0 0 0 90px;
   width: 100%;
   font-size:12px;
   color: #9f9f9f;
