@@ -123,7 +123,7 @@ const Index = () => {
 
   return (
     <Container color="#fdf8d7">
-      <Header textcolor="#000000" color="#fdf8d7" nextBtnImageUrl="/assets/home.svg" title="마이페이지" nextPage="/" />
+      <Header textcolor="#000000" color="#fee208" nextBtnImageUrl="/assets/home.svg" title="마이페이지" nextPage="/" />
       <MyPageContainer>
         {userData && (
         <ProfileCard>
@@ -183,7 +183,7 @@ const ProfileCard = styled.div`
   background-color: white;
   border-radius: 12px;
   padding: 16px;
-  margin: 20px 0 10px 0;
+  margin: 40px 0 10px 0;
 `;
 
 const ChildProfileCard = styled.div`
