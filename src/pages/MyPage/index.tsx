@@ -147,7 +147,7 @@ const Index = () => {
 
           {childProfiles.map((child) => (
             <ChildProfile key={child.childProfileId}>
-              <ProfileImage src={child.childProfileImage || "/assets/default_profile.svg"} alt={child.childName} />
+              <ProfileImage src={child.childProfileImage || "/assets/childprofile.png"} alt={child.childName} />
               <ChildInfo>
                 <h4>{child.childName}</h4>
                 <p>{child.childBirthDate.split("T")[0]}</p>
