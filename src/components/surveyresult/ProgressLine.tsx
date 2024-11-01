@@ -15,9 +15,9 @@ const ProgressLine = ({ percentage, isReverse }: ProgressLineProps) => {
 
     return (
         <Container>
-            <ProgressVisualFull style={{ backgroundColor: isReverse ? "#6EA7D0" : "#E8E8E8" }}>
+            <ProgressVisualFull style={{ backgroundColor: isReverse ? "#fee208" : "#ffffff" }}>
                 <ProgressVisualPart
-                    style={{ width, backgroundColor: isReverse ? "#E8E8E8" : "#6EA7D0" }}
+                    style={{ width, backgroundColor: isReverse ? "#ffffff" : "#fee208" }}
                 />
             </ProgressVisualFull>
         </Container>
