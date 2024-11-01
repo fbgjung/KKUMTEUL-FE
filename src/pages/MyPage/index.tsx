@@ -100,6 +100,7 @@ const Index = () => {
     try {
       await axiosWithToken.post('/kkumteul/api/auth/logout');
       sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('childProfileId');
       alert("로그아웃 되었습니다.");
       navigate('/login');
     } catch (error) {
@@ -121,8 +122,8 @@ const Index = () => {
   };
 
   return (
-    <Container color="#f3f3f3">
-      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="마이페이지" nextPage="/" />
+    <Container color="#fdf8d7">
+      <Header textcolor="#000000" color="#fdf8d7" nextBtnImageUrl="/assets/home.svg" title="마이페이지" nextPage="/" />
       <MyPageContainer>
         {userData && (
         <ProfileCard>
@@ -200,10 +201,11 @@ const ProfileContent = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   margin-right: 16px;
+  border: 2px solid #fee208;
 `;
 
 const ChildInfoText = styled.span`
@@ -231,28 +233,28 @@ const ProfileInfo = styled.div`
 `;
 
 const UserEditButton = styled.button`
-  background-color: #e6e6e6;
+  background-color: #e9e9e9;
   border: none;
-  border-radius: 12px;
-  padding: 8px 12px;
-  font-size: 14px;
+  border-radius: 18px;
+  padding: 7px 12px;
+  font-size: 13px;
   position: absolute;
   top: 2px;
   right: 0;
   &:hover {
-    background-color: #6EA7D0;
+    background-color: #77a5fe;
     color: #ffffff;
   }
 `;
 
 const ChildEditButton = styled.button`
-  background-color: #e6e6e6;
+  background-color: #e9e9e9;
   border: none;
-  border-radius: 12px;
-  padding: 8px 12px;
-  font-size: 14px;
+  border-radius: 18px;
+  padding: 7px 12px;
+  font-size: 13px;
   &:hover {
-    background-color: #6EA7D0;
+    background-color: #77a5fe;
     color: #ffffff;
   }
 `;
@@ -302,12 +304,13 @@ const DeleteAccount = styled.p`
   margin-top: 10px;
   font-size: 14px;
   text-align: center;
-  color: #6EA7D0;
+  color: #a6a6a6;
   cursor: pointer;
   text-decoration: underline;
 `;
 
 const LogoutButton = styled(Button)`
   width: 90%;
-  margin-top: 300px;
+  margin-top: 270px;
+  background-color: #fee208;
 `;
