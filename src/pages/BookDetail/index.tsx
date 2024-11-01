@@ -104,82 +104,81 @@ const Index = () => {
     }
 
     return (
-        <Container color="#fee208">
-                <Header
-                    textcolor="#000000"
-                    color="#fee208"
-                    title={book.bookTitle}
-                    nextPage="/"
-                    nextBtnImageUrl="/assets/home.svg"
-                />
+      <Container color="#fee208">
+        <Header
+          textcolor="#000000"
+          color="#fee208"
+          title={book.bookTitle}
+          nextPage="/"
+          nextBtnImageUrl="/assets/home.svg"
+          fontSize='14px'
+        />
 
-            <ImageAndContentContainer>
+        <ImageAndContentContainer>
 
-                <BookImageContainer>
-                <BookImage src={`data:image/jpeg;base64,${book.bookImage}`} alt={book.bookTitle} />
-                <OverlayImage src="/assets/detail_page_book.png" alt="Overlay" />
-                </BookImageContainer>
-                
+          <BookImageContainer>
+          <BookImage src={`data:image/jpeg;base64,${book.bookImage}`} alt={book.bookTitle} />
+          <OverlayImage src="/assets/detail_page_book.png" alt="Overlay" />
+          </BookImageContainer>
+            
 
-                <ContentContainer>
-                    <BookInfo>
-                      <BookInfoFirstSection>
-                        <BookTitle>{book.bookTitle}</BookTitle>
-                        <Author>{book.bookAuthor}</Author>
-                        <GenreAndAge>
-                          <Genre>{book.genreName}</Genre>
-                          <Age>{book.ageGroup} 추천</Age>
-                        </GenreAndAge>
-                        
-                      </BookInfoFirstSection>
-                        
+          <ContentContainer>
+            <BookInfo>
+              <BookInfoFirstSection>
+                <BookTitle>{book.bookTitle}</BookTitle>
+                <Author>{book.bookAuthor}</Author>
+                <GenreAndAge>
+                  <Genre>{book.genreName}</Genre>
+                  <Age>{book.ageGroup} 추천</Age>
+                </GenreAndAge>
+              </BookInfoFirstSection>
+              
+              <TitleText>이런 성향의 꿈틀이들과 잘 맞는 책이에요</TitleText>
+              <MbtiValue>INFJ</MbtiValue>
+              {/* <MbtiValue>{book.mbtiInfo}</MbtiValue> */}
 
-                        <TitleText>이런 성향의 꿈틀이들과 잘 맞는 책이에요</TitleText>
-                        <MbtiValue>INFJ</MbtiValue>
-                        {/* <MbtiValue>{book.mbtiInfo}</MbtiValue> */}
+              <TitleText>줄거리</TitleText>
+              <SummaryContainer>
+                  <Summary>{book.bookSummary}</Summary>
+              </SummaryContainer>
 
-                        <TitleText>줄거리</TitleText>
-                        <SummaryContainer>
-                            <Summary>{book.bookSummary}</Summary>
-                        </SummaryContainer>
+              <InfoWrapper>
+                  <TitleText>주제</TitleText>
+                  <InfoValue>{Array.isArray(book.topicNames) ? book.topicNames.join(', ') : book.topicNames}</InfoValue>
+              </InfoWrapper>
 
-                        <InfoWrapper>
-                            <TitleText>주제</TitleText>
-                            <InfoValue>{Array.isArray(book.topicNames) ? book.topicNames.join(', ') : book.topicNames}</InfoValue>
-                        </InfoWrapper>
+              <InfoWrapper>
+                  <TitleText>페이지 수</TitleText>
+                  <InfoValue>{book.bookPage}</InfoValue>
+              </InfoWrapper>
 
-                        <InfoWrapper>
-                            <TitleText>페이지 수</TitleText>
-                            <InfoValue>{book.bookPage}</InfoValue>
-                        </InfoWrapper>
+              <InfoWrapper>
+                  <TitleText>출판사</TitleText>
+                  <InfoValue>{book.publisher}</InfoValue>
+              </InfoWrapper>
+            </BookInfo>
 
-                        <InfoWrapper>
-                            <TitleText>출판사</TitleText>
-                            <InfoValue>{book.publisher}</InfoValue>
-                        </InfoWrapper>
-                    </BookInfo>
-
-                    <ButtonContainer>
-                        <LikeButton
-                            onClick={() => handleLike('LIKE')}
-                            color={isLiked ? "#FFC317" : "#757575"}
-                            backcolor={isLiked ? "#FFD869" : "#ffffff"}
-                            active={isLiked}
-                        >
-                            좋아요
-                        </LikeButton>
-                        <DisLikeButton
-                            onClick={() => handleLike('DISLIKE')}
-                            color={isDisliked ? "#757575" : "#6EA7D0"}
-                            backcolor={isDisliked ? "#ffffff" : "#6EA7D0"}
-                            active={isDisliked}
-                        >
-                            다음에 볼래요
-                        </DisLikeButton>
-                    </ButtonContainer>
-                </ContentContainer>
-            </ImageAndContentContainer>
-        </Container>
+            <ButtonContainer>
+              <LikeButton
+                  onClick={() => handleLike('LIKE')}
+                  color={isLiked ? "#FFC317" : "#757575"}
+                  backcolor={isLiked ? "#FFD869" : "#ffffff"}
+                  active={isLiked}
+              >
+                  좋아요
+              </LikeButton>
+              <DisLikeButton
+                  onClick={() => handleLike('DISLIKE')}
+                  color={isDisliked ? "#757575" : "#6EA7D0"}
+                  backcolor={isDisliked ? "#ffffff" : "#6EA7D0"}
+                  active={isDisliked}
+              >
+                  다음에 볼래요
+              </DisLikeButton>
+            </ButtonContainer>
+          </ContentContainer>
+        </ImageAndContentContainer>
+      </Container>
     );
 };
 
