@@ -9,7 +9,7 @@ import axiosWithToken from '../../axiosWithToken.ts';
 
 
 interface UserProps {
-  username:string
+  name:string
   profileImageBase64:string
   nickName:string
   phoneNumber:string
@@ -130,7 +130,7 @@ const Index = () => {
           <ProfileContent>
             <ProfileImage src={userData?.profileImageBase64 || "/assets/default_profile.svg"} alt="Profile" />
             <ProfileInfo>
-              <h3>{userData?.username}</h3>
+              <h3>{userData?.name}</h3>
               <p>{userData?.nickName}</p>
             </ProfileInfo>
             <UserEditButton onClick={handleEditProfile}>편집</UserEditButton>
@@ -138,7 +138,7 @@ const Index = () => {
         </ProfileCard>
         )}
 
-        <ProfileCard>
+        <ChildProfileCard>
           <ProfileHeader>
             <ProfileTitle>우리집 꿈틀이들</ProfileTitle>
             <ChildEditButton onClick={handleEditChildrenProfile}>편집</ChildEditButton>
@@ -158,7 +158,7 @@ const Index = () => {
               </ChildProfile>
           ))}
 
-        </ProfileCard>
+        </ChildProfileCard>
 
         <LogoutButton backcolor="#FFC317" color="#FFFFFF" onClick={handleLogout}>로그아웃</LogoutButton>
         <DeleteAccount onClick={handleDeleteAccount}>탈퇴하기</DeleteAccount>
@@ -186,6 +186,14 @@ const ProfileCard = styled.div`
   margin: 20px 0 10px 0;
 `;
 
+const ChildProfileCard = styled.div`
+  width: 90%;
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0 40px 0;
+`;
+
 const ProfileHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -205,7 +213,7 @@ const ProfileImage = styled.img`
   height: 54px;
   border-radius: 50%;
   margin-right: 16px;
-  border: 2px solid #fee208;
+  border: 3px solid #fee208;
 `;
 
 const ChildInfoText = styled.span`
@@ -311,6 +319,5 @@ const DeleteAccount = styled.p`
 
 const LogoutButton = styled(Button)`
   width: 90%;
-  margin-top: 270px;
   background-color: #fee208;
 `;
