@@ -74,18 +74,20 @@ const Index = () => {
   };
 
   return (
-    <Container color="#f3f3f3">
-      <Header textcolor="#000000" color="#f3f3f3" nextBtnImageUrl="/assets/home.svg" title="자녀 등록" nextPage='/' />
+    <Container color="#ffffff">
+      <Header textcolor="#000000" color="#fee208" nextBtnImageUrl="/assets/home.svg" title="자녀 등록" nextPage='/' />
       <WholeContainer color="#f3f3f3">
-
-        <ProfileImageWrapper>
-        <ProfileImageLabel htmlFor="profile-upload">
-        {profileImageFile ? (
+      <ProfileImageWrapper>
+        <ProfileImageContainer>
+          <ProfileImageLabel htmlFor="profile-upload">
+            {profileImageFile ? (
               <ProfileImage src={URL.createObjectURL(profileImageFile)} alt="profile" />
             ) : (
-              <ProfileImage src="/assets/default_profile.svg" alt="default profile" />
+              <ProfileImage src="/assets/childprofile.png" alt="default profile" />
             )}
-        </ProfileImageLabel>
+          </ProfileImageLabel>
+          <OverlayImage src="/assets/camera.png" alt="overlay" />
+        </ProfileImageContainer>
         <input type="file" id="profile-upload" style={{ display: 'none' }} onChange={handleProfileImageChange} />
       </ProfileImageWrapper>
 
@@ -115,14 +117,14 @@ const Index = () => {
           </GenderButtonContainer>
           <Label>생년월일</Label>
           <StyledInput
-            placeholder="ex) 19980905"
+            placeholder="ex) 20190101"
             color="#6EA7D0"
             inputcolor='#E6E6E6'
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
           />
         </FormContainer>
-        <AddButton color="#FFFFFF" backcolor='#6EA7D0' onClick={handleAddChild}>추가하기</AddButton>
+        <AddButton color="#FFFFFF" backcolor='#fee208' onClick={handleAddChild}>추가하기</AddButton>
       </WholeContainer>
     </Container>
   );
@@ -139,32 +141,15 @@ const WholeContainer = styled.div`
   align-content: center;
 
 `;
-
-// const ProfileImageContainer = styled.div<{ imageUrl?: string }>`
-//   width: 200px;
-//   height: 200px;
-//   background-color: #D3D3D3;
-//   border-radius: 100%;
-//   overflow: hidden;
-//   position: relative;
-//   justify-content: center;
-//   align-items: center;
-//   display: flex;
-//   background: cover center ${({ imageUrl }) => (imageUrl ? `url(${imageUrl})` : 'none')};
-//   // imageUrl 상태를 추가하여 선택한 이미지를 저장 (useState<string | null>).
-//   cursor: pointer;
-// `;
-
 const FormContainer = styled.div`
   width: 90%;
   margin-top: 20px;
 `;
 
 const Label = styled.label`
-  margin-top: 15px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #6EA7D0;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #dcc728;
   display: block;
 `;
 
@@ -177,11 +162,12 @@ const GenderButtonContainer = styled.div`
 const GenderButton = styled.button<{ isSelected: boolean }>`
   flex: 1;
   height: 48px;
-  border-radius: 16px;
-  background-color: ${({ isSelected }) => (isSelected ? 'rgb(110,167,208,0.5)' : '#E6E6E6')};
-  color: ${({ isSelected }) => (isSelected ? '#FFFFFF' : '#6EA7D0')};
+  border-radius: 20px;
+  border: 2px solid #fee208;
+  background-color: ${({ isSelected }) => (isSelected ? '#fee208' : '#ffffff')};
+  color: ${({ isSelected }) => (isSelected ? '#6a6d6f' : '#6a6d6f')};
   font-size: 16px;
-  border: none;
+  cursor: pointer;
 `;
 
 const AddButton = styled(Button)`
@@ -191,10 +177,13 @@ const AddButton = styled(Button)`
 `;
 
 const StyledInput = styled(Input)`
-    width: 100%; /* 입력 필드의 너비를 부모 요소에 맞추도록 설정 */
-    padding-left: 15px;
-    margin-top: 5px;
+  width: 100%;
+  padding-left: 15px;
+  margin-top: 5px;
+  background-color: #fdf8d7;
+  border: 2px solid #fee208;
 `;
+
 
 const ProfileImageWrapper = styled.div`
   display: flex;
@@ -203,21 +192,36 @@ const ProfileImageWrapper = styled.div`
   width: 100%;
 `;
 
+const ProfileImageContainer = styled.div`
+  position: relative;
+  width: 120px;
+  height: 120px;
+`;
+
 const ProfileImageLabel = styled.label`
   cursor: pointer;
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #E6E6E6;
-  border: 2px solid #6EA7D0;
+  background-color: #ffffff;
+  border: 2px solid #fee208;
 `;
 
 const ProfileImage = styled.img`
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
+  object-fit: cover;
+`;
+
+const OverlayImage = styled.img`
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
 `;
