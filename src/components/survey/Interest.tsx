@@ -27,31 +27,31 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
   ];
 
   const keywords = [
-    { id: 1, name: '환경', image: '/assets/sports.png' },
-    { id: 2, name: '동물', image: '/assets/sports.png' },
-    { id: 3, name: '성장', image: '/assets/sports.png' },
-    { id: 4, name: '가족', image: '/assets/sports.png' },
-    { id: 5, name: '과학', image: '/assets/sports.png' },
-    { id: 6, name: '생명', image: '/assets/sports.png' },
-    { id: 7, name: '수학', image: '/assets/sports.png' },
-    { id: 8, name: '세계문화', image: '/assets/sports.png' },
-    { id: 9, name: '인물', image: '/assets/sports.png' },
-    { id: 10, name: '스포츠', image: '/assets/sports.png' },
-    { id: 11, name: '협동', image: '/assets/sports.png' },
-    { id: 12, name: '미술', image: '/assets/sports.png' },
-    { id: 13, name: '모험', image: '/assets/sports.png' },
-    { id: 14, name: '기계', image: '/assets/sports.png' },
-    { id: 15, name: '식물', image: '/assets/sports.png' },
-    { id: 16, name: '꿈', image: '/assets/sports.png' },
-    { id: 17, name: '관찰', image: '/assets/sports.png' },
-    { id: 18, name: '사랑', image: '/assets/sports.png' },
-    { id: 19, name: '영웅', image: '/assets/sports.png' },
-    { id: 20, name: '외국어', image: '/assets/sports.png' },
-    { id: 21, name: '우주', image: '/assets/sports.png' },
-    { id: 22, name: '유머', image: '/assets/sports.png' },
-    { id: 23, name: '음악', image: '/assets/sports.png' },
-    { id: 24, name: '의학', image: '/assets/sports.png' },
-    { id: 25, name: '이별', image: '/assets/sports.png' },
+    { id: 1, name: '환경', image: '/assets/topic/environment.png' },
+    { id: 2, name: '동물', image: '/assets/topic/animal.png' },
+    { id: 3, name: '성장', image: '/assets/topic/growth.png' },
+    { id: 4, name: '가족', image: '/assets/topic/family.png' },
+    { id: 5, name: '과학', image: '/assets/topic/science.png' },
+    { id: 6, name: '생명', image: '/assets/topic/life.png' },
+    { id: 7, name: '수학', image: '/assets/topic/math.png' },
+    { id: 8, name: '세계문화', image: '/assets/topic/culture.png' },
+    { id: 9, name: '인물', image: '/assets/topic/human.png' },
+    { id: 10, name: '스포츠', image: '/assets/topic/sport.png' },
+    { id: 11, name: '협동', image: '/assets/topic/collaboration.png' },
+    { id: 12, name: '미술', image: '/assets/topic/art.png' },
+    { id: 13, name: '모험', image: '/assets/topic/adventure.png' },
+    { id: 14, name: '기계', image: '/assets/topic/machine.png' },
+    { id: 15, name: '식물', image: '/assets/topic/plant.png' },
+    { id: 16, name: '꿈', image: '/assets/topic/dream.png' },
+    { id: 17, name: '관찰', image: '/assets/topic/observation.png' },
+    { id: 18, name: '사랑', image: '/assets/topic/love.png' },
+    { id: 19, name: '영웅', image: '/assets/topic/hero.png' },
+    { id: 20, name: '외국어', image: '/assets/topic/language.png' },
+    { id: 21, name: '우주', image: '/assets/topic/space.png' },
+    { id: 22, name: '유머', image: '/assets/topic/humor.png' },
+    { id: 23, name: '음악', image: '/assets/topic/music.png' },
+    { id: 24, name: '의학', image: '/assets/topic/medicine.png' },
+    { id: 25, name: '이별', image: '/assets/topic/parting.png' },
   ];
 
   const toggleGenre = (genreId: number) => {
@@ -155,28 +155,25 @@ const GenreTitle = styled.h3`
 
 const GenreList = styled.div`
   width: 95%;
-  /* height: 240px; */
   background-color: #ffffff;
-  /* box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03); */
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 30px;
+  padding: 20px;
   margin-bottom: 30px;
 `;
 
 const Item = styled.div<{ isSelected: boolean }>`
-  width: 100px; /* 정원 형태를 유지하기 위해 고정된 너비 */
-  height: 100px; /* 높이도 너비와 동일하게 설정 */
+  width: 100px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  margin: 12px 6px;
+  margin: 10px 6px;
   background-color: ${({ isSelected }) => (isSelected ? '#fee208' : 'transparent')};
   border-radius: 50%;
-  padding: 10px;
   justify-content: center;
   transition: background-color 0.3s ease, transform 0.1s ease;
   color: #565656;
@@ -222,14 +219,12 @@ const KeyWordTitle = styled.h3`
 
 const KeyWordList = styled.div`
   width: 95%;
-  /* height: 520px; */
   background-color: #ffffff;
-  /* box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03); */
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 30px;
+  padding: 20px;
 `;
 
 const NextButton = styled(Button)`
