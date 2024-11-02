@@ -13,7 +13,6 @@ import MyPageCreateChildProfile from '../pages/MyPageCreateChildProfile';
 import MyPageManageChildProfile from '../pages/MyPageManageChildProfile';
 import MyPageEditUserProfile from "../pages/MyPageEditUserProfile";
 import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
-import EventResult from '../pages/EventResult';
 import SurveyResult from '../pages/SurveyResult';
 import ChildPersonalityHistoryDetail from '../pages/ChildPersonalityHistoryDetail';
 import EventTicket from '../pages/EventTicket';
@@ -73,11 +72,6 @@ export const Screens = {
   Event: {
     path: '/event',
     element: <Event />
-  },
-
-  EventResult:{
-    path: '/event/result',
-    element: <EventResult />
   },
 
   ManageBookList: {
