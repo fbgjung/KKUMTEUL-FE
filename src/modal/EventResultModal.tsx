@@ -25,10 +25,12 @@ const EventModal = ({ isOpen, onClose, winners }: EventModalProps) => {
   };
 
   const obfuscateName = (name: string) => {
-    if (name.length > 2) {
+    if (name.length > 3) {
       return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1);
+    } else if (name.length === 3) {
+      return name.charAt(0) + '*' + name.charAt(2);
     } else if (name.length === 2) {
-      return name.charAt(0) + '*' + name.charAt(1);
+      return name.charAt(0) + '*';
     }
     return name;
   };
@@ -112,7 +114,7 @@ const WinnerCell = styled.td`
 `;
 
 const customModalStyles: ReactModal.Styles = {
-  overlay: {
+overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.4)",
     width: "100%",
     height: "100vh",
@@ -120,10 +122,10 @@ const customModalStyles: ReactModal.Styles = {
     position: "fixed",
     top: "0",
     left: "0",
-  },
-  content: {
+},
+content: {
     width: "500px",
-    height: "auto",
+    maxHeight: "80vh",
     zIndex: "150",
     position: "absolute",
     top: "50%",
@@ -132,11 +134,10 @@ const customModalStyles: ReactModal.Styles = {
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "white",
-    justifyContent: "center",
-    overflow: "auto",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     padding: "20px",
-  },
+    overflow: "auto",
+},
 };
