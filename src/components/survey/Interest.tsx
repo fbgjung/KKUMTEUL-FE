@@ -42,7 +42,7 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
     { id: 13, name: '모험', image: '/assets/topic/adventure.png' },
     { id: 14, name: '기계', image: '/assets/topic/machine.png' },
     { id: 15, name: '식물', image: '/assets/topic/plant.png' },
-    { id: 16, name: '꿈', image: '/assets/topic/dream.png' },
+    { id: 16, name: '꿈', image: '/assets/topic/wish.png' },
     { id: 17, name: '관찰', image: '/assets/topic/observation.png' },
     { id: 18, name: '사랑', image: '/assets/topic/love.png' },
     { id: 19, name: '영웅', image: '/assets/topic/hero.png' },
