@@ -4,6 +4,8 @@ import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
+import EventResultModal from '../../modal/EventResultModal';
+
 
 
 interface Event {
@@ -59,6 +61,9 @@ const Index = () => {
   const [childName, setChildName] = useState<string>();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // 로그인 유무
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [isEventModalOpen, setEventModalOpen] = useState(false); // 이벤트 결과 모달
+  const [winners, setWinners] = useState([]); // 이벤트 당첨자 리스트 저장
 
   const menus: Menu[] = [
     {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/menu_mbti.png'},
@@ -125,6 +130,15 @@ const Index = () => {
     setIsModalOpen(false);
   };
 
+  const handleOpenEventModal = () => {
+    fetchEventResultList();
+    setEventModalOpen(true);
+  };
+
+  const handleCloseEventModal = () => {
+    setEventModalOpen(false);
+  };
+
   useEffect(() => {
       const accessToken = sessionStorage.getItem('accessToken');
       setIsLoggedIn(!!accessToken);
@@ -166,6 +180,7 @@ const Index = () => {
         fetchChildProfiles();
         fetchChildProfileAndRecommendedBooks();  
         fetchCurrentEvent();
+        fetchEventResultList();
       } else{        
         fetchChildProfileAndRecommendedBooks();  
       }
@@ -190,6 +205,18 @@ const Index = () => {
           console.error('Failed to fetch recommended books:', error);
       }
   };
+
+  // 이벤트 결과 조회
+  // 이전날 이벤트 결과 조회 
+  const fetchEventResultList = async () => {
+    try{
+      const response = await axiosWithToken.get(`/kkumteul/api/events/result`);
+      console.log("이벤트 당첨자:", response.data.response);
+      setWinners(response.data.response);
+    } catch(error) {
+      console.error('Failed to fetch event result list:', error);
+    }
+  }
 
   const handleAddChildProfile = () => {
     navigate('/mypage/createChildProfile');
@@ -261,10 +288,22 @@ const Index = () => {
       </MenuSection>  
       
       <EventBanner onClick={onClickEventBanner}>
-      <EventImage src="/assets/donut.png" alt="Event" /> {/* 이미지 경로 설정 */}
-        <EventTitle>선착순 쿠키 100개 Event!!</EventTitle>
+      <EventImage src="/assets/donut.png" alt="Event" />
+        <EventTitle>선착순 쿠키 Event!!</EventTitle>
         <EventText>오늘 오후 1시! 행운의 당첨자는?</EventText>
       </EventBanner>
+
+      <EventResultContainer>
+      <EventResult onClick={handleOpenEventModal}>
+          <EventResultImage src='/assets/cookie.png'></EventResultImage>
+          <EventResultText>당첨확인</EventResultText>
+        </EventResult>
+      </EventResultContainer>
+      <EventResultModal isOpen={isEventModalOpen} onClose={handleCloseEventModal} winners={winners} />
+
+      
+
+
           <RecommendTitleSection>
             <RecommendTitleImage src="/assets/help.png"></RecommendTitleImage>
             <RecommendTitleText>
@@ -333,6 +372,15 @@ const Index = () => {
 
 
 export default Index;
+
+const bounceEvent = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+`;
 
 const Header = styled.div`
     width: 100%;
@@ -479,7 +527,7 @@ const EventBanner = styled.div`
     width: 95%;
     height: 100px;
     background-color: #ffd8df;
-    margin: 20px 10px 30px 10px;
+    margin: 20px 10px 8px 10px;
     border-radius: 20px;
     box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
     cursor: pointer;
@@ -500,7 +548,7 @@ const EventBanner = styled.div`
 `;
 
 const EventTitle = styled.p`
-    font-weight: bold;
+    font-family: RecipekoreaFont, sans-serif, Arial;
     font-size: 30px;
     color: #ec8396;
     margin: 0;
@@ -522,8 +570,40 @@ const EventImage = styled.img`
 `;
 
 
-// 도서 추천
+// 이벤트 결과
 
+const EventResultContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+`
+const EventResult = styled.div`
+  width: 70px;
+  border-radius: 30px 0 0 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2px;
+`;
+
+const EventResultImage = styled.img`
+  width: 35px;
+  height: 35px;
+  animation: ${bounceEvent} 0.5s ease-in-out infinite;
+`
+
+const EventResultText = styled.p`
+  margin: 0;
+  font-size: 10px;
+  color: brown;
+`
+
+// 도서 추천
 const RecommendBookSection = styled.div`
   width: 95%;
   background-color: #ffffff;
@@ -540,27 +620,14 @@ const RecommendBookSection = styled.div`
 const RecommendTitleSection = styled.div`
   width: 90%;
   display: flex;
-  margin-top: 20px;
 `
 
 
-const bounce = keyframes`
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-`;
 
 const RecommendTitleImage = styled.img`
   width: 44px;
   height: 44px;
   margin-right: 20px;
-  animation: ${bounce} 1s infinite;
 `;
 
 
