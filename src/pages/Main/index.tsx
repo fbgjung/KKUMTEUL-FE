@@ -4,7 +4,6 @@ import {useEffect, useState} from 'react';
 import {Container} from '../../styles/globalStyles';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
-import FontStyles from '../../styles/globalStyles.ts';
 
 
 interface Event {
@@ -82,7 +81,7 @@ const Index = () => {
       } else if (eventData == null){
         alert("진행중인 이벤트가 없습니다!");
       } else {
-        navigate('/event', {state: eventData});
+        navigate('/ticket', {state: eventData});
       }
   }
 
@@ -214,7 +213,6 @@ const Index = () => {
   
   return (
     <Container color="#fdf8d7">
-      <FontStyles/>
       <Header>
           <PrevButton onClick={onClickPrevButton} $imageurl="/assets/prev_button.svg"></PrevButton>
           <Title>꿈틀</Title>
