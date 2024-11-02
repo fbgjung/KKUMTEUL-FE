@@ -90,7 +90,7 @@ const LoginButton = styled(Button)`
 `;
 
 const SignUpLink = styled.p`
-  color: #74A5D0;
+  color: #5f5f5f;
   cursor: pointer;
   text-decoration: underline;
   font-size: 16px;

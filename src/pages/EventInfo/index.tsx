@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import axiosWithToken from '../../axiosWithToken.ts';
 import { Container } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
+import EventJoinCompleteModal from '../../modal/EventJoinCompleteModal';
 
 const Index = () => {
     const location = useLocation();
@@ -12,6 +13,8 @@ const Index = () => {
 
     const [name, setName] = useState<string>("");
     const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     const handleJoinButtonClick = async () => {
         const joinEventRequestDto = {
@@ -27,6 +30,7 @@ const Index = () => {
                 },
             });
             console.log(response.data);
+            setIsModalOpen(true);
         } catch (error) {
             console.error("이벤트 참여 요청 실패:", error);
         }
@@ -62,6 +66,8 @@ const Index = () => {
                 <Text>10분 이내에 입력을 완료해주세요!</Text>
                 <JoinButton onClick={handleJoinButtonClick}>이벤트 참여 완료</JoinButton>
             </EventInfoContainer>
+            <EventJoinCompleteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
 
         </Container>
         
