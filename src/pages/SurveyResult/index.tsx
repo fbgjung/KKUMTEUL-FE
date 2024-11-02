@@ -31,7 +31,7 @@ const Index = () => {
         return leftValue < rightValue;
     };
 
-    const calculateAge = (birthDate) => {
+    const calculateAge = (birthDate:string) => {
         const birth = new Date(birthDate);
         const today = new Date();
         let age = today.getFullYear() - birth.getFullYear();
@@ -54,16 +54,14 @@ const Index = () => {
         spercent: surveyResult.spercent.toFixed(0)
     };
 
-    const formatImageSrc = (imageData) => {
-        return imageData
-            ? `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(imageData)))}`
-            : '/assets/dog.svg';
+    const formatImageSrc = (imageData: string) => {
+        return imageData ? `data:image/png;base64,${imageData}` : '/assets/dog.svg';
     };
 
 
     return (
-        <Container color="#FFD869">
-            <Header textcolor="#000000" color="#FFD869" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
+        <Container color="#fdf8d7">
+            <Header textcolor="#000000" color="#fdf8d7" nextBtnImageUrl="/assets/home.svg" title="진단 결과" nextPage='/'/>
             <SurveyContainer>
                 <MbtiSection>
                     <MbtiImage src={formatImageSrc(surveyResult.mbtiResult?.mbtiImage) || "/assets/default-mbti.png"} alt="MBTI 이미지"/>
@@ -194,7 +192,7 @@ const Index = () => {
                     </InterestList>
                 </ResultSection>
 
-                <ReSurveyButton color="#FFFFFF" backcolor='#FFC317' onClick={handleReSurveyButton}>
+                <ReSurveyButton color="#FFFFFF" backcolor='#fee208' onClick={handleReSurveyButton}>
                     다시 진단하기
                 </ReSurveyButton>
             </SurveyContainer>
@@ -211,7 +209,7 @@ const SurveyContainer = styled.div`
     align-items: center;
 `
 const MbtiSection = styled.div`
-    background-color: #FFC317;
+    background-color: #b0c8f9;
     width: 100%;
     margin: 10px 0;
     padding: 0 0 0 50px;
@@ -221,10 +219,9 @@ const MbtiSection = styled.div`
     align-items: center;
 `
 
-const MbtiImage = styled.div`
+const MbtiImage = styled.img`
     width: 130px;
     height: 130px;
-    background: no-repeat center/contain url("/assets/isfj.png");
     background-size: contain;
 `
 
@@ -236,7 +233,7 @@ const MbtiInfo = styled.div`
 const MbtiTitle = styled.span`
     font-size: 60px;
     font-weight: 700;
-    color: #ff6f00;
+    color: #77a5fe;
     text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
 `
 
@@ -262,10 +259,9 @@ const ProfileSection = styled.div`
     margin-bottom: 20px;
 `
 
-const ProfileImage = styled.div`
+const ProfileImage = styled.img`
     width: 64px;
     height: 64px;
-    background: no-repeat center/contain url("/assets/dog.svg");
     background-size: contain;
 `
 
@@ -287,7 +283,7 @@ const ChildBirth = styled.span<{ $color: string }>`
 `
 
 const ResultSection = styled.div`
-    background-color: #FFD869;
+    background-color: #fdf8d7;
     width: 90%;
     display: flex;
     align-items: center;
@@ -295,17 +291,17 @@ const ResultSection = styled.div`
 `
 
 const Title = styled.h3`
-    margin: 60px 0 0 0;
+    margin: 40px 0 0 0;
     width: 100%;
 `
 
 const MbtiDescription = styled.p`
-    margin: 10px;
+    margin: 10px 0 0 0;
 `
 
 const Graph = styled.div`
     width: 100%;
-    background-color: #FFD869;
+    background-color: #fdf8d7;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -341,21 +337,21 @@ const Image = styled.img`
 const InterestList = styled.div`
     width: 100%;
     height: auto;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
     display: flex;
     flex-wrap: wrap;
     box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.03);
     border-radius: 20px;
-    margin-top: 14px;
+    margin-top: 10px;
     align-items: center;
-    padding: 0 0 0 20px;
+    padding: 10px 0 10px 20px;
 `;
 
 const List = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 18%;
+    width: 15%;
 `
 
 const Name = styled.p`
@@ -365,5 +361,5 @@ const Name = styled.p`
 
 const ReSurveyButton = styled(Button)`
     width: 90%;
-    margin: 30px 0;
+    margin: 40px 0;
 `

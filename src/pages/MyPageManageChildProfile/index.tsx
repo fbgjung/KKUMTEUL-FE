@@ -2,7 +2,6 @@ import { Container, Button } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { useState } from 'react';
 import axiosWithToken from '../../axiosWithToken.ts';
 
@@ -63,11 +62,17 @@ const Index = () => {
     navigate('/mypage/createChildProfile');
   };
 
+  const formatGender = (gender:string) => {
+    if (gender === "FEMALE") {
+        return "여아";
+    } else return "남아";
+};
+
   return (
-    <Container color="#f3f3f3">
+    <Container color="#fdf8d7">
       <Header
         textcolor="#000000"
-        color="#f3f3f3"
+        color="#fee208"
         nextBtnImageUrl="/assets/home.svg"
         title="우리집 꿈틀이들"
         nextPage='/'
@@ -79,17 +84,17 @@ const Index = () => {
         return (
         <ChildItem key={child.childProfileId}>
           <ChildInfo>
-            <ChildImage src={child.childProfileImage} alt="자녀 이미지" />
+            <ChildImage src={child.childProfileImage || '/assets/childprofile.png'}  alt="자녀 이미지" />
             <ChildDetails>
               <ChildName>{child.childName}</ChildName>
               <ChildBirth>{formattedBirthDate}</ChildBirth>
               <ChildText>
-                <ChildDetailText>{child.childGender}</ChildDetailText>
+                <ChildDetailText>{formatGender(child.childGender)}</ChildDetailText>
                 <ChildDetailText>{age}</ChildDetailText>
               </ChildText>
             </ChildDetails>
           </ChildInfo>
-          <DeleteButton color="rgb(110,167,208,0.8)" backcolor="#f3f3f3" onClick={() => handleDeleteChild(child.childProfileId)}>
+          <DeleteButton color="#7e7e7e" backcolor="#f3f3f3" onClick={() => handleDeleteChild(child.childProfileId)}>
             삭제
           </DeleteButton>
           </ChildItem>
@@ -108,8 +113,8 @@ const ListContainer = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 10%;
+  gap: 10px;
+  margin-top: 30px;
   overflow-y: auto;
 `;
 
@@ -134,7 +139,7 @@ const ChildImage = styled.img`
   border-radius: 50%;
   margin-right: 20px;
   object-fit: cover;
-  background: #888888;
+  border: 3px solid #fee208;
 `;
 
 const ChildDetails = styled.div`
@@ -170,11 +175,15 @@ const DeleteButton = styled(Button)`
   height: 30px;
   font-size: 13px;
   text-align: center;
+  &:hover {
+    background-color: #fee208;
+    color: #ffffff;
+  }
   
 `;
 
 const AddChildLink = styled.a`
-  color: #6EA7D0;
+  color: #5f5f5f;
   text-decoration: underline;
   font-size: 18px;
   cursor: pointer;

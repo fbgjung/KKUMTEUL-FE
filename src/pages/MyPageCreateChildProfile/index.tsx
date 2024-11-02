@@ -95,7 +95,7 @@ const Index = () => {
           <Label>이름</Label>
           <StyledInput
             placeholder="이름"
-            color="#6EA7D0"
+            color="#fee208"
             inputcolor='#E6E6E6'
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -118,7 +118,7 @@ const Index = () => {
           <Label>생년월일</Label>
           <StyledInput
             placeholder="ex) 20190101"
-            color="#6EA7D0"
+            color="#fee208"
             inputcolor='#E6E6E6'
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}

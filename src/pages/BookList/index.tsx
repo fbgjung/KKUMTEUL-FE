@@ -156,7 +156,6 @@ const BookCard = styled.div`
   border-radius: 20px;
   text-align: center;
   width: 140px;
-  height: 220px;
   display: flex;
   flex-direction: column;
   justify-content: center;
