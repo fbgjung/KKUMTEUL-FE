@@ -1,8 +1,23 @@
 import { createGlobalStyle } from 'styled-components';
 import styled from "styled-components";
+import RecipekoreaFont from '../font/RecipekoreaFont.ttf';
 
 
 const GlobalStyles = createGlobalStyle`
+@font-face {
+    font-family: 'RecipekoreaFont';
+    src: local('RecipekoreaFont'), local('RecipekoreaFont');
+    font-style: normal;
+      src: url(${RecipekoreaFont}) format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Ownglyph_meetme-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_1@1.0/Ownglyph_meetme-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
   html,
   body {
     margin: 0;
