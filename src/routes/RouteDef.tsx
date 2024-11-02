@@ -16,6 +16,8 @@ import MyPageDetailChildProfile from "../pages/MyPageDetailChildProfile";
 import EventResult from '../pages/EventResult';
 import SurveyResult from '../pages/SurveyResult';
 import ChildPersonalityHistoryDetail from '../pages/ChildPersonalityHistoryDetail';
+import EventTicket from '../pages/EventTicket';
+import EventInfo from '../pages/EventInfo';
 
 export const Screens = {
   Main: {
@@ -106,6 +108,16 @@ export const Screens = {
   ChildPersonalityHistoryDetail: {
     path: '/record/:childProfileId/:historyId',
     element: <ChildPersonalityHistoryDetail />
+  },
+
+  EventTicket: {
+    path: '/ticket',
+    element: <EventTicket />
+  },
+
+  EventInfo: {
+    path: '/eventInfo',
+    element: <EventInfo />
   }
 
   
