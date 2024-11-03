@@ -346,6 +346,8 @@ const ResultSection = styled.div`
 const Title = styled.h3`
     margin: 40px 0 0 0;
     width: 100%;
+    font-size: 24px;
+    font-family: Ownglyph_meetme-Rg, sans-serif, Arial;
 `;
 
 const MbtiDescription = styled.p`
