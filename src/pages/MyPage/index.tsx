@@ -128,7 +128,7 @@ const Index = () => {
         {userData && (
         <ProfileCard>
           <ProfileContent>
-            <ProfileImage src={userData?.profileImageBase64 || "/assets/default_profile.svg"} alt="Profile" />
+            <ProfileImage src={userData?.profileImageBase64 || "/assets/dog.svg"} alt="Profile" />
             <ProfileInfo>
               <h3>{userData?.name}</h3>
               <p>{userData?.nickName}</p>
