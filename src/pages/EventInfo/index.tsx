@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import axiosWithToken from '../../axiosWithToken.ts';
 import { Container } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
-import EventJoinCompleteModal from '../../modal/EventJoinCompleteModal';
+import EventModal from '../../modal/EventModal';
 
 const Index = () => {
     const location = useLocation();
@@ -14,6 +14,7 @@ const Index = () => {
     const [name, setName] = useState<string>("");
     const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
 
 
     const handleJoinButtonClick = async () => {
@@ -29,7 +30,16 @@ const Index = () => {
                     "Content-Type": "application/json",
                 },
             });
-            console.log(response.data);
+            console.log(response.data.response);
+
+            const message = response.data.response;
+            if(message === "이미 해당 이름과 전화번호로 이벤트에 참여함") {
+                setModalMessage("이미 참여한 정보입니다. 다시 응모해주세요.");
+            } else if(message === "세션이 만료되었습니다. 다시 응모해주세요!") {
+                setModalMessage("입력 시간이 만료되었어요. 다시 응모해주세요.");
+            } else {
+                setModalMessage("이벤트 참여 완료! 내일 오후 1시, 당첨 결과를 확인해 주세요.");
+            }
             setIsModalOpen(true);
         } catch (error) {
             console.error("이벤트 참여 요청 실패:", error);
@@ -66,7 +76,7 @@ const Index = () => {
                 <Text>10분 이내에 입력을 완료해주세요!</Text>
                 <JoinButton onClick={handleJoinButtonClick}>이벤트 참여 완료</JoinButton>
             </EventInfoContainer>
-            <EventJoinCompleteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <EventModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} message={modalMessage}/>
 
 
         </Container>
