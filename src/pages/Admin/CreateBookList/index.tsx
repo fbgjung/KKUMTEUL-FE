@@ -253,7 +253,7 @@ const Index = () => {
         textcolor="#000000"
         color="#6EA7D0"
         nextBtnImageUrl="/assets/home.svg"
-        nextPage="/"
+        nextPage="/" fontSize={'auto'}
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>

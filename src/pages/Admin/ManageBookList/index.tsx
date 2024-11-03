@@ -356,7 +356,7 @@ const Index = () => {
           nextBtnImageUrl="/assets/home.svg"
           title="도서 관리"
           nextPage="/"
-        />
+         fontSize={'auto'}/>
         <div style={{ padding: '20px', height: '100%' }}>
           <InputContainer>
             <SearchContainer>
