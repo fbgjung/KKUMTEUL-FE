@@ -5,7 +5,7 @@ import {Container} from '../../styles/globalStyles';
 import LoginModal from '../../modal/LoginModal';
 import axiosWithToken from '../../axiosWithToken.ts';
 import EventResultModal from '../../modal/EventResultModal';
-
+import AlertModal from '../../modal/AlertModal';
 
 
 interface Event {
@@ -65,6 +65,9 @@ const Index = () => {
   const [isEventModalOpen, setEventModalOpen] = useState(false); // 이벤트 결과 모달
   const [winners, setWinners] = useState([]); // 이벤트 당첨자 리스트 저장
 
+  const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<string>("");
+
   const menus: Menu[] = [
     {id: 0, name: 'MBTI 검사', link: '/survey', image: '/assets/menu_mbti.png'},
     {id: 1, name: '도서 목록', link: '/booklist', image: '/assets/menu_book.png'},
@@ -81,8 +84,9 @@ const Index = () => {
 
   const onClickEventBanner = () => {
       if (!isLoggedIn) {
-          alert('로그인이 필요합니다.');
-          navigate('/login');
+          // alert('로그인이 필요합니다.');
+          // navigate('/login');
+          setIsModalOpen(true);
       } else if (eventData == null){
         alert("진행중인 이벤트가 없습니다!");
       } else {
@@ -96,18 +100,22 @@ const Index = () => {
     setChildName(profile.childName);
     fetchRecommendedBooks(profile.profileId);
 
-    alert("프로필 변경이 완료되었습니다.");
+    setAlertModalOpen(true);
+    setAlertMessage("자녀 프로필 변경이 완료되었습니다!");
   };
 
   const onClickMenuItem = (menuId: number, menuLink: string) => {
       if (!isLoggedIn) {
-          alert('로그인이 필요합니다.');
-          navigate('/login'); // 로그인 화면으로 이동
+        setIsModalOpen(true);
+          // alert('로그인이 필요합니다.');
+          // navigate('/login'); // 로그인 화면으로 이동
           return;
       }
 
       if (menuId === 0 && !childProfileId) {
-          alert('자녀 프로필을 선택해주세요.');
+          // alert('자녀 프로필을 선택해주세요.');
+          setAlertMessage("자녀 프로필을 선택해주세요.");
+          setAlertModalOpen(true);
           return;
       }
 
@@ -116,13 +124,17 @@ const Index = () => {
 
     const onClickSurvey = () => {
       if (!isLoggedIn) {
-        alert('로그인이 필요합니다.');
+        // alert('로그인이 필요합니다.');
+        setIsModalOpen(true);
         return;
       }
 
       if(!childProfileId) {
-        alert('자녀 프로필을 선택해주세요.');
+        setAlertMessage("자녀 프로필을 선택해주세요.");
+        setAlertModalOpen(true);
+        return;
       }
+      navigate('/survey')
     }
   
 
@@ -137,6 +149,10 @@ const Index = () => {
 
   const handleCloseEventModal = () => {
     setEventModalOpen(false);
+  };
+
+  const handleCloseAlertModal = () => {
+    setAlertModalOpen(false);
   };
 
   useEffect(() => {
@@ -275,7 +291,7 @@ const Index = () => {
       </Header>
 
       <ImageWrapper>
-        <Image src="/assets/rabbit.png" alt="Main Test" />      
+        <Image src="/assets/main.jpg" alt="Main Test" />      
       </ImageWrapper> 
 
       <MenuSection>
@@ -286,6 +302,14 @@ const Index = () => {
         </Menus>
       ))}
       </MenuSection>  
+      {isAlertModalOpen && (
+        <AlertModal
+          isOpen={isAlertModalOpen}
+          message={alertMessage}
+          onClose={handleCloseAlertModal}
+          icon="/assets/childprofile.png"
+        />
+      )}
       
       <EventBanner onClick={onClickEventBanner}>
       <EventImage src="/assets/donut.png" alt="Event" />
@@ -450,7 +474,10 @@ const ImageWrapper = styled.div`
 `;
 
 const Image = styled.img`
-    width: 100%;
+    width: 95%;
+    height: 420px;
+    border-radius: 20px;
+    margin-top: 10px;
 `
 
 // 링크

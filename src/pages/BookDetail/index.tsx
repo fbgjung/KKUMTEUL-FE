@@ -4,6 +4,8 @@ import { Container, Button } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import { useParams } from 'react-router-dom';
 import axiosWithToken from '../../axiosWithToken.ts';
+import AlertModal from '../../modal/AlertModal';
+
 
 interface Book {
   ageGroup:string;
@@ -29,6 +31,9 @@ const Index = () => {
         const storedId = sessionStorage.getItem('childProfileId');
         return storedId ? parseInt(storedId) : null;
     });
+
+    const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>("");
 
     useEffect(() => {
         const fetchBookDetail = async () => {
@@ -69,7 +74,8 @@ const Index = () => {
 
     const handleLike = async (likeType:string) => {
         if (childProfileId === null) {
-            alert("🌈 자녀를 선택해 주세요 🌈");
+            setAlertModalOpen(true);
+            setAlertMessage("자녀 프로필을 선택해 주세요");
             return;
         }
 
@@ -79,14 +85,20 @@ const Index = () => {
                 childProfileId: childProfileId,
                 likeType: likeType,
             });
-            alert(response.data.response);
+            // alert(response.data.response);
+            
+
 
             if (likeType === 'LIKE') {
                 setIsLiked(true);
                 setIsDisliked(false);
+                setAlertModalOpen(true);
+                setAlertMessage("저는 이 책이 좋아요!");
             } else if (likeType === 'DISLIKE') {
                 setIsLiked(false);
                 setIsDisliked(true);
+                setAlertModalOpen(true);
+                setAlertMessage("다음에 다시 볼게요!");
             }
 
         } catch (error) {
@@ -102,6 +114,10 @@ const Index = () => {
     if (!book) {
         return null;
     }
+
+    const handleCloseAlertModal = () => {
+      setAlertModalOpen(false);
+    };
 
     return (
       <Container color="#fee208">
@@ -175,6 +191,14 @@ const Index = () => {
               >
                   다음에 볼래요
               </DisLikeButton>
+              {isAlertModalOpen && (
+              <AlertModal
+                isOpen={isAlertModalOpen}
+                message={alertMessage}
+                onClose={handleCloseAlertModal}
+                icon="/assets/childprofile.png"
+              />
+              )}
             </ButtonContainer>
           </ContentContainer>
         </ImageAndContentContainer>
