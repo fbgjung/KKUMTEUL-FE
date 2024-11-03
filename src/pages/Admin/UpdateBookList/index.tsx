@@ -333,7 +333,7 @@ const Index = () => {
 
   return (
     <AdminContainer color="#f3f3f3">
-      <Header title="도서 수정" textcolor="#000000" color="#6EA7D0" nextBtnImageUrl="/assets/home.svg" nextPage="/" />
+      <Header title="도서 수정" textcolor="#000000" color="#6EA7D0" nextBtnImageUrl="/assets/home.svg" nextPage="/"  fontSize={'auto'}/>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <FormContainer>
           <ImageContainer imageurl={imageUrl} onClick={handleImageClick}>
