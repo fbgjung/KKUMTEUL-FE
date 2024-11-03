@@ -148,23 +148,87 @@ type Book = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState<Book[]>([]); // 전체 도서 목록
+  const [books, setBooks] = useState<Book[]>([]); // 페이지네이션된 도서 목록
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]); // 필터링된 도서 목록
+  const [searchResults, setSearchResults] = useState<Book[]>([]); // 검색 결과 목록
   const [searchText, setSearchText] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  interface FilterParams {
+    page: number;
+    size: number;
+    genre?: string;
+    topic?: string;
+    mbti?: string;
+  }
+
   // 새로운 상태 추가
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [selectedMBTI, setSelectedMBTI] = useState<string>('');
 
+  // 조건에 따라 렌더링할 목록 선택
+  const displayedBooks = searchText ? searchResults : filteredBooks;
+
+  // 필터 기능 - 조건에 따라 API 요청
+  useEffect(() => {
+    const applyFilters = async () => {
+      // 필터 초기화
+      setFilteredBooks([]);
+
+      // 기본 엔드포인트 및 매개변수 설정
+      let endpoint = '/kkumteul/api/admin/books';
+      let params: FilterParams = { page: currentPage, size: 7 };
+
+      // 필터 조합에 따라 엔드포인트를 변경
+      if (selectedGenre && selectedSubject && selectedMBTI) {
+        endpoint += '/filter/all';
+        params = { ...params, genre: selectedGenre, topic: selectedSubject, mbti: selectedMBTI };
+      } else if (selectedGenre && selectedSubject) {
+        endpoint += '/filter/genreandtopic';
+        params = { ...params, genre: selectedGenre, topic: selectedSubject };
+      } else if (selectedGenre && selectedMBTI) {
+        endpoint += '/filter/genreandmbti';
+        params = { ...params, genre: selectedGenre, mbti: selectedMBTI };
+      } else if (selectedSubject && selectedMBTI) {
+        endpoint += '/filter/topicandmbti';
+        params = { ...params, topic: selectedSubject, mbti: selectedMBTI };
+      } else if (selectedGenre) {
+        endpoint += '/filter/genre';
+        params.genre = selectedGenre;
+      } else if (selectedSubject) {
+        endpoint += '/filter/topic';
+        params.topic = selectedSubject;
+      } else if (selectedMBTI) {
+        endpoint += '/filter/mbti';
+        params.mbti = selectedMBTI;
+      }
+
+      // 필터 API 요청
+      try {
+        const response = await axiosWithToken.get(endpoint, { params });
+        setFilteredBooks(response.data.response.content);
+        setTotalPages(response.data.response.totalPages);
+      } catch (error) {
+        console.error("Error fetching filtered books: ", error);
+      }
+    };
+
+    // 검색어가 없을 때만 필터를 적용
+    if (!searchText){
+      applyFilters();
+    }
+  }, [selectedGenre, selectedSubject, selectedMBTI, currentPage]);
+
   useEffect(() => {
     if (searchText) {
       handleSearchBook();
     } else {
+      // 데이터 초기화
+      setSearchResults([]);
       const fetchBooks = async () => {
         try {
           const response = await axiosWithToken.get('/kkumteul/api/admin/books', {
@@ -174,7 +238,6 @@ const Index = () => {
             },
           });
           setBooks(response.data.response.content); // 전체 목록 저장
-          setFilteredBooks(response.data.response.content); // 초기 필터링 목록도 설정
           setTotalPages(response.data.response.totalPages);
         } catch (error) {
           console.error('도서 목록 조회 실패:', error);
@@ -182,60 +245,8 @@ const Index = () => {
       };
       fetchBooks();
     }
-  }, [currentPage]);
+  }, [searchText, currentPage]);
 
-  // 도서 필드 effect 기능
-  useEffect(() => {
-    applyFilters();
-  }, [selectedGenre, selectedSubject, selectedMBTI]);
-
-  const applyFilters = () => {
-    // 기본값을 확인하여 필터링을 제외할 항목을 설정
-    const isGenreSelected = selectedGenre && selectedGenre !== "장르";
-    const isSubjectSelected = selectedSubject && selectedSubject !== "주제어";
-    const isMBTISelected = selectedMBTI && selectedMBTI !== "MBTI";
-
-    let filteredBooksList = books;
-
-    // 필터링 로직: 각각의 상태가 변경되었을 때만 해당 조건을 추가하여 필터링 수행
-    if (isGenreSelected && !isSubjectSelected && !isMBTISelected) {
-      // 장르만 선택되었을 때
-      filteredBooksList = books.filter((book) => book.bookGenre === selectedGenre);
-    } else if (!isGenreSelected && isSubjectSelected && !isMBTISelected) {
-      // 주제어만 선택되었을 때
-      filteredBooksList = books.filter((book) => book.bookTopicList.includes(selectedSubject));
-    } else if (!isGenreSelected && !isSubjectSelected && isMBTISelected) {
-      // MBTI만 선택되었을 때
-      filteredBooksList = books.filter((book) => book.bookMBTI === selectedMBTI);
-    } else if (isGenreSelected && isSubjectSelected && !isMBTISelected) {
-      // 장르와 주제어만 선택되었을 때
-      filteredBooksList = books.filter(
-        (book) => book.bookGenre === selectedGenre && book.bookTopicList.includes(selectedSubject)
-      );
-    } else if (isGenreSelected && !isSubjectSelected && isMBTISelected) {
-      // 장르와 MBTI만 선택되었을 때
-      filteredBooksList = books.filter(
-        (book) => book.bookGenre === selectedGenre && book.bookMBTI === selectedMBTI
-      );
-    } else if (!isGenreSelected && isSubjectSelected && isMBTISelected) {
-      // MBTI와 주제어만 선택되었을 때
-      filteredBooksList = books.filter(
-        (book) => book.bookMBTI === selectedMBTI && book.bookTopicList.includes(selectedSubject)
-      );
-    } else if (isGenreSelected && isSubjectSelected && isMBTISelected) {
-      // 장르, 주제어, MBTI 모두 선택되었을 때
-      filteredBooksList = books.filter(
-        (book) =>
-          book.bookGenre === selectedGenre &&
-          book.bookTopicList.includes(selectedSubject) &&
-          book.bookMBTI === selectedMBTI
-      );
-    }
-
-    // 필터링된 결과를 상태로 업데이트
-    setFilteredBooks(filteredBooksList); // 필터링된 결과를 업데이트
-    // setBooks(filteredBooks);
-  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -244,6 +255,9 @@ const Index = () => {
   };
 
   const handleSearchBook = async () => {
+    // 데이터 초기화
+    setFilteredBooks([]);
+
     try {
       const response = await axiosWithToken.get('/kkumteul/api/admin/books/search', {
         params: {
@@ -252,8 +266,9 @@ const Index = () => {
           search: searchText
         },
       });
-      // setBooks(response.data.response.content);
-      setFilteredBooks(response.data.response.content); // 검색어 결과 목록도 설정
+      console.log("Search response:", response.data.response.content);
+
+      setSearchResults(response.data.response.content); // 검색어 결과 목록도 설정
       setTotalPages(response.data.response.totalPages);
     } catch (error) {
       console.error('도서 검색 실패:', error);
@@ -413,8 +428,9 @@ const Index = () => {
               </tr>
               </thead>
               <tbody>
-              {filteredBooks.map((book, index) => (
-                <TableRow key={book.id}>
+              {displayedBooks.length > 0 ? (
+                displayedBooks.map((book, index) => (
+                <TableRow key={`${book.id}-${index}`}>
                   <TableCell>
                     <input
                       type="checkbox"
@@ -430,7 +446,13 @@ const Index = () => {
                   <TableCell>{book.publisher}</TableCell>
                   <TableCell>{book.bookGenre}</TableCell>
                   <TableCell>{book.ageGroup}</TableCell>
-                  <TableCell>{book.bookTopicList.join(', ')}</TableCell>
+                  <TableCell>
+                    {Array.isArray(book.bookTopicList)
+                      ? book.bookTopicList.length === 1
+                        ? book.bookTopicList[0]             // 배열의 값이 하나일 때
+                        : book.bookTopicList.join(', ')      // 배열의 값이 여러 개일 때
+                      : book.bookTopicList}
+                  </TableCell>
                   <TableCell>{book.bookMBTI}</TableCell>
                   <TableCell>
                     <Button color="#FFFFFF" backcolor="#6EA7D0"
@@ -440,7 +462,12 @@ const Index = () => {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))
+              ) : (
+                <tr>
+                  <td colSpan={10}>데이터가 없습니다.</td>
+                </tr>
+              )}
               </tbody>
             </Table>
           </div>
