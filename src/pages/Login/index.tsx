@@ -5,6 +5,24 @@ import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
 
+
+const parseJwt = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Failed to parse JWT', e);
+    return null;
+  }
+};
+
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -20,15 +38,23 @@ const Login: React.FC = () => {
 
             const accessToken = response.headers['authorization']?.split(' ')[1];
             if (accessToken) {
-                sessionStorage.setItem('accessToken', accessToken);
+              sessionStorage.setItem('accessToken', accessToken);
+              const decodedToken = parseJwt(accessToken);
+              if (decodedToken && decodedToken.role) {
+                if (decodedToken.role === 'ROLE_ADMIN') {
+                  navigate('/book/manage');
+                } else {
+                  navigate('/');
+                }
+              } else {
+                navigate('/');
+              }
             }
-
-            navigate('/');
-        } catch (error) {
+          } catch (error) {
             console.error('Login failed', error);
             alert('로그인 실패');
-        }
-    };
+          }
+      };
 
   return (
     <Container color='#FDDC69'>
