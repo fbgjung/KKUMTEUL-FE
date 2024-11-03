@@ -103,7 +103,12 @@ const Index = () => {
 
         } catch (error) {
             console.error('Error processing like/dislike:', error);
-            alert(error.response?.data || '오류가 발생했습니다.');
+            if (error.response?.data === "이미 좋아요를 눌렀습니다." || error.response?.data === "이미 싫어요를 눌렀습니다."){
+                            setAlertModalOpen(true);
+                            setAlertMessage(error.response?.data);
+                }else{
+                    alert(error.response?.data || '오류가 발생했습니다.');
+            }
         }
     };
 
