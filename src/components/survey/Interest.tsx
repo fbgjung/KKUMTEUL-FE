@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 interface Props {
   updateAnswer: (favoriteId: string, interests: number[]) => void;
-  handleSubmit: () => void; // 최종 제출 함수를 부모로부터 전달받음
+  handleSubmit: () => void;
 }
 
 const Interest = ({ updateAnswer, handleSubmit }: Props) => {
@@ -23,7 +23,6 @@ const Interest = ({ updateAnswer, handleSubmit }: Props) => {
     { id: 8, name: '생활과 과학', image: '/assets/genre/science_book.png' },
     { id: 9, name: '예술', image: '/assets/genre/art_book.png' },
     { id: 10, name: '시', image: '/assets/genre/poem_book.png' },
-    { id: 11, name: '기타', image: '/assets/genre/other_book.png' },
   ];
 
   const keywords = [
