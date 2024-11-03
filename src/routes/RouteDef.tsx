@@ -17,6 +17,9 @@ import SurveyResult from '../pages/SurveyResult';
 import ChildPersonalityHistoryDetail from '../pages/ChildPersonalityHistoryDetail';
 import EventTicket from '../pages/EventTicket';
 import EventInfo from '../pages/EventInfo';
+import CreateEvent from '../pages/Admin/CreateEvent';
+import UpdateEvent from '../pages/Admin/UpdateEvent';
+import ManageEventList from '../pages/Admin/ManageEventList';
 
 export const Screens = {
   Main: {
@@ -112,6 +115,21 @@ export const Screens = {
   EventInfo: {
     path: '/eventInfo',
     element: <EventInfo />
+  },
+
+  CreateEvent: {
+    path: '/event/create',
+    element: <CreateEvent />
+  },
+
+  UpdateEvent: {
+    path: '/event/update/:event_id',
+    element: <UpdateEvent />
+  },
+
+  ManageEventList: {
+    path: '/event/manage',
+    element: <ManageEventList />
   }
 
   
