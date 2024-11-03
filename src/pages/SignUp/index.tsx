@@ -4,8 +4,14 @@ import {useNavigate} from 'react-router-dom';
 import {Container, Button, Input} from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
+import AlertModal from '../../modal/AlertModal';
+
 
 const SignUp: React.FC = () => {
+    const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>("");
+
+
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -24,13 +30,18 @@ const SignUp: React.FC = () => {
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.password !== formData.passwordConfirm) {
-            alert('비밀번호가 일치하지 않습니다.');
+            setAlertModalOpen(true);
+            setAlertMessage("비밀번호가 일치하지 않아요!")
             return;
         }
         try {
             await axios.post('/kkumteul/api/users/register', formData);
-            alert('회원가입에 성공하였습니다.');
-            navigate('/login');
+            setAlertModalOpen(true);
+            setAlertMessage("꿈틀 회원가입 성공!")
+
+            setTimeout(() => {
+                navigate('/login');
+              }, 1000);
         } catch (error) {
             console.error('회원가입에 실패하였습니다.', error);
             alert('회원가입에 실패하였습니다.');
@@ -48,15 +59,22 @@ const SignUp: React.FC = () => {
 
             const response = await axios.get(apiUrl);
             if (response.data.response === true) {
-                alert(`${field}가 이미 사용 중입니다.`);
+                // alert(`${field}가 이미 사용 중입니다.`);
+                setAlertModalOpen(true);
+                setAlertMessage(`이미 사용중인 ${field}에요`)
             } else {
-                alert(`${field}를 사용하실 수 있습니다.`);
+                setAlertModalOpen(true);
+                setAlertMessage(`사용할 수 있는 ${field}이에요`)
             }
         } catch (error) {
             console.error(`${field} 중복 확인 오류`, error);
             alert(`${field} 중복 확인에 실패하였습니다.`);
         }
     };
+
+    const handleCloseAlertModal = () => {
+        setAlertModalOpen(false);
+      };
 
     return (
         <Container color='#FDDC69'>
@@ -128,6 +146,12 @@ const SignUp: React.FC = () => {
                     <SignUpButton type="submit">회원가입</SignUpButton>
                 </Form>
             </ContentContainer>
+            <AlertModal
+            isOpen={isAlertModalOpen}
+            message={alertMessage}
+            onClose={handleCloseAlertModal}
+            icon="/assets/flower.png"
+            />
         </Container>
     );
 };

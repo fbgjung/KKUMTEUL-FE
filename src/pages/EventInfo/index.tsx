@@ -18,6 +18,11 @@ const Index = () => {
 
 
     const handleJoinButtonClick = async () => {
+        if (!name.trim() || !phoneNumber.trim()) {
+            setModalMessage("이름과 전화번호를 입력해주세요!");
+            setIsModalOpen(true);
+            return;
+        }
         const joinEventRequestDto = {
             eventId: eventId,
             ticket: ticket,

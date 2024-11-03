@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Button, Input } from '../../styles/globalStyles';
 import Header from '../../components/layout/Header';
 import styled from 'styled-components';
+import AlertModal from '../../modal/AlertModal';
 
 
 const parseJwt = (token: string) => {
@@ -26,6 +27,10 @@ const parseJwt = (token: string) => {
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<string>("");
+
   const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -44,17 +49,25 @@ const Login: React.FC = () => {
                 if (decodedToken.role === 'ROLE_ADMIN') {
                   navigate('/book/manage');
                 } else {
-                  navigate('/');
+                  setAlertModalOpen(true);
+                  setAlertMessage("로그인 성공!")
+
+                  setTimeout(() => {
+                    navigate('/');
+                  }, 1000);
                 }
-              } else {
-                navigate('/');
               }
             }
           } catch (error) {
             console.error('Login failed', error);
-            alert('로그인 실패');
+            setAlertModalOpen(true);
+            setAlertMessage("아이디와 비밀번호를 다시 확인해 주세요")
           }
       };
+
+  const handleCloseAlertModal = () => {
+    setAlertModalOpen(false);
+  };
 
   return (
     <Container color='#FDDC69'>
@@ -69,6 +82,12 @@ const Login: React.FC = () => {
             <LoginButton color='#ffffff' backcolor='#FFCB05'type="submit">로그인</LoginButton>
         </Form>
         <SignUpLink onClick={() => navigate('/signup')}>회원가입하러 가기</SignUpLink>
+        <AlertModal
+          isOpen={isAlertModalOpen}
+          message={alertMessage}
+          onClose={handleCloseAlertModal}
+          icon="/assets/topic/wish.png"
+        />
       </ContentContainer>
   </Container>
 );

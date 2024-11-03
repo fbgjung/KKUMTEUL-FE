@@ -52,14 +52,16 @@ const Index = () => {
             } else if (message === "남은 티켓이 없습니다!") {
                 setModalMessage("이벤트 참여가 완료되었습니다! 내일 결과를 확인해주세요")
                 setIsModalOpen(true);
+            } else {
+                setModalMessage("이벤트 참여 성공!")
+                setIsModalOpen(true);
+                navigate('/eventInfo', { state: { 
+                    eventId,
+                    response: response.data.response 
+                }  });
             }
 
-            setModalMessage("이벤트 참여 성공!")
-            setIsModalOpen(true);
-            navigate('/eventInfo', { state: { 
-                eventId,
-                response: response.data.response 
-            }  });
+            
         } catch (error) {
             console.error("이벤트 참여 실패:", error);
             alert("이벤트 참여에 실패했습니다.");
