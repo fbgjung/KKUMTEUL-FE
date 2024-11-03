@@ -150,7 +150,7 @@ const Index = () => {
               </BookInfoFirstSection>
               
               <TitleText>이런 성향의 꿈틀이들과 잘 맞는 책이에요</TitleText>
-              <MbtiValue>INFJ</MbtiValue>
+              <MbtiValue>{book.mbtiInfo}</MbtiValue>
               {/* <MbtiValue>{book.mbtiInfo}</MbtiValue> */}
 
               <TitleText>줄거리</TitleText>
