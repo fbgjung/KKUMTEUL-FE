@@ -1,50 +1,25 @@
-# React + TypeScript + Vite
+## 👶📚 웹 서비스 소개
+우리 아이 꿈의 틀을 잡아주는 맞춤형 성향 진단 및 도서 추천 서비스, 꿈틀
+### 주요 기능
+- 자녀 성향 진단: 어린이 기반 MBTI 설문 및 성향 히스토리로 MBTI 변화, 선로 장르 주제어 변화를 관찰 할 수 있어요.
+- 맞춤형 도서 추천: 추천 알고리즘 콘텐츠 기반 필터링과 협업 필터링 사용으로 개인화 된 도서를 추천받을 수 있어요.
+- 선착순 응모 이벤트: 대규모 트래픽 처리 및 안정적인 서비스를 구축하였습니다.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 프로젝트 저장소
+- [🔗 꿈틀 Organization](https://github.com/KKUMTEUL)
 
-Currently, two official plugins are available:
+## 👶📚 프로젝트 정보
+- 기간 : 2024.10.15 ~ 2024.11.03
+- 인원 : BackEnd 3
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 👶📚 역할
+[![UsedSkill](https://skillicons.dev/icons?i=github,java,ts,react,vite,styledcomponents,spring,mysql,redis)](https://skillicons.dev)
 
-## Expanding the ESLint configuration
+### BackEnd
+- 🐯 내 정보 및 자녀 관리 시스템 개발
+- 🐯 선착순 이벤트 응모 시스템 개발
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### FrontEnd
+- 🐯 MBTI 및 성향 조사 페이지
+- 🐯 메인페이지
+- 🐯 UI/UX 개선
